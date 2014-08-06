@@ -15,7 +15,8 @@ Example
 
 The example is quite straightforward and you may find it under the relevant directory.
 
-'''java
+```java
+
 //implement the onFlingListener
 public class MyActivity extends Activity implements onFlingListener {
     ...
@@ -62,4 +63,4 @@ public class MyActivity extends Activity implements onFlingListener {
 
 
 }
-'''
+```
