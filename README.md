@@ -60,7 +60,7 @@ public class MyActivity extends Activity implements onFlingListener {
     @Override
     public void removeFirstObjectInAdapter() {
         // this is the simplest way to delete an object from the Adapter (/AdapterView)
-        Log.d("LIST", "removed ovject!");
+        Log.d("LIST", "removed object!");
         al.remove(0);
         arrayAdapter.notifyDataSetChanged();
     }
