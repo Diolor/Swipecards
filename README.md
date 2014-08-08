@@ -16,7 +16,7 @@ Go ahead find the latest version on [Grandle please] cowboy!
 
 ```groovy
 dependencies {
-    compile 'com.lorentzos:FlingSwipe:X.X.X'
+    compile 'com.lorentzos.swipecards:library:X.X.X'
 }
 ```
 
