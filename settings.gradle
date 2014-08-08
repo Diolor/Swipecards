@@ -1,2 +1,2 @@
-include  'FlingSwipe', 'example'
+include  ':FlingSwipe', ':example'
 

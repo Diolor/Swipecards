@@ -10,6 +10,21 @@ The library creates a similar effect to Tinder's swipable cards with Fling anima
 
 It was inspired by kikoso's https://github.com/kikoso/Swipeable-Cards but I decided to create a more simple and fresh approach.
 
+
+
+Installation
+=======
+
+Go ahead find the latest version on [Grandle please] [2] cowboy!
+
+```groovy
+dependencies {
+    compile 'com.lorentzos:FlingSwipe:X.X.X'
+}
+```
+
+
+
 Example
 =======
 
@@ -64,3 +79,5 @@ public class MyActivity extends Activity implements onFlingListener {
 
 }
 ```
+
+[2] :http://gradleplease.appspot.com/#flingswipe
