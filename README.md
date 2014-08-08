@@ -77,5 +77,5 @@ public class MyActivity extends Activity implements onFlingListener {
 }
 ```
 
-[Grandle please]:http://gradleplease.appspot.com/#flingswipe[
-Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
+[Grandle please]:http://gradleplease.appspot.com/#flingswipe
+[Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
