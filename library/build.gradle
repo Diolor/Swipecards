@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion Integer.parseInt(project.COMPILE_SDK_VERSION)
+    compileSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
     buildToolsVersion project.BUILD_TOOLS_VERSION
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 20
+        minSdkVersion 14
+        targetSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
     }
@@ -59,7 +59,7 @@ uploadArchives {
 
         pom.project {
             name 'Android FlingSwipe cards Library'
-            packaging 'aar'
+            packaging 'jar'
             description 'Android library that creates a similar effect to Tinder\'s swipable cards with Fling animation.'
             url 'https://github.com/Diolor/Swipecards'
 

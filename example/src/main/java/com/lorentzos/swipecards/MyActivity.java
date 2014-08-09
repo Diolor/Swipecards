@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.lorentzos.flingswipe.onFlingListener;
 
@@ -35,6 +36,10 @@ public class MyActivity extends Activity implements onFlingListener {
         al.add("c");
         al.add("python");
         al.add("java");
+        al.add("html");
+        al.add("c++");
+        al.add("css");
+        al.add("javascript");
 
         arrayAdapter = new ArrayAdapter<String>(this, R.layout.item, R.id.helloText, al );
 
@@ -45,7 +50,7 @@ public class MyActivity extends Activity implements onFlingListener {
 
     @Override
     public void removeFirstObjectInAdapter() {
-        Log.d("LIST", "removed ovject!");
+        Log.d("LIST", "removed object!");
         al.remove(0);
         arrayAdapter.notifyDataSetChanged();
     }

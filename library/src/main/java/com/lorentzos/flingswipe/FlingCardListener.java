@@ -2,7 +2,6 @@ package com.lorentzos.flingswipe;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -15,6 +14,8 @@ import android.widget.TextView;
  * and project Swipe cards.
  * Use with caution dinausaurs might appear!
  */
+
+
 public class FlingCardListener implements View.OnTouchListener {
 
     private final float originalX;
@@ -22,35 +23,15 @@ public class FlingCardListener implements View.OnTouchListener {
     private final int originalHeight;
     private final int originalWidth;
     private final int halfWidth;
-    private final float originalCenterX;
-    private final float originalCenterY;
     private final int parentWidth;
-    private final int parentHeight;
     private final HelperFlingListener helperFlingListener;
-    private float MAX_ROTATION_DEGREES = 15.f;
+    private float BASE_ROTATION_DEGREES = 15.f;
     private final String TAG = "Action: ";
-
-
-    public FlingCardListener(TextView frame, int parentWidth, int parentHeight,float originalX, float originalY, int originalHeight, int originalWidth, HelperFlingListener helperFlingListener) {
-        super();
-        this.frame = frame;
-        this.parentWidth = parentWidth;
-        this.parentHeight = parentHeight;
-        this.originalX = originalX;
-        this.originalY = originalY;
-        this.originalHeight = originalHeight;
-        this.originalWidth = originalWidth;
-        this.originalCenterX = originalX + originalHeight/2;
-        this.originalCenterY = originalY + originalWidth/2;
-        this.halfWidth = this.originalWidth/2;
-        this.helperFlingListener = helperFlingListener;
-    }
-
 
     private float aPosX;
     private float aPosY;
-    private float aLastTouchX;
-    private float aLastTouchY;
+    private float aDownTouchX;
+    private float aDownTouchY;
     private static final int INVALID_POINTER_ID = -1;
 
     // The active pointer is the one currently moving our object.
@@ -62,20 +43,33 @@ public class FlingCardListener implements View.OnTouchListener {
     private final int TOUCH_BELOW = 1;
     private int touchPosition;
 
+    public FlingCardListener(TextView frame, int parentWidth, float originalX, float originalY, int originalHeight, int originalWidth, HelperFlingListener helperFlingListener) {
+        super();
+        this.frame = frame;
+        this.parentWidth = parentWidth;
+        this.originalX = originalX;
+        this.originalY = originalY;
+        this.originalHeight = originalHeight;
+        this.originalWidth = originalWidth;
+        this.halfWidth = this.originalWidth/2;
+        this.helperFlingListener = helperFlingListener;
+    }
+
 
     public boolean onTouch(View view, MotionEvent event) {
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+//                Log.d(TAG, "action down");
+
                 //from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
-                Log.d(TAG, "action down");
                 // Save the ID of this pointer
                 mActivePointerId = event.getPointerId(0);
                 final float x = event.getX(mActivePointerId);
                 final float y = event.getY(mActivePointerId);
                 // Remember where we started
-                aLastTouchX = x;
-                aLastTouchY = y;
+                aDownTouchX = x;
+                aDownTouchY = y;
                 //to prevent an initial jump of the magnifier, aposX and aPosY must
                 //have the values from the magnifier frame
                 if (aPosX == 0) {
@@ -94,8 +88,8 @@ public class FlingCardListener implements View.OnTouchListener {
                 break;
 
             case MotionEvent.ACTION_UP:
-                Log.d(TAG, "action up");
-                reset();
+//                Log.d(TAG, "action up");
+                resetCardViewOnStack();
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -113,26 +107,27 @@ public class FlingCardListener implements View.OnTouchListener {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
+//                Log.d(TAG, "action move");
 
                 // Find the index of the active pointer and fetch its position
                 final int pointerIndexMove = event.findPointerIndex(mActivePointerId);
-                Log.d(TAG, "action move");
-                float xMove = event.getX(pointerIndexMove);
-                float yMove = event.getY(pointerIndexMove);
+                final float xMove = event.getX(pointerIndexMove);
+                final float yMove = event.getY(pointerIndexMove);
 
                 //from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
                 // Calculate the distance moved
-                final float dx = xMove - aLastTouchX;
-                final float dy = yMove - aLastTouchY;
+                final float dx = xMove - aDownTouchX;
+                final float dy = yMove - aDownTouchY;
 
-//                    if ( Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop){
+//              if ( Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop){
+
                 // Move the frame
                 aPosX += dx;
                 aPosY += dy;
 
                 // calculate the rotation degrees
                 float distOriginalX = aPosX - originalX;
-                float rotation = MAX_ROTATION_DEGREES * 2.f * distOriginalX / parentWidth;
+                float rotation = BASE_ROTATION_DEGREES * 2.f * distOriginalX / parentWidth;
                 if (touchPosition == TOUCH_BELOW) {
                     rotation = -rotation;
                 }
@@ -143,13 +138,13 @@ public class FlingCardListener implements View.OnTouchListener {
                 // last comment in http://stackoverflow.com/questions/16676097/android-getx-gety-interleaves-relative-absolute-coordinates?rq=1
                 //aLastTouchX = xMove;
                 //aLastTouchY = yMove;
-                Log.d(TAG, "we moved");
 
                 //in this area would be code for doing something with the magnified view as the frame moves.
                 frame.setX(aPosX);
                 frame.setY(aPosY);
                 frame.setRotation(rotation);
-//                    }
+
+//              }
                 break;
 
             case MotionEvent.ACTION_CANCEL: {
@@ -161,7 +156,7 @@ public class FlingCardListener implements View.OnTouchListener {
         return true;
     }
 
-    private void reset() {
+    private void resetCardViewOnStack() {
         if(aPosX+halfWidth>rightBorder()) {
             onRightSelected();
         }else if( aPosX+halfWidth <leftBorder()){
@@ -169,8 +164,8 @@ public class FlingCardListener implements View.OnTouchListener {
         }else {
             aPosX = 0;
             aPosY = 0;
-            aLastTouchX = 0;
-            aLastTouchY = 0;
+            aDownTouchX = 0;
+            aDownTouchY = 0;
             frame.animate()
                     .setDuration(100)
                     .setInterpolator(new DecelerateInterpolator())
@@ -203,7 +198,7 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     public void setRotationDegrees(float degrees) {
-        this.MAX_ROTATION_DEGREES = degrees;
+        this.BASE_ROTATION_DEGREES = degrees;
     }
 
     public void onLeftSelected() {
@@ -211,36 +206,63 @@ public class FlingCardListener implements View.OnTouchListener {
                 .setDuration(100)
                 .setInterpolator(new AccelerateInterpolator())
                 .x(-originalWidth)
-                .y(500)
+                .y(getExitPoint(-originalWidth))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         helperFlingListener.onCardExited();
                         helperFlingListener.leftExit();
                     }
-                });
+                })
+                .rotation(-getExitRotation());
     }
 
+
     public void onRightSelected() {
-
-        //TODO correct exit point
-        float exitPoint = (originalCenterY-aLastTouchY)*(originalCenterX-parentWidth)/(originalCenterX-aLastTouchX)+originalCenterY;
-
         frame.animate()
                 .setDuration(100)
                 .setInterpolator(new AccelerateInterpolator())
                 .x(parentWidth)
-                .y(exitPoint)
+                .y(getExitPoint(parentWidth))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         helperFlingListener.onCardExited();
                         helperFlingListener.rightExit();
                     }
-                });
-//                .rotation(exitRotation);
-
+                })
+                .rotation(getExitRotation());
     }
 
 
+    private float getExitPoint(int exitXPoint) {
+        float[] x = new float[2];
+        x[0] = originalX;
+        x[1] = aPosX;
+
+        float[] y = new float[2];
+        y[0] = originalY;
+        y[1] = aPosY;
+
+        LinearRegression regression =new LinearRegression(x,y);
+
+        //Your typical y = ax+b linear reggression
+        return (float) regression.slope() * exitXPoint +  (float) regression.intercept();
+    }
+
+    private float getExitRotation(){
+        float rotation= BASE_ROTATION_DEGREES * 2.f * (parentWidth - originalX)/parentWidth;
+        if (touchPosition == TOUCH_BELOW) {
+            rotation = -rotation;
+        }
+        return rotation;
+    }
+
+
+
 }
+
+
+
+
+

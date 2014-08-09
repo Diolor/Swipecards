@@ -1,4 +1,4 @@
-<com.lorentzos.swipecards.flingadapter.SwipeFlingAdapterView
+<com.lorentzos.flingswipe.SwipeFlingAdapterView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frame"
