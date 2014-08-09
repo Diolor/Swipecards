@@ -3,23 +3,20 @@ Swipecards
 
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
 
-
----
-
 The library creates a similar effect to Tinder's swipable cards with Fling animation.
 
-It was inspired by kikoso's https://github.com/kikoso/Swipeable-Cards but I decided to create a more simple and fresh approach.
+It was inspired by [Kikoso's Swipeable-Cards] but I decided to create a more simple and fresh approach with less bugs.
 
-
+---
 
 Installation
 =======
 
-Go ahead find the latest version on [Grandle please] [2] cowboy!
+Go ahead find the latest version on [Grandle please] cowboy!
 
 ```groovy
 dependencies {
-    compile 'com.lorentzos:FlingSwipe:X.X.X'
+    compile 'com.lorentzos.swipecards:library:X.X.X'
 }
 ```
 
@@ -80,4 +77,5 @@ public class MyActivity extends Activity implements onFlingListener {
 }
 ```
 
-[2] :http://gradleplease.appspot.com/#flingswipe
+[Grandle please]:http://gradleplease.appspot.com/#com.lorentzos.swipecards
+[Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
