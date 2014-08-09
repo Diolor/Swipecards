@@ -9,6 +9,10 @@ It was inspired by [Kikoso's Swipeable-Cards] but I decided to create a more sim
 
 ---
 
+![ ](/screenshot.png)
+
+
+
 Installation
 =======
 
