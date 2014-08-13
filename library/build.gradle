@@ -59,7 +59,7 @@ uploadArchives {
 
         pom.project {
             name 'Android FlingSwipe cards Library'
-            packaging 'jar'
+            packaging 'aar'
             description 'Android library that creates a similar effect to Tinder\'s swipable cards with Fling animation.'
             url 'https://github.com/Diolor/Swipecards'
 

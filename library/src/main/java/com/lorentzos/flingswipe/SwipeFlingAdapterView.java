@@ -124,7 +124,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
     */
     private void setTopView() {
         if(getChildCount()>0){
-            TextView tv = (TextView) getChildAt(LAST_OBJECT_IN_STACK);
+            View tv = getChildAt(LAST_OBJECT_IN_STACK);
             if(tv!=null) {
                 FlingCardListener flingCardListener = new FlingCardListener(tv, getWidth(), tv.getX(),
                         tv.getY(), tv.getHeight(), tv.getWidth(), this) ;
