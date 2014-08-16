@@ -16,11 +16,6 @@ import java.util.ArrayList;
 
 public class MyActivity extends Activity implements onFlingListener {
 
-
-    private View v;
-    private float originalX;
-    private float originalY;
-    private float centerY;
     private ArrayList<String> al;
     private ArrayAdapter<String> arrayAdapter;
 
