@@ -8,6 +8,6 @@ package com.lorentzos.flingswipe;
  */
 interface HelperFlingListener {
     public void onCardExited();
-    public void leftExit();
-    public void rightExit();
+    public void leftExit(Object dataObject);
+    public void rightExit(Object dataObject);
 }

@@ -14,6 +14,11 @@ import android.widget.AdapterView;
 abstract class BaseFlingAdapterView extends AdapterView {
 
 
+    private int heightMeasureSpec;
+    private int widthMeasureSpec;
+
+
+
     public BaseFlingAdapterView(Context context) {
         super(context);
     }
@@ -34,6 +39,22 @@ abstract class BaseFlingAdapterView extends AdapterView {
     @Override
     public void setSelection(int i) {
         throw new UnsupportedOperationException("Not supported");
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        this.widthMeasureSpec = widthMeasureSpec;
+        this.heightMeasureSpec = heightMeasureSpec;
+    }
+
+
+    public int getWidthMeasureSpec() {
+        return widthMeasureSpec;
+    }
+
+    public int getHeightMeasureSpec() {
+        return heightMeasureSpec;
     }
 
 

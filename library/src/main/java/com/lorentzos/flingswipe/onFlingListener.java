@@ -8,6 +8,7 @@ package com.lorentzos.flingswipe;
  */
 public interface onFlingListener {
     void removeFirstObjectInAdapter();
-    void onLeftCardExit();
-    void onRightCardExit();
+    void onLeftCardExit(Object dataObject);
+    void onRightCardExit(Object dataObject);
+    void onAdapterAboutToEmpty(int itemsInAdapter);
 }

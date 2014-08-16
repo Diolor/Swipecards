@@ -25,8 +25,8 @@ public class FlingCardListener implements View.OnTouchListener {
     private final int halfWidth;
     private final int parentWidth;
     private final HelperFlingListener helperFlingListener;
+    private final Object dataObject;
     private float BASE_ROTATION_DEGREES = 15.f;
-    private final String TAG = "Action: ";
 
     private float aPosX;
     private float aPosY;
@@ -43,7 +43,7 @@ public class FlingCardListener implements View.OnTouchListener {
     private final int TOUCH_BELOW = 1;
     private int touchPosition;
 
-    public FlingCardListener(View frame, int parentWidth, float originalX, float originalY, int originalHeight, int originalWidth, HelperFlingListener helperFlingListener) {
+    public FlingCardListener(View frame, int parentWidth, float originalX, float originalY, int originalHeight, int originalWidth, Object itemAtPosition, HelperFlingListener helperFlingListener) {
         super();
         this.frame = frame;
         this.parentWidth = parentWidth;
@@ -52,6 +52,7 @@ public class FlingCardListener implements View.OnTouchListener {
         this.originalHeight = originalHeight;
         this.originalWidth = originalWidth;
         this.halfWidth = this.originalWidth/2;
+        this.dataObject = itemAtPosition;
         this.helperFlingListener = helperFlingListener;
     }
 
@@ -60,13 +61,13 @@ public class FlingCardListener implements View.OnTouchListener {
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-//                Log.d(TAG, "action down");
 
                 //from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
                 // Save the ID of this pointer
                 mActivePointerId = event.getPointerId(0);
                 final float x = event.getX(mActivePointerId);
                 final float y = event.getY(mActivePointerId);
+
                 // Remember where we started
                 aDownTouchX = x;
                 aDownTouchY = y;
@@ -88,7 +89,7 @@ public class FlingCardListener implements View.OnTouchListener {
                 break;
 
             case MotionEvent.ACTION_UP:
-//                Log.d(TAG, "action up");
+                mActivePointerId = INVALID_POINTER_ID;
                 resetCardViewOnStack();
                 break;
 
@@ -97,7 +98,8 @@ public class FlingCardListener implements View.OnTouchListener {
 
             case MotionEvent.ACTION_POINTER_UP:
                 // Extract the index of the pointer that left the touch sensor
-                final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                final int pointerIndex = (event.getAction() &
+                        MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 if (pointerId == mActivePointerId) {
                     // This was our active pointer going up. Choose a new
@@ -107,10 +109,10 @@ public class FlingCardListener implements View.OnTouchListener {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-//                Log.d(TAG, "action move");
 
                 // Find the index of the active pointer and fetch its position
                 final int pointerIndexMove = event.findPointerIndex(mActivePointerId);
+                System.out.println(pointerIndexMove);
                 final float xMove = event.getX(pointerIndexMove);
                 final float yMove = event.getY(pointerIndexMove);
 
@@ -171,19 +173,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     .setInterpolator(new DecelerateInterpolator())
                     .x(originalX)
                     .y(originalY)
-                    .rotation(0)
-//                    .setListener(new AnimatorListenerAdapter() {
-//                        @Override
-//                        public void onAnimationEnd(Animator animation) {
-//                            onEndAnimate();
-//                        }
-//
-//                        @Override
-//                        public void onAnimationCancel(Animator animation) {
-//                            onAnimationEnd(animation);
-//                        }
-//                    })
-            ;
+                    .rotation(0);
         }
     }
 
@@ -202,7 +192,7 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     public void onLeftSelected() {
-        frame.animate()
+        this.frame.animate()
                 .setDuration(100)
                 .setInterpolator(new AccelerateInterpolator())
                 .x(-originalWidth)
@@ -211,7 +201,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         helperFlingListener.onCardExited();
-                        helperFlingListener.leftExit();
+                        helperFlingListener.leftExit(dataObject);
                     }
                 })
                 .rotation(-getExitRotation());
@@ -219,7 +209,7 @@ public class FlingCardListener implements View.OnTouchListener {
 
 
     public void onRightSelected() {
-        frame.animate()
+        this.frame.animate()
                 .setDuration(100)
                 .setInterpolator(new AccelerateInterpolator())
                 .x(parentWidth)
@@ -228,7 +218,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         helperFlingListener.onCardExited();
-                        helperFlingListener.rightExit();
+                        helperFlingListener.rightExit(dataObject);
                     }
                 })
                 .rotation(getExitRotation());
