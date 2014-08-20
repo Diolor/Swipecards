@@ -239,7 +239,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
 
             if(tv!=null) {
                 FlingCardListener flingCardListener = new FlingCardListener(tv, getWidth(), tv.getX(),
-                        tv.getY(), tv.getHeight(), tv.getWidth(), getItemAtPosition(LAST_OBJECT_IN_STACK), this) ;
+                        tv.getY(), tv.getHeight(), tv.getWidth(), mAdapter.getItem(0), this) ;
                 tv.setOnTouchListener(flingCardListener);
             }
         }
