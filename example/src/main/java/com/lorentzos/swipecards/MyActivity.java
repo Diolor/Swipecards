@@ -3,10 +3,8 @@ package com.lorentzos.swipecards;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.lorentzos.flingswipe.onFlingListener;
@@ -41,6 +39,10 @@ public class MyActivity extends Activity implements onFlingListener {
         flingContainer.setRemoveObjectsListener(this);
         flingContainer.setAdapter(arrayAdapter);
 
+
+        al.add("234");
+        arrayAdapter.notifyDataSetChanged();
+        System.out.println("notified");
     }
 
     @Override

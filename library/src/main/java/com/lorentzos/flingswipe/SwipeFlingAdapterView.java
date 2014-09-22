@@ -3,6 +3,7 @@ package com.lorentzos.flingswipe;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
@@ -15,7 +16,8 @@ import android.widget.FrameLayout;
  * Use with caution dinosaurs might appear!
  */
 
-public class SwipeFlingAdapterView extends BaseFlingAdapterView implements HelperFlingListener {
+public class SwipeFlingAdapterView extends BaseFlingAdapterView
+        implements FlingCardListener.FlingListener {
 
 
     private Adapter mAdapter;
@@ -23,50 +25,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
     private int MIN_ADAPTER_STACK = 6;
     private int LAST_OBJECT_IN_STACK = 0;
     private onFlingListener ROList;
-
-    private final DataSetObserver mDataSetObserver = new DataSetObserver() {
-        @Override
-        public void onChanged() {
-            observedChange();
-        }
-
-        @Override
-        public void onInvalidated() {
-            observedChange();
-        }
-
-
-        private void observedChange() {
-
-            final int adapterCount = mAdapter.getCount();
-
-            if(adapterCount <= MIN_ADAPTER_STACK){
-                ROList.onAdapterAboutToEmpty(adapterCount);
-            }
-
-            if(adapterCount  ==0){
-                removeAllViewsInLayout();
-            }else if( adapterCount == 1){
-                //Add one object and set top view
-
-                removeAllViewsInLayout();
-                layoutChildren(0);
-                setTopView();
-
-            }else if( adapterCount <= MAX_VISIBLE){
-                //Add objects but leave the top view as is
-                try {
-                    //Remove -if any- additional views
-                    removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
-                }catch (NullPointerException e){
-                }
-                layoutChildren(1);
-            }
-
-        }
-
-    };
-
+    private AdapterDataSetObserver mDataSetObserver;
+    private boolean mInLayout = false;
+    private View mActiveCard = null;
 
 
     public SwipeFlingAdapterView(Context context) {
@@ -83,6 +44,24 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
 
 
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (mAdapter != null && mDataSetObserver==null) {
+            mDataSetObserver = new AdapterDataSetObserver();
+            mAdapter.registerDataSetObserver(mDataSetObserver);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mAdapter != null && mDataSetObserver!=null) {
+            mAdapter.unregisterDataSetObserver(mDataSetObserver);
+            mDataSetObserver = null;
+        }
+    }
+
 
     @Override
     public Adapter getAdapter() {
@@ -91,20 +70,15 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
 
     @Override
     public void setAdapter(Adapter adapter) {
-        if (mAdapter != null) {
-            mAdapter.unregisterDataSetObserver(mDataSetObserver);
-        }
         this.mAdapter = adapter;
-        mAdapter.registerDataSetObserver(mDataSetObserver);
     }
 
 
     @Override
     public void onCardExited() {
         ROList.removeFirstObjectInAdapter();
-        removeAllViewsInLayout();
-        layoutChildren(0);
-        setTopView();
+        mActiveCard = null;
+        requestLayout();
     }
 
     @Override
@@ -125,20 +99,67 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
 
 
     @Override
+    public void requestLayout() {
+        System.out.println("Requested layout..");
+        if (!mInLayout) {
+            System.out.println("Layout is not rendering");
+            super.requestLayout();
+        }
+    }
+
+
+
+
+
+
+    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         // if we don't have an adapter, we don't need to do anything
         if (mAdapter == null) {
             return;
         }
-//        layoutChildren(0);
+        mInLayout = true;
+
+        final int adapterCount = mAdapter.getCount();
+
+        System.out.println(adapterCount);
+
+        if(adapterCount == 0) {
+            System.out.println("empty adapter");
+            removeAllViewsInLayout();
+        }else {
+            View topCard = getChildAt(LAST_OBJECT_IN_STACK);
+            if(mActiveCard!=null && topCard!=null && topCard==mActiveCard) {
+                System.out.println("Omit next");
+                removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
+//                try {
+//                    //Remove -if any- additional views
+//                    removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
+//                }catch (NullPointerException ignored){
+//
+//                }
+                layoutChildren(1, adapterCount);
+            }else{
+                System.out.println("Reset layout");
+                // Reset the UI and set top view listener
+                removeAllViewsInLayout();
+                layoutChildren(0, adapterCount);
+                setTopView();
+            }
+        }
+
+        mInLayout = false;
     }
 
 
-    private void layoutChildren(final int index){
-        int position = index;
+    private void layoutChildren(final int startingIndex, int adapterCount){
+        int position = startingIndex;
 
-        while (position < mAdapter.getCount() && position < MAX_VISIBLE) {
+        while (position < adapterCount && position < MAX_VISIBLE) {
+            Log.d("Position", String.valueOf(position));
+//            Log.d("mAdapter.getCount", String.valueOf(mAdapter.getCount()));
+            Log.d("MAX_VISIBLE", String.valueOf(MAX_VISIBLE));
             View newBottomChild = mAdapter.getView(position, null, this);
             if (newBottomChild.getVisibility() != GONE) {
                 addAndMeasureChild(newBottomChild);
@@ -147,7 +168,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
             position++;
         }
 
-        positionItems(index);
+        positionItems(startingIndex);
     }
 
 
@@ -183,8 +204,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
             int height = child.getMeasuredHeight();
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
 
-            int childLeft;
-            int childTop;
 
             int gravity = lp.gravity;
             if (gravity == -1) {
@@ -195,15 +214,18 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
             final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
             final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
 
+
+            int childLeft;
+            int childTop;
             switch (absoluteGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
                 case Gravity.CENTER_HORIZONTAL:
                     childLeft = (getWidth() + getPaddingLeft() - getPaddingRight()  - width) / 2 +
                             lp.leftMargin - lp.rightMargin;
                     break;
-                case Gravity.RIGHT:
+                case Gravity.END:
                     childLeft = getWidth() + getPaddingRight() - width - lp.rightMargin;
                     break;
-                case Gravity.LEFT:
+                case Gravity.START:
                 default:
                     childLeft = getPaddingLeft() + lp.leftMargin;
                     break;
@@ -223,8 +245,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
                     break;
             }
 
+            Log.d("isLayoutRequested", String.valueOf(isLayoutRequested()));
             child.layout(childLeft, childTop, childLeft + width, childTop + height);
-            System.out.println("positioned");
         }
     }
 
@@ -235,12 +257,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
     */
     private void setTopView() {
         if(getChildCount()>0){
-            View tv = getChildAt(LAST_OBJECT_IN_STACK);
-
-            if(tv!=null) {
-                FlingCardListener flingCardListener = new FlingCardListener(tv, getWidth(), tv.getX(),
-                        tv.getY(), tv.getHeight(), tv.getWidth(), getItemAtPosition(LAST_OBJECT_IN_STACK), this) ;
-                tv.setOnTouchListener(flingCardListener);
+            mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
+            if(mActiveCard!=null) {
+                FlingCardListener flingCardListener = new FlingCardListener(mActiveCard, getWidth(), mActiveCard.getX(),
+                        mActiveCard.getY(), mActiveCard.getHeight(), mActiveCard.getWidth(), mAdapter.getItem(0), this) ;
+                mActiveCard.setOnTouchListener(flingCardListener);
             }
         }
     }
@@ -259,5 +280,30 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements Helpe
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new FrameLayout.LayoutParams(getContext(), attrs);
     }
+
+
+    class AdapterDataSetObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            System.out.println("Changed..");
+            requestLayout();
+        }
+
+        @Override
+        public void onInvalidated() {
+            requestLayout();
+        }
+
+    }
+
+
+
+    public interface onFlingListener {
+        public void removeFirstObjectInAdapter();
+        public void onLeftCardExit(Object dataObject);
+        public void onRightCardExit(Object dataObject);
+        public void onAdapterAboutToEmpty(int itemsInAdapter);
+    }
+
 
 }
