@@ -4,8 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 /**
  * Created by dionysis_lorentzos on 5/8/14
@@ -17,15 +18,15 @@ import android.view.animation.DecelerateInterpolator;
 
 public class FlingCardListener implements View.OnTouchListener {
 
-    private final float originalX;
-    private final float originalY;
-    private final int originalHeight;
-    private final int originalWidth;
-    private final int halfWidth;
+    private final float objectX;
+    private final float objectY;
+    private final int objectH;
+    private final int objectW;
     private final int parentWidth;
     private final FlingListener mFlingListener;
     private final Object dataObject;
-    private float BASE_ROTATION_DEGREES = 15.f;
+    private final float halfWidth;
+    private float BASE_ROTATION_DEGREES;
 
     private float aPosX;
     private float aPosY;
@@ -42,19 +43,24 @@ public class FlingCardListener implements View.OnTouchListener {
     private final int TOUCH_BELOW = 1;
     private int touchPosition;
 
-    public FlingCardListener(View frame, int parentWidth, float originalX, float originalY,
-                             int originalHeight, int originalWidth, Object itemAtPosition,
-                             FlingListener flingListener) {
+
+    public FlingCardListener(View frame, Object itemAtPosition, FlingListener flingListener) {
+        this(frame,itemAtPosition, 15f, flingListener);
+    }
+
+    public FlingCardListener(View frame, Object itemAtPosition, float rotation_degrees, FlingListener flingListener) {
         super();
         this.frame = frame;
-        this.parentWidth = parentWidth;
-        this.originalX = originalX;
-        this.originalY = originalY;
-        this.originalHeight = originalHeight;
-        this.originalWidth = originalWidth;
-        this.halfWidth = this.originalWidth/2;
+        this.objectX = frame.getX();
+        this.objectY = frame.getY();
+        this.objectH = frame.getHeight();
+        this.objectW = frame.getWidth();
+        this.halfWidth = objectW/2f;
         this.dataObject = itemAtPosition;
+        this.parentWidth = ((ViewGroup) frame.getParent()).getWidth();
+        this.BASE_ROTATION_DEGREES = rotation_degrees;
         this.mFlingListener = flingListener;
+        
     }
 
 
@@ -81,7 +87,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     aPosY = frame.getY();
                 }
 
-                if (y < originalHeight/2) {
+                if (y < objectH/2) {
                     touchPosition = TOUCH_ABOVE;
                 } else {
                     touchPosition = TOUCH_BELOW;
@@ -129,8 +135,8 @@ public class FlingCardListener implements View.OnTouchListener {
                 aPosY += dy;
 
                 // calculate the rotation degrees
-                float distOriginalX = aPosX - originalX;
-                float rotation = BASE_ROTATION_DEGREES * 2.f * distOriginalX / parentWidth;
+                float distobjectX = aPosX - objectX;
+                float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
                 if (touchPosition == TOUCH_BELOW) {
                     rotation = -rotation;
                 }
@@ -165,20 +171,18 @@ public class FlingCardListener implements View.OnTouchListener {
         }else if( aPosX+halfWidth <leftBorder()){
             onLeftSelected();
         }else {
-            float abslMoveDistance = Math.abs(aPosX-originalX);
+            float abslMoveDistance = Math.abs(aPosX-objectX);
             aPosX = 0;
             aPosY = 0;
             aDownTouchX = 0;
             aDownTouchY = 0;
             frame.animate()
-                    .setDuration(100)
-                    .setInterpolator(new DecelerateInterpolator())
-                    .x(originalX)
-                    .y(originalY)
+                    .setDuration(200)
+                    .setInterpolator(new OvershootInterpolator(1.5f))
+                    .x(objectX)
+                    .y(objectY)
                     .rotation(0);
-            System.out.println(abslMoveDistance);
             if(abslMoveDistance<4.0){
-                System.out.println("returns false");
                 return true;
             }
         }
@@ -203,8 +207,8 @@ public class FlingCardListener implements View.OnTouchListener {
         this.frame.animate()
                 .setDuration(100)
                 .setInterpolator(new AccelerateInterpolator())
-                .x(-originalWidth)
-                .y(getExitPoint(-originalWidth))
+                .x(-objectW)
+                .y(getExitPoint(-objectW))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -235,11 +239,11 @@ public class FlingCardListener implements View.OnTouchListener {
 
     private float getExitPoint(int exitXPoint) {
         float[] x = new float[2];
-        x[0] = originalX;
+        x[0] = objectX;
         x[1] = aPosX;
 
         float[] y = new float[2];
-        y[0] = originalY;
+        y[0] = objectY;
         y[1] = aPosY;
 
         LinearRegression regression =new LinearRegression(x,y);
@@ -249,7 +253,7 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     private float getExitRotation(){
-        float rotation= BASE_ROTATION_DEGREES * 2.f * (parentWidth - originalX)/parentWidth;
+        float rotation= BASE_ROTATION_DEGREES * 2.f * (parentWidth - objectX)/parentWidth;
         if (touchPosition == TOUCH_BELOW) {
             rotation = -rotation;
         }

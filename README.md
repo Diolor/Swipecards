@@ -37,7 +37,7 @@ You may find it under the relevant directory.
 ```java
 
 //implement the onFlingListener
-public class MyActivity extends Activity implements onFlingListener {
+public class MyActivity extends Activity {
     ...
 
     @Override
@@ -57,37 +57,73 @@ public class MyActivity extends Activity implements onFlingListener {
         arrayAdapter = new ArrayAdapter<String>(this, R.layout.item, R.id.helloText, al );
         
         //set the listener and the adapter
-        flingContainer.setRemoveObjectsListener(this);
         flingContainer.setAdapter(arrayAdapter);
-    }
+        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+            @Override
+            public void removeFirstObjectInAdapter() {
+                // this is the simplest way to delete an object from the Adapter (/AdapterView)
+                Log.d("LIST", "removed object!");
+                al.remove(0);
+                arrayAdapter.notifyDataSetChanged();
+            }
 
-    @Override
-    public void removeFirstObjectInAdapter() {
-        // this is the simplest way to delete an object from the Adapter (/AdapterView)
-        al.remove(0);
-        arrayAdapter.notifyDataSetChanged();
-    }
+            @Override
+            public void onLeftCardExit(Object dataObject) {
+                //Do something on the left!
+                //You also have access to the original object.
+                //If you want to use it just cast it (String) dataObject
+                Toast.makeText(MyActivity.this, "Left!", Toast.LENGTH_SHORT).show();
+            }
 
-    @Override
-    public void onLeftCardExit(Object dataObject) {
-        //Do something on the left!
-        //You also have access to the original object. 
-        //If you want to use it just cast it (String) dataObject
-        Toast.makeText(this,"Left!",Toast.LENGTH_SHORT).show();
-    }
+            @Override
+            public void onRightCardExit(Object dataObject) {
+                Toast.makeText(MyActivity.this, "Right!", Toast.LENGTH_SHORT).show();
+            }
 
-    @Override
-    public void onRightCardExit(Object dataObject) {
-        Toast.makeText(this,"Right!",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onAdapterAboutToEmpty(int itemsInAdapter) {
-        // Ask for more data here
-        System.out.println("Almost empty!!!");
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                // Ask for more data here
+                al.add("XML ".concat(String.valueOf(i)));
+                arrayAdapter.notifyDataSetChanged();
+                Log.d("LIST", "notified");
+                i++;
+            }
+        });
     }
 }
 ```
+
+
+Configuration
+============
+
+You can optionally specify some attrs for the animation and the stack. The easiest way is in xml:
+
+```xml
+<com.lorentzos.flingswipe.SwipeFlingAdapterView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:rotation_degrees="16"
+    app:max_visible="4"
+    app:min_adapter_stack="6" />
+```
+
+Or use styles:
+
+```xml
+<!-- Base application theme. -->
+<style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="SwipeFlingStyle">@style/SwipeFling</item>
+</style>
+```
+
+- rotation_degrees: the degrees of the card rotation offset
+- max_visible: the max visible cards at the time
+- min_adapter_stack: the min number of objects left. Initiates onAdapterAboutToEmpty() method.
+
 
 [Grandle please]:http://gradleplease.appspot.com/#com.lorentzos.swipecards
 [Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
