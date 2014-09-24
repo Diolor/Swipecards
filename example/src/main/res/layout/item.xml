@@ -9,5 +9,6 @@
     android:background="#E339"
     android:gravity="center"
     tools:text="@string/hello_world"
+    android:layout_gravity="center"
     android:layout_width="250dp"
     android:layout_height="170dp" />

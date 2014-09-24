@@ -13,7 +13,6 @@ import android.widget.AdapterView;
  */
 abstract class BaseFlingAdapterView extends AdapterView {
 
-
     private int heightMeasureSpec;
     private int widthMeasureSpec;
 
@@ -30,6 +29,7 @@ abstract class BaseFlingAdapterView extends AdapterView {
     public BaseFlingAdapterView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
+
 
     @Override
     public View getSelectedView() {
@@ -56,6 +56,8 @@ abstract class BaseFlingAdapterView extends AdapterView {
     public int getHeightMeasureSpec() {
         return heightMeasureSpec;
     }
+
+
 
 
 }
