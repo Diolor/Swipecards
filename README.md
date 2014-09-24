@@ -1,6 +1,8 @@
 Swipecards
 ==========
 
+[![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
+
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
 The library creates a similar effect to Tinder's swipable cards with Fling animation.
 
@@ -8,16 +10,18 @@ It was inspired by [Kikoso's Swipeable-Cards] but I decided to create a more sim
 
 It handles greatly asynchronous loading of adapter's data and uses the same layout parameters as FrameLayout (you may use `android:layout_gravity` in your layout xml file).
 
----
-
 ![ ](/screenshot.png)
 
+---
 
 
 Installation
 =======
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.lorentzos.swipecards/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.lorentzos.swipecards/library)
+
 Go ahead find the latest version on [Grandle please] cowboy!
+
 
 ```groovy
 dependencies {
