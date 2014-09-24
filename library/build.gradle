@@ -46,14 +46,14 @@ uploadArchives {
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        repository(url: sonatypeRepo ?: "$System.env.sonatypeRepo") {
+            authentication(userName: sonatypeUsername ?: "$System.env.sonatypeUsername",
+                    password: sonatypePassword ?: "$System.env.sonatypePassword")
         }
 
-        snapshotRepository(url: snapshotRepo) {
-            authentication(userName: sonatypeUsername,
-                    password: sonatypePassword)
+        snapshotRepository(url: snapshotRepo ?: "$System.env.snapshotRepo") {
+            authentication(userName: sonatypeUsername ?: "$System.env.sonatypeUsername",
+                    password: sonatypePassword ?: "$System.env.sonatypePassword")
         }
 
         pom.project {
