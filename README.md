@@ -1,7 +1,7 @@
 Swipecards
 ==========
 
-[![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
+Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
 
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
 The library creates a similar effect to Tinder's swipable cards with Fling animation.
