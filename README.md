@@ -1,7 +1,8 @@
 Swipecards
 ==========
-
+<!---
 Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
+--->
 
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
 The library creates a similar effect to Tinder's swipable cards with Fling animation.
@@ -128,6 +129,24 @@ Or use styles:
 - max_visible: the max visible cards at the time
 - min_adapter_stack: the min number of objects left. Initiates onAdapterAboutToEmpty() method.
 
+License
+======
+
+```
+   Copyright 2014 Dionysis Lorentzos
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```
 
 [Grandle please]:http://gradleplease.appspot.com/#com.lorentzos.swipecards
 [Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
