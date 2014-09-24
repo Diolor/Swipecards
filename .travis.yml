@@ -2,15 +2,11 @@ language: android
 
 android:
   components:
-    # Ensure that latest Android SDK is used
-    # Note: comment these lines if you prefer to keep using SDK version installed on the Travis VM.
     - platform-tools
     - tools
 
-    # Proposal: VM image does not contain any pre-installed component,
-    # All dependencies must be explicitly declared in .travis.yml
     - build-tools-20.0.0
     - android-20
 
 
-script: ./gradlew build connectedCheck
+script: ./gradlew build check
