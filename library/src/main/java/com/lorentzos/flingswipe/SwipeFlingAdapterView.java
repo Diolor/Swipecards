@@ -1,15 +1,15 @@
 package com.lorentzos.flingswipe;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
-
-import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
 
 /**
  * Created by dionysis_lorentzos on 5/8/14
@@ -130,6 +130,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void makeAndAddView(View child) {
 
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
@@ -157,12 +158,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             gravity = Gravity.TOP | Gravity.START;
         }
 
-        int layoutDirection;
-        if (getContext().getApplicationInfo().targetSdkVersion < JELLY_BEAN_MR1) {
-            layoutDirection = View.LAYOUT_DIRECTION_LTR;
-        }else {
-            layoutDirection = getLayoutDirection();
-        }
+
+        int layoutDirection = getLayoutDirection();
         final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
         final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
 
@@ -197,8 +194,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
         child.layout(childLeft, childTop, childLeft + w, childTop + h);
     }
-
-
 
     /**
     *  Set the top view and add the fling listener
