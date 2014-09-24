@@ -54,6 +54,7 @@ uploadArchives {
             authentication(userName: sonatypeUsername, password: sonatypePassword)
         }
 
+
         pom.project {
             name POM_NAME
             packaging 'jar'
