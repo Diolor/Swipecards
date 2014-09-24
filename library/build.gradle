@@ -51,7 +51,7 @@ uploadArchives {
         }
 
         snapshotRepository(url: snapshotRepo) {
-            authentication(userName: sonatypeUsername , password: sonatypePassword)
+            authentication(userName: sonatypeUsername, password: sonatypePassword)
         }
 
         pom.project {
