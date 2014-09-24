@@ -1,0 +1,2 @@
+language: android
+script: ./gradlew build
