@@ -8,13 +8,12 @@ android {
 
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION
-        targetSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
+        targetSdkVersion project.TARGET_SDK_VERSION
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
     }
     buildTypes {
         release {
-            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -27,14 +26,6 @@ dependencies {
 
 
 
-
-
-configurations {
-    archives {
-        extendsFrom configurations.default
-    }
-}
-
 signing {
     required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
@@ -43,7 +34,9 @@ signing {
 
 uploadArchives {
     configuration = configurations.archives
+
     repositories.mavenDeployer {
+
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
         repository(url: sonatypeRepo) {
@@ -54,11 +47,10 @@ uploadArchives {
             authentication(userName: sonatypeUsername, password: sonatypePassword)
         }
 
-
         pom.project {
             name POM_NAME
-            packaging 'jar'
             description POM_DESC
+            packaging 'aar'
             url POM_URL
 
             scm {
