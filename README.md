@@ -1,5 +1,6 @@
 Swipecards
 ==========
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Diolor/Swipecards?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
 
