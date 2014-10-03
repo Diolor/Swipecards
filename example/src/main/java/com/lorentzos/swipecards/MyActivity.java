@@ -1,6 +1,7 @@
 package com.lorentzos.swipecards;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -52,12 +53,12 @@ public class MyActivity extends Activity {
                 //Do something on the left!
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
-                Toast.makeText(MyActivity.this, "Left!", Toast.LENGTH_SHORT).show();
+                makeToast(MyActivity.this, "Left!");
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                Toast.makeText(MyActivity.this, "Right!", Toast.LENGTH_SHORT).show();
+                makeToast(MyActivity.this, "Right!");
             }
 
             @Override
@@ -69,5 +70,22 @@ public class MyActivity extends Activity {
                 i++;
             }
         });
+
+
+        // Optionally add an OnItemClickListener
+        flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClicked(int itemPosition, Object dataObject) {
+                makeToast(MyActivity.this, "Clicked!");
+            }
+        });
+
+
     }
+
+    static void makeToast(Context ctx, String s){
+        Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
+    }
+
+
 }

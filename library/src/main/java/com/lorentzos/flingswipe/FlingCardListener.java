@@ -97,8 +97,7 @@ public class FlingCardListener implements View.OnTouchListener {
 
             case MotionEvent.ACTION_UP:
                 mActivePointerId = INVALID_POINTER_ID;
-                if ( resetCardViewOnStack() )
-                    view.performClick();
+                resetCardViewOnStack();
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -128,7 +127,6 @@ public class FlingCardListener implements View.OnTouchListener {
                 final float dx = xMove - aDownTouchX;
                 final float dy = yMove - aDownTouchY;
 
-//              if ( Math.abs(dx) > mTouchSlop || Math.abs(dy) > mTouchSlop){
 
                 // Move the frame
                 aPosX += dx;
@@ -141,19 +139,10 @@ public class FlingCardListener implements View.OnTouchListener {
                     rotation = -rotation;
                 }
 
-
-                // Remember this touch position for the next move event
-                //no! see http://stackoverflow.com/questions/17530589/jumping-imageview-while-dragging-getx-and-gety-values-are-jumping?rq=1 and
-                // last comment in http://stackoverflow.com/questions/16676097/android-getx-gety-interleaves-relative-absolute-coordinates?rq=1
-                //aLastTouchX = xMove;
-                //aLastTouchY = yMove;
-
                 //in this area would be code for doing something with the magnified view as the frame moves.
                 frame.setX(aPosX);
                 frame.setY(aPosY);
                 frame.setRotation(rotation);
-
-//              }
                 break;
 
             case MotionEvent.ACTION_CANCEL: {
@@ -183,7 +172,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     .y(objectY)
                     .rotation(0);
             if(abslMoveDistance<4.0){
-                return true;
+                mFlingListener.onClick(dataObject);
             }
         }
         return false;
@@ -265,6 +254,7 @@ public class FlingCardListener implements View.OnTouchListener {
         public void onCardExited();
         public void leftExit(Object dataObject);
         public void rightExit(Object dataObject);
+        public void onClick(Object dataObject);
     }
 
 }

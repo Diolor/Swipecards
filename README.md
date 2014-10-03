@@ -95,13 +95,26 @@ public class MyActivity extends Activity {
                 i++;
             }
         });
+        
+        // Optionally add an OnItemClickListener
+        flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClicked(int itemPosition, Object dataObject) {
+                makeToast(MyActivity.this, "Clicked!");
+            }
+        });
     }
 }
 ```
 
+If you start a new Activity in the `onItemClicked` you will probably want to avoid double activity instances.
+If so these solutions might work for you: [1](http://stackoverflow.com/a/8077776/1447885), 
+[2](http://stackoverflow.com/a/17270364/1447885) and I personally prefer [3](http://stackoverflow.com/a/21906867/1447885)
+
+
 
 Configuration
-============
+=============
 
 You can optionally specify some attrs for the animation and the stack. The easiest way is in xml:
 

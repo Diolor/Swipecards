@@ -31,6 +31,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private AdapterDataSetObserver mDataSetObserver;
     private boolean mInLayout = false;
     private View mActiveCard = null;
+    private OnItemClickListener mOnItemClickListener;
 
 
     public SwipeFlingAdapterView(Context context) {
@@ -52,30 +53,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
 
-    @Override
-    public Adapter getAdapter() {
-        return mAdapter;
-    }
 
-
-    @Override
-    public void setAdapter(Adapter adapter) {
-        if (mAdapter != null && mDataSetObserver != null) {
-            mAdapter.unregisterDataSetObserver(mDataSetObserver);
-            mDataSetObserver = null;
-        }
-
-        mAdapter = adapter;
-
-        if (mAdapter != null  && mDataSetObserver == null) {
-            mDataSetObserver = new AdapterDataSetObserver();
-            mAdapter.registerDataSetObserver(mDataSetObserver);
-        }
-    }
-
-    public void setFlingListener(onFlingListener onFlingListener) {
-        this.mFlingListener = onFlingListener;
-    }
 
 
     @Override
@@ -84,7 +62,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             super.requestLayout();
         }
     }
-
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -195,6 +172,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         child.layout(childLeft, childTop, childLeft + w, childTop + h);
     }
 
+
+
+
     /**
     *  Set the top view and add the fling listener
     */
@@ -206,21 +186,31 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
                 FlingCardListener flingCardListener =
                         new FlingCardListener(mActiveCard, mAdapter.getItem(0), ROTATION_DEGREES, new FlingCardListener.FlingListener() {
-                    @Override
-                    public void onCardExited() {
-                        mFlingListener.removeFirstObjectInAdapter();
-                        mActiveCard = null;
-                        requestLayout();
-                    }
-                    @Override
-                    public void leftExit(Object dataObject) {
-                        mFlingListener.onLeftCardExit(dataObject);
-                    }
-                    @Override
-                    public void rightExit(Object dataObject) {
-                        mFlingListener.onRightCardExit(dataObject);
-                    }
-                });
+
+                            @Override
+                            public void onCardExited() {
+                                mFlingListener.removeFirstObjectInAdapter();
+                                mActiveCard = null;
+                                requestLayout();
+                            }
+
+                            @Override
+                            public void leftExit(Object dataObject) {
+                                mFlingListener.onLeftCardExit(dataObject);
+                            }
+
+                            @Override
+                            public void rightExit(Object dataObject) {
+                                mFlingListener.onRightCardExit(dataObject);
+                            }
+
+                            @Override
+                            public void onClick(Object dataObject) {
+                                if(mOnItemClickListener!=null)
+                                    mOnItemClickListener.onItemClicked(0, dataObject);
+
+                            }
+                        });
 
                 mActiveCard.setOnTouchListener(flingCardListener);
             }
@@ -236,6 +226,37 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         this.MIN_ADAPTER_STACK = MIN_ADAPTER_STACK;
     }
 
+    @Override
+    public Adapter getAdapter() {
+        return mAdapter;
+    }
+
+
+    @Override
+    public void setAdapter(Adapter adapter) {
+        if (mAdapter != null && mDataSetObserver != null) {
+            mAdapter.unregisterDataSetObserver(mDataSetObserver);
+            mDataSetObserver = null;
+        }
+
+        mAdapter = adapter;
+
+        if (mAdapter != null  && mDataSetObserver == null) {
+            mDataSetObserver = new AdapterDataSetObserver();
+            mAdapter.registerDataSetObserver(mDataSetObserver);
+        }
+    }
+
+    public void setFlingListener(onFlingListener onFlingListener) {
+        this.mFlingListener = onFlingListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.mOnItemClickListener = onItemClickListener;
+    }
+
+
+
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
@@ -243,7 +264,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
 
-    class AdapterDataSetObserver extends DataSetObserver {
+    private class AdapterDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
             requestLayout();
@@ -257,6 +278,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
 
+    public interface OnItemClickListener {
+        public void onItemClicked(int itemPosition, Object dataObject);
+    }
 
     public interface onFlingListener {
         public void removeFirstObjectInAdapter();
