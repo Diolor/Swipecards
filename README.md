@@ -2,6 +2,7 @@ Swipecards
 ==========
 
 Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
+Android Arsenal: [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
 
 
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
