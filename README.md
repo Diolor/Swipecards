@@ -2,7 +2,8 @@ Swipecards
 ==========
 
 Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards)
-Android Arsenal: [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
+
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
 
 
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
@@ -108,7 +109,15 @@ public class MyActivity extends Activity {
 }
 ```
 
-If you start a new Activity in the `onItemClicked` you will probably want to avoid double activity instances.
+You can alternatively use a helpful method which sets in one line both the listeners and the adapter.
+
+```java
+    // where "this" stands for the Context
+    flingContainer.init(this, arrayAdapter);
+````
+
+
+**Tip**: If you start a new Activity in the `onItemClicked` you will probably want to avoid double activity instances.
 If so these solutions might work for you: [1](http://stackoverflow.com/a/8077776/1447885), 
 [2](http://stackoverflow.com/a/17270364/1447885) and I personally prefer [3](http://stackoverflow.com/a/21906867/1447885)
 
