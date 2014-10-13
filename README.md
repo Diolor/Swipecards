@@ -2,9 +2,9 @@ Swipecards
 ==========
 
 Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards) 
+
 Travis dev: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=dev)](https://travis-ci.org/Diolor/Swipecards)
 
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
 
 
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
@@ -188,3 +188,5 @@ License
 
 [Grandle please]:http://gradleplease.appspot.com/#com.lorentzos.swipecards
 [Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
+
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
