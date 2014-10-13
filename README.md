@@ -117,6 +117,19 @@ You can alternatively use a helpful method which sets in one line both the liste
 ````
 
 
+**Adding buttons** is easy. Get the top card listener and trigger manually the right or left animation.
+On the end of the animation the above listeners (e.g. removeFirstObjectInAdapter) will be triggered depending on the direction.
+ 
+
+```java
+    /**
+     * Trigger the right event manually.
+     */
+    flingContainer.getTopCardListener().selectRight();
+```
+
+
+
 **Tip**: If you start a new Activity in the `onItemClicked` you will probably want to avoid double activity instances.
 If so these solutions might work for you: [1](http://stackoverflow.com/a/8077776/1447885), 
 [2](http://stackoverflow.com/a/17270364/1447885) and I personally prefer [3](http://stackoverflow.com/a/21906867/1447885)

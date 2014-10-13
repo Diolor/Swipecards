@@ -22,4 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':library')
+
+    compile 'com.jakewharton:butterknife:5.1.2'
 }
