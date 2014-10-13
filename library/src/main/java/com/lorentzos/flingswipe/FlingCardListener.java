@@ -203,8 +203,6 @@ public class FlingCardListener implements View.OnTouchListener {
         }else {
             exitX = parentWidth+getRotationWidthOffset();
         }
-        System.out.println(parentWidth);
-        System.out.println(exitX);
 
         this.frame.animate()
                 .setDuration(duration)
@@ -282,10 +280,6 @@ public class FlingCardListener implements View.OnTouchListener {
      *
      */
     private float getRotationWidthOffset() {
-
-        System.out.println(2*BASE_ROTATION_DEGREES);
-        System.out.println(Math.cos(2*BASE_ROTATION_DEGREES));
-
         return objectW/MAX_COS - objectW;
     }
 

@@ -1,7 +1,8 @@
 Swipecards
 ==========
 
-Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards) Travis dev: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=dev)](https://travis-ci.org/Diolor/Swipecards)
+Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=master)](https://travis-ci.org/Diolor/Swipecards) 
+Travis dev: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?branch=dev)](https://travis-ci.org/Diolor/Swipecards)
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
 
