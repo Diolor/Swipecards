@@ -11,6 +11,10 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
 
 public class MyActivity extends Activity {
 
@@ -18,12 +22,15 @@ public class MyActivity extends Activity {
     private ArrayAdapter<String> arrayAdapter;
     private int i;
 
+    @InjectView(R.id.frame) SwipeFlingAdapterView flingContainer;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        ButterKnife.inject(this);
 
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.frame);
 
         al = new ArrayList<String>();
         al.add("php");
@@ -80,12 +87,27 @@ public class MyActivity extends Activity {
             }
         });
 
-
     }
 
     static void makeToast(Context ctx, String s){
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
     }
+
+
+    @OnClick(R.id.right)
+    public void right() {
+        /**
+         * Trigger the right event manually.
+         */
+        flingContainer.getTopCardListener().selectRight();
+    }
+
+    @OnClick(R.id.left)
+    public void left() {
+        flingContainer.getTopCardListener().selectLeft();
+    }
+
+
 
 
 }

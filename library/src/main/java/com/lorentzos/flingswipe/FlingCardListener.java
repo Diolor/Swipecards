@@ -42,6 +42,9 @@ public class FlingCardListener implements View.OnTouchListener {
     private final int TOUCH_ABOVE = 0;
     private final int TOUCH_BELOW = 1;
     private int touchPosition;
+    private final Object obj = new Object();
+    private boolean isAnimationRunning = false;
+    private float MAX_COS = (float) Math.cos(Math.toRadians(45));
 
 
     public FlingCardListener(View frame, Object itemAtPosition, FlingListener flingListener) {
@@ -139,7 +142,7 @@ public class FlingCardListener implements View.OnTouchListener {
                     rotation = -rotation;
                 }
 
-                //in this area would be code for doing something with the magnified view as the frame moves.
+                //in this area would be code for doing something with the view as the frame moves.
                 frame.setX(aPosX);
                 frame.setY(aPosY);
                 frame.setRotation(rotation);
@@ -155,10 +158,12 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     private boolean resetCardViewOnStack() {
-        if(aPosX+halfWidth>rightBorder()) {
-            onRightSelected();
-        }else if( aPosX+halfWidth <leftBorder()){
-            onLeftSelected();
+        if( aPosX+halfWidth < leftBorder() ){
+            // Left Swipe
+            onSelected(true, getExitPoint(-objectW), 100 );
+        }else if( aPosX+halfWidth > rightBorder() ) {
+            // Right Swipe
+            onSelected(false, getExitPoint(parentWidth), 100 );
         }else {
             float abslMoveDistance = Math.abs(aPosX-objectX);
             aPosX = 0;
@@ -179,7 +184,6 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
 
-
     public float leftBorder(){
         return parentWidth/4.f;
     }
@@ -188,41 +192,56 @@ public class FlingCardListener implements View.OnTouchListener {
         return 3*parentWidth/4.f;
     }
 
-    public void setRotationDegrees(float degrees) {
-        this.BASE_ROTATION_DEGREES = degrees;
-    }
 
-    public void onLeftSelected() {
+    public void onSelected(final boolean isLeft,
+                           float exitY, long duration){
+
+        isAnimationRunning = true;
+        float exitX;
+        if(isLeft) {
+            exitX = -objectW-getRotationWidthOffset();
+        }else {
+            exitX = parentWidth+getRotationWidthOffset();
+        }
+
         this.frame.animate()
-                .setDuration(100)
+                .setDuration(duration)
                 .setInterpolator(new AccelerateInterpolator())
-                .x(-objectW)
-                .y(getExitPoint(-objectW))
+                .x(exitX)
+                .y(exitY)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        mFlingListener.onCardExited();
-                        mFlingListener.leftExit(dataObject);
+                        if (isLeft) {
+                            mFlingListener.onCardExited();
+                            mFlingListener.leftExit(dataObject);
+                        } else {
+                            mFlingListener.onCardExited();
+                            mFlingListener.rightExit(dataObject);
+                        }
+                        isAnimationRunning = false;
                     }
                 })
-                .rotation(-getExitRotation());
+                .rotation(getExitRotation(isLeft));
     }
 
 
-    public void onRightSelected() {
-        this.frame.animate()
-                .setDuration(100)
-                .setInterpolator(new AccelerateInterpolator())
-                .x(parentWidth)
-                .y(getExitPoint(parentWidth))
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mFlingListener.onCardExited();
-                        mFlingListener.rightExit(dataObject);
-                    }
-                })
-                .rotation(getExitRotation());
+
+
+    /**
+     * Starts a default left exit animation.
+     */
+    public void selectLeft(){
+        if(!isAnimationRunning)
+            onSelected(true, objectY, 200);
+    }
+
+    /**
+     * Starts a default right exit animation.
+     */
+    public void selectRight(){
+        if(!isAnimationRunning)
+            onSelected(false, objectY, 200);
     }
 
 
@@ -237,16 +256,36 @@ public class FlingCardListener implements View.OnTouchListener {
 
         LinearRegression regression =new LinearRegression(x,y);
 
-        //Your typical y = ax+b linear reggression
+        //Your typical y = ax+b linear regression
         return (float) regression.slope() * exitXPoint +  (float) regression.intercept();
     }
 
-    private float getExitRotation(){
+    private float getExitRotation(boolean isLeft){
         float rotation= BASE_ROTATION_DEGREES * 2.f * (parentWidth - objectX)/parentWidth;
         if (touchPosition == TOUCH_BELOW) {
             rotation = -rotation;
         }
+        if(isLeft){
+            rotation = -rotation;
+        }
         return rotation;
+    }
+
+
+    /**
+     * When the object rotates it's width becomes bigger.
+     * The maximum width is at 45 degrees.
+     *
+     * The below method calculates the width offset of the rotation.
+     *
+     */
+    private float getRotationWidthOffset() {
+        return objectW/MAX_COS - objectW;
+    }
+
+
+    public void setRotationDegrees(float degrees) {
+        this.BASE_ROTATION_DEGREES = degrees;
     }
 
 

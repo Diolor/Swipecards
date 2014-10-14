@@ -32,6 +32,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private boolean mInLayout = false;
     private View mActiveCard = null;
     private OnItemClickListener mOnItemClickListener;
+    private FlingCardListener flingCardListener;
 
 
     public SwipeFlingAdapterView(Context context) {
@@ -202,14 +203,13 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
             if(mActiveCard!=null) {
 
-                FlingCardListener flingCardListener =
-                        new FlingCardListener(mActiveCard, mAdapter.getItem(0), ROTATION_DEGREES, new FlingCardListener.FlingListener() {
+                flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0),
+                        ROTATION_DEGREES, new FlingCardListener.FlingListener() {
 
                             @Override
                             public void onCardExited() {
-                                mFlingListener.removeFirstObjectInAdapter();
                                 mActiveCard = null;
-                                requestLayout();
+                                mFlingListener.removeFirstObjectInAdapter();
                             }
 
                             @Override
@@ -235,6 +235,12 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         }
     }
 
+    public FlingCardListener getTopCardListener() throws NullPointerException{
+        if(flingCardListener==null){
+            throw new NullPointerException();
+        }
+        return flingCardListener;
+    }
 
     public void setMaxVisible(int MAX_VISIBLE){
         this.MAX_VISIBLE = MAX_VISIBLE;
