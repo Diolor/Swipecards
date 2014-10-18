@@ -72,7 +72,10 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         setAdapter(mAdapter);
     }
 
-
+ 	@Override
+    public View getSelectedView() {
+        return mActiveCard;
+    }
 
 
     @Override
