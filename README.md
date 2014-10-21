@@ -183,7 +183,7 @@ License
    limitations under the License.
 ```
 
-[Grandle please]:http://gradleplease.appspot.com/#com.lorentzos.swipecards
+[Gradle please]:http://gradleplease.appspot.com/#com.lorentzos.swipecards
 [Kikoso's Swipeable-Cards]:https://github.com/kikoso/Swipeable-Cards
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Swipecards-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1028)
