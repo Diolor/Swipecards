@@ -21,7 +21,7 @@ Installation
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.lorentzos.swipecards/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.lorentzos.swipecards/library)
 
-Go ahead find the latest version on [Grandle please] cowboy! 
+Go ahead find the latest version on [Gradle please] cowboy! 
 Be sure to add the `@aar` suffix.
 
 
