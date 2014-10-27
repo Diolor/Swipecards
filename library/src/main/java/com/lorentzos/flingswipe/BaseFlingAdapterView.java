@@ -30,12 +30,6 @@ abstract class BaseFlingAdapterView extends AdapterView {
         super(context, attrs, defStyle);
     }
 
-
-    @Override
-    public View getSelectedView() {
-        throw new UnsupportedOperationException("Not supported");
-    }
-
     @Override
     public void setSelection(int i) {
         throw new UnsupportedOperationException("Not supported");
