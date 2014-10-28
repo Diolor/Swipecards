@@ -231,6 +231,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                                     mOnItemClickListener.onItemClicked(0, dataObject);
 
                             }
+
+                            @Override
+                            public void onScroll(float scrollProgressPercent) {
+                                mFlingListener.onScroll(scrollProgressPercent);
+                            }
                         });
 
                 mActiveCard.setOnTouchListener(flingCardListener);
@@ -314,6 +319,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         public void onLeftCardExit(Object dataObject);
         public void onRightCardExit(Object dataObject);
         public void onAdapterAboutToEmpty(int itemsInAdapter);
+        public void onScroll(float scrollProgressPercent);
     }
 
 

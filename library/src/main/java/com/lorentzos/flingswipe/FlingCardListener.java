@@ -146,6 +146,7 @@ public class FlingCardListener implements View.OnTouchListener {
                 frame.setX(aPosX);
                 frame.setY(aPosY);
                 frame.setRotation(rotation);
+                mFlingListener.onScroll(getScrollProgressPercent());
                 break;
 
             case MotionEvent.ACTION_CANCEL: {
@@ -157,13 +158,26 @@ public class FlingCardListener implements View.OnTouchListener {
         return true;
     }
 
+    private float getScrollProgressPercent() {
+        if (movedBeyondLeftBorder()) {
+            return -1.0f;
+        } else if (movedBeyondRightBorder()) {
+            return 1.0f;
+        } else {
+            float zeroToOneValue = (aPosX + halfWidth - leftBorder()) / (rightBorder() - leftBorder());
+            return zeroToOneValue * 2.0f - 1.0f;
+        }
+    }
+
     private boolean resetCardViewOnStack() {
-        if( aPosX+halfWidth < leftBorder() ){
+        if(movedBeyondLeftBorder()){
             // Left Swipe
             onSelected(true, getExitPoint(-objectW), 100 );
-        }else if( aPosX+halfWidth > rightBorder() ) {
+            mFlingListener.onScroll(-1.0f);
+        }else if(movedBeyondRightBorder()) {
             // Right Swipe
             onSelected(false, getExitPoint(parentWidth), 100 );
+            mFlingListener.onScroll(1.0f);
         }else {
             float abslMoveDistance = Math.abs(aPosX-objectX);
             aPosX = 0;
@@ -176,11 +190,20 @@ public class FlingCardListener implements View.OnTouchListener {
                     .x(objectX)
                     .y(objectY)
                     .rotation(0);
+            mFlingListener.onScroll(0.0f);
             if(abslMoveDistance<4.0){
                 mFlingListener.onClick(dataObject);
             }
         }
         return false;
+    }
+
+    private boolean movedBeyondLeftBorder() {
+        return aPosX+halfWidth < leftBorder();
+    }
+
+    private boolean movedBeyondRightBorder() {
+        return aPosX+halfWidth > rightBorder();
     }
 
 
@@ -294,6 +317,7 @@ public class FlingCardListener implements View.OnTouchListener {
         public void leftExit(Object dataObject);
         public void rightExit(Object dataObject);
         public void onClick(Object dataObject);
+        public void onScroll(float scrollProgressPercent);
     }
 
 }
