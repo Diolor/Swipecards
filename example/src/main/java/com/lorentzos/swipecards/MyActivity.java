@@ -33,7 +33,7 @@ public class MyActivity extends Activity {
         ButterKnife.inject(this);
 
 
-        al = new ArrayList<String>();
+        al = new ArrayList<>();
         al.add("php");
         al.add("c");
         al.add("python");
@@ -43,7 +43,7 @@ public class MyActivity extends Activity {
         al.add("css");
         al.add("javascript");
 
-        arrayAdapter = new ArrayAdapter<String>(this, R.layout.item, R.id.helloText, al );
+        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
 
 
         flingContainer.setAdapter(arrayAdapter);

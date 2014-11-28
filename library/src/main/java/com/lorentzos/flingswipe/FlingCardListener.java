@@ -160,12 +160,12 @@ public class FlingCardListener implements View.OnTouchListener {
 
     private float getScrollProgressPercent() {
         if (movedBeyondLeftBorder()) {
-            return -1.0f;
+            return -1f;
         } else if (movedBeyondRightBorder()) {
-            return 1.0f;
+            return 1f;
         } else {
             float zeroToOneValue = (aPosX + halfWidth - leftBorder()) / (rightBorder() - leftBorder());
-            return zeroToOneValue * 2.0f - 1.0f;
+            return zeroToOneValue * 2f - 1f;
         }
     }
 
