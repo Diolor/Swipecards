@@ -5,8 +5,8 @@ android:
     - platform-tools
     - tools
 
-    - build-tools-20.0.0
-    - android-20
+    - build-tools-21.1.1
+    - android-21
 
 
-script: ./gradlew build check
+script: ./gradlew build check :library:uploadArchives
