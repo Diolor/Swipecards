@@ -2,6 +2,7 @@ package com.lorentzos.flingswipe;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -311,6 +312,13 @@ public class FlingCardListener implements View.OnTouchListener {
         this.BASE_ROTATION_DEGREES = degrees;
     }
 
+    public boolean isTouching() {
+        return this.mActivePointerId != INVALID_POINTER_ID;
+    }
+
+    public PointF getLastPoint() {
+        return new PointF(this.aPosX, this.aPosY);
+    }
 
     protected interface FlingListener {
         public void onCardExited();
