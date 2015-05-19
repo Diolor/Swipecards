@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.lorentzos.flingswipe.Direction;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -57,16 +58,22 @@ public class MyActivity extends Activity {
             }
 
             @Override
-            public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
+            public void onCardExit(int direction, Object dataObject) {
+
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
-                makeToast(MyActivity.this, "Left!");
-            }
 
-            @Override
-            public void onRightCardExit(Object dataObject) {
-                makeToast(MyActivity.this, "Right!");
+                if (Direction.hasLeft(direction)){
+                    makeToast(MyActivity.this, "Left!");
+                } else if (Direction.hasRight(direction)){
+                    makeToast(MyActivity.this, "Right!");
+                } else if (Direction.hasTop(direction)){
+                    makeToast(MyActivity.this, "Top!");
+                } else if (Direction.hasBottom(direction)){
+                    makeToast(MyActivity.this, "Bottom!");
+                } else {
+                    makeToast(MyActivity.this, "No known direction!");
+                }
             }
 
             @Override
@@ -79,10 +86,12 @@ public class MyActivity extends Activity {
             }
 
             @Override
-            public void onScroll(float scrollProgressPercent) {
+            public void onScroll(float scrollProgressPercentHorizontal, float scrollProgressPercentVertical) {
                 View view = flingContainer.getSelectedView();
-                view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
-                view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
+                view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercentHorizontal < 0 ? -scrollProgressPercentHorizontal : 0);
+                view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercentHorizontal > 0 ? scrollProgressPercentHorizontal : 0);
+                view.findViewById(R.id.item_swipe_bottom_indicator).setAlpha(scrollProgressPercentVertical < 0 ? -scrollProgressPercentVertical : 0);
+                view.findViewById(R.id.item_swipe_top_indicator).setAlpha(scrollProgressPercentVertical > 0 ? scrollProgressPercentVertical : 0);
             }
         });
 
@@ -115,6 +124,15 @@ public class MyActivity extends Activity {
         flingContainer.getTopCardListener().selectLeft();
     }
 
+    @OnClick(R.id.top)
+    public void top() {
+        flingContainer.getTopCardListener().selectTop();
+    }
+
+    @OnClick(R.id.bottom)
+    public void bottom() {
+        flingContainer.getTopCardListener().selectBottom();
+    }
 
 
 

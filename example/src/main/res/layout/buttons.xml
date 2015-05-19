@@ -15,9 +15,23 @@
         android:layout_height="wrap_content" />
 
     <Button
+        android:id="@+id/top"
+        android:layout_margin="10dp"
+        android:text="Top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
         android:id="@+id/right"
         android:layout_margin="10dp"
         android:text="Right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/bottom"
+        android:layout_margin="10dp"
+        android:text="Bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

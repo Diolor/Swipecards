@@ -2,10 +2,19 @@
 <resources>
 
     <declare-styleable name="SwipeFlingAdapterView">
-        <attr name="SwipeFlingStyle" format="reference"/>
-        <attr name="rotation_degrees" format="float"/>
-        <attr name="min_adapter_stack" format="integer"/>
-        <attr name="max_visible" format="integer"/>
+        <attr name="SwipeFlingStyle" format="reference" />
+        <!-- Must be aligned with constants in Direction.java -->
+        <attr name="direction">
+            <flag name="LEFT" value="1" />
+            <flag name="TOP" value="2" />
+            <flag name="RIGHT" value="4" />
+            <flag name="BOTTOM" value="8" />
+            <flag name="HORIZONTAL" value="5" />
+            <flag name="VERTICAL" value="10" />
+        </attr>
+        <attr name="rotation_degrees" format="float" />
+        <attr name="min_adapter_stack" format="integer" />
+        <attr name="max_visible" format="integer" />
     </declare-styleable>
 
 </resources>
