@@ -319,15 +319,15 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
 
     public interface OnItemClickListener {
-        public void onItemClicked(int itemPosition, Object dataObject);
+        void onItemClicked(int itemPosition, Object dataObject);
     }
 
     public interface onFlingListener {
-        public void removeFirstObjectInAdapter();
-        public void onLeftCardExit(Object dataObject);
-        public void onRightCardExit(Object dataObject);
-        public void onAdapterAboutToEmpty(int itemsInAdapter);
-        public void onScroll(float scrollProgressPercent);
+        void removeFirstObjectInAdapter();
+        void onLeftCardExit(Object dataObject);
+        void onRightCardExit(Object dataObject);
+        void onAdapterAboutToEmpty(int itemsInAdapter);
+        void onScroll(float scrollProgressPercent);
     }
 
 

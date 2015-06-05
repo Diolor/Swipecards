@@ -18,7 +18,7 @@ import android.view.animation.OvershootInterpolator;
  */
 
 
-class FlingCardListener implements View.OnTouchListener {
+public class FlingCardListener implements View.OnTouchListener {
 
     private static final String TAG = FlingCardListener.class.getSimpleName();
     private static final int INVALID_POINTER_ID = -1;
