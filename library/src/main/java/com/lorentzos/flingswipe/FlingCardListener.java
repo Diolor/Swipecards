@@ -2,6 +2,8 @@ package com.lorentzos.flingswipe;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,26 +76,38 @@ class FlingCardListener implements View.OnTouchListener {
 
                 //from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
                 // Save the ID of this pointer
+
+
                 mActivePointerId = event.getPointerId(0);
-                final float x = event.getX(mActivePointerId);
-                final float y = event.getY(mActivePointerId);
-
-                // Remember where we started
-                aDownTouchX = x;
-                aDownTouchY = y;
-                //to prevent an initial jump of the magnifier, aposX and aPosY must
-                //have the values from the magnifier frame
-                if (aPosX == 0) {
-                    aPosX = frame.getX();
-                }
-                if (aPosY == 0) {
-                    aPosY = frame.getY();
+                float x = 0;
+                float y = 0;
+                boolean success = false;
+                try {
+                    y = event.getY(mActivePointerId);
+                    x = event.getX(mActivePointerId);
+                    success = true;
+                } catch (IllegalArgumentException e) {
+                    Log.e(getClass().getSimpleName(), "Exception in onTouch(view, event) : " + mActivePointerId);
                 }
 
-                if (y < objectH/2) {
-                    touchPosition = TOUCH_ABOVE;
-                } else {
-                    touchPosition = TOUCH_BELOW;
+                if (success) {
+                    // Remember where we started
+                    aDownTouchX = x;
+                    aDownTouchY = y;
+                    //to prevent an initial jump of the magnifier, aposX and aPosY must
+                    //have the values from the magnifier frame
+                    if (aPosX == 0) {
+                        aPosX = frame.getX();
+                    }
+                    if (aPosY == 0) {
+                        aPosY = frame.getY();
+                    }
+
+                    if (y < objectH / 2) {
+                        touchPosition = TOUCH_ABOVE;
+                    } else {
+                        touchPosition = TOUCH_BELOW;
+                    }
                 }
 
                 break;
@@ -311,6 +325,13 @@ class FlingCardListener implements View.OnTouchListener {
         this.BASE_ROTATION_DEGREES = degrees;
     }
 
+    public boolean isTouching() {
+        return this.mActivePointerId != INVALID_POINTER_ID;
+    }
+
+    public PointF getLastPoint() {
+        return new PointF(this.aPosX, this.aPosY);
+    }
 
     protected interface FlingListener {
         public void onCardExited();

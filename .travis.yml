@@ -9,4 +9,4 @@ android:
     - android-21
 
 
-script: ./gradlew build check :library:uploadArchives
+script: ./gradlew build check

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -33,6 +34,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private View mActiveCard = null;
     private OnItemClickListener mOnItemClickListener;
     private FlingCardListener flingCardListener;
+    private PointF mLastTouchPoint;
 
 
     public SwipeFlingAdapterView(Context context) {
@@ -101,8 +103,14 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         }else {
             View topCard = getChildAt(LAST_OBJECT_IN_STACK);
             if(mActiveCard!=null && topCard!=null && topCard==mActiveCard) {
-                removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
-                layoutChildren(1, adapterCount);
+                if (this.flingCardListener.isTouching()) {
+                    PointF lastPoint = this.flingCardListener.getLastPoint();
+                    if (this.mLastTouchPoint == null || !this.mLastTouchPoint.equals(lastPoint)) {
+                        this.mLastTouchPoint = lastPoint;
+                        removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
+                        layoutChildren(1, adapterCount);
+                    }
+                }
             }else{
                 // Reset the UI and set top view listener
                 removeAllViewsInLayout();
