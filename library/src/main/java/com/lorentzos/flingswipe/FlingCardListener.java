@@ -16,7 +16,7 @@ import android.view.animation.OvershootInterpolator;
  */
 
 
-public class FlingCardListener implements View.OnTouchListener {
+class FlingCardListener implements View.OnTouchListener {
 
     private final float objectX;
     private final float objectY;

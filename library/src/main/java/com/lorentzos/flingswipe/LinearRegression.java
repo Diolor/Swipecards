@@ -25,7 +25,7 @@ package com.lorentzos.flingswipe;
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
-public class LinearRegression {
+class LinearRegression {
     private final int N;
     private final double alpha, beta;
     private final double R2;

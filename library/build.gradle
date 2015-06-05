@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 android {
     compileSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
-    buildToolsVersion project.BUILD_TOOLS_VERSION
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION
