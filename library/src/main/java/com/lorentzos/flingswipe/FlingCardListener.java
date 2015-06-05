@@ -110,11 +110,13 @@ class FlingCardListener implements View.OnTouchListener {
                     }
                 }
 
+                view.getParent().requestDisallowInterceptTouchEvent(true);
                 break;
 
             case MotionEvent.ACTION_UP:
                 mActivePointerId = INVALID_POINTER_ID;
                 resetCardViewOnStack();
+                view.getParent().requestDisallowInterceptTouchEvent(false);
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -165,6 +167,7 @@ class FlingCardListener implements View.OnTouchListener {
 
             case MotionEvent.ACTION_CANCEL: {
                 mActivePointerId = INVALID_POINTER_ID;
+                view.getParent().requestDisallowInterceptTouchEvent(false);
                 break;
             }
         }
