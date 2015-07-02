@@ -3,6 +3,8 @@ package com.lorentzos.flingswipe;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.PointF;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -159,9 +161,9 @@ public class FlingCardListener implements View.OnTouchListener {
                 }
 
                 //in this area would be code for doing something with the view as the frame moves.
-                frame.setX(aPosX);
-                frame.setY(aPosY);
-                frame.setRotation(rotation);
+                ViewCompat.setX(frame, aPosX);
+                ViewCompat.setY(frame, aPosY);
+                ViewCompat.setRotation(frame, rotation);
                 mFlingListener.onScroll(getScrollProgressPercent());
                 break;
 
@@ -201,7 +203,7 @@ public class FlingCardListener implements View.OnTouchListener {
             aPosY = 0;
             aDownTouchX = 0;
             aDownTouchY = 0;
-            frame.animate()
+            ViewCompat.animate(frame)
                     .setDuration(200)
                     .setInterpolator(new OvershootInterpolator(1.5f))
                     .x(objectX)
@@ -244,14 +246,19 @@ public class FlingCardListener implements View.OnTouchListener {
             exitX = parentWidth + getRotationWidthOffset();
         }
 
-        this.frame.animate()
+        ViewCompat.animate(this.frame)
                 .setDuration(duration)
                 .setInterpolator(new AccelerateInterpolator())
                 .x(exitX)
                 .y(exitY)
-                .setListener(new AnimatorListenerAdapter() {
+                .setListener(new ViewPropertyAnimatorListener() {
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationStart(View view) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(View view) {
                         if (isLeft) {
                             mFlingListener.onCardExited();
                             mFlingListener.leftExit(dataObject);
@@ -260,6 +267,11 @@ public class FlingCardListener implements View.OnTouchListener {
                             mFlingListener.rightExit(dataObject);
                         }
                         isAnimationRunning = false;
+                    }
+
+                    @Override
+                    public void onAnimationCancel(View view) {
+
                     }
                 })
                 .rotation(getExitRotation(isLeft));
