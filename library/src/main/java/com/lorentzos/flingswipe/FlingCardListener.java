@@ -32,6 +32,7 @@ public class FlingCardListener implements View.OnTouchListener {
     private final Object dataObject;
     private final float halfWidth;
     private float BASE_ROTATION_DEGREES;
+    private int ANIMATION_DURATION;
 
     private float aPosX;
     private float aPosY;
@@ -52,10 +53,10 @@ public class FlingCardListener implements View.OnTouchListener {
 
 
     public FlingCardListener(View frame, Object itemAtPosition, FlingListener flingListener) {
-        this(frame, itemAtPosition, 15f, flingListener);
+        this(frame, itemAtPosition, 15f, 200, flingListener);
     }
 
-    public FlingCardListener(View frame, Object itemAtPosition, float rotation_degrees, FlingListener flingListener) {
+    public FlingCardListener(View frame, Object itemAtPosition, float rotation_degrees, int animationDuration, FlingListener flingListener) {
         super();
         this.frame = frame;
         this.objectX = frame.getX();
@@ -67,6 +68,7 @@ public class FlingCardListener implements View.OnTouchListener {
         this.parentWidth = ((ViewGroup) frame.getParent()).getWidth();
         this.BASE_ROTATION_DEGREES = rotation_degrees;
         this.mFlingListener = flingListener;
+        this.ANIMATION_DURATION = animationDuration;
 
     }
 
@@ -271,7 +273,7 @@ public class FlingCardListener implements View.OnTouchListener {
      */
     public void selectLeft() {
         if (!isAnimationRunning)
-            onSelected(true, objectY, 200);
+            onSelected(true, objectY, ANIMATION_DURATION);
     }
 
     /**
@@ -279,7 +281,7 @@ public class FlingCardListener implements View.OnTouchListener {
      */
     public void selectRight() {
         if (!isAnimationRunning)
-            onSelected(false, objectY, 200);
+            onSelected(false, objectY, ANIMATION_DURATION);
     }
 
 
