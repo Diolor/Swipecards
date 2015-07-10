@@ -123,7 +123,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
         mInLayout = false;
         
-        if(adapterCount < MAX_VISIBLE) mFlingListener.onAdapterAboutToEmpty(adapterCount);
+        if(adapterCount <= MIN_ADAPTER_STACK) mFlingListener.onAdapterAboutToEmpty(adapterCount);
     }
 
 
