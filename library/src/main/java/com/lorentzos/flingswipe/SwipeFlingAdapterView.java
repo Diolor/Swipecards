@@ -75,6 +75,12 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         }
         setAdapter(mAdapter);
     }
+    
+    
+    public void setAnimationDuration(int animationDuration)
+    {
+        ANIMATION_DURATION = animationDuration;
+    }
 
  	@Override
     public View getSelectedView() {
