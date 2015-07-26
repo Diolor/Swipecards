@@ -7,11 +7,14 @@ import android.database.DataSetObserver;
 import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
+
+import java.util.LinkedList;
 
 /**
  * Created by dionysis_lorentzos on 5/8/14
@@ -22,14 +25,12 @@ import android.widget.FrameLayout;
 
 public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
-
-    private int MAX_VISIBLE = 4;
+    private int MAX_VISIBLE = 1;
     private int MIN_ADAPTER_STACK = 6;
-    private float ROTATION_DEGREES = 15.f;
+    private int LAST_OBJECT_IN_STACK = 0;
     private boolean ALLOW_CHILD_INPUT = false;
 
     private Adapter mAdapter;
-    private int LAST_OBJECT_IN_STACK = 0;
     private onFlingListener mFlingListener;
     private AdapterDataSetObserver mDataSetObserver;
     private boolean mInLayout = false;
@@ -38,12 +39,16 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private FlingCardListener flingCardListener;
     private PointF mLastTouchPoint;
 
+    /** A list of cached (re-usable) item views */
+    private final LinkedList<View> mCachedItemViews = new LinkedList<View>();
+
 
     public SwipeFlingAdapterView(Context context) {
         this(context, null);
     }
 
-    public SwipeFlingAdapterView(Context context, AttributeSet attrs) {
+    public SwipeFlingAdapterView(Context context, AttributeSet attrs)
+    {
         this(context, attrs, R.attr.SwipeFlingStyle);
     }
 
@@ -53,7 +58,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeFlingAdapterView, defStyle, 0);
         MAX_VISIBLE = a.getInt(R.styleable.SwipeFlingAdapterView_max_visible, MAX_VISIBLE);
         MIN_ADAPTER_STACK = a.getInt(R.styleable.SwipeFlingAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
-        ROTATION_DEGREES = a.getFloat(R.styleable.SwipeFlingAdapterView_rotation_degrees, ROTATION_DEGREES);
         ALLOW_CHILD_INPUT = a.getBoolean(R.styleable.SwipeFlingAdapterView_allow_child_input, ALLOW_CHILD_INPUT);
         a.recycle();
     }
@@ -92,6 +96,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+//        Log.d("SwipeFlindAdapterView", "onLayout");
         super.onLayout(changed, left, top, right, bottom);
         // if we don't have an adapter, we don't need to do anything
         if (mAdapter == null) {
@@ -116,6 +121,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                 }
             }else{
                 // Reset the UI and set top view listener
+                cacheChildViews();
                 removeAllViewsInLayout();
                 layoutChildren(0, adapterCount);
                 setTopView();
@@ -123,19 +129,47 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         }
 
         mInLayout = false;
-        
+
         if(adapterCount <= MIN_ADAPTER_STACK) mFlingListener.onAdapterAboutToEmpty(adapterCount);
     }
 
 
     private void layoutChildren(int startingIndex, int adapterCount){
         while (startingIndex < Math.min(adapterCount, MAX_VISIBLE) ) {
-            View newUnderChild = mAdapter.getView(startingIndex, null, this);
+            View newUnderChild = mAdapter.getView(startingIndex, getCachedView(), this);
             if (newUnderChild.getVisibility() != GONE) {
                 makeAndAddView(newUnderChild);
                 LAST_OBJECT_IN_STACK = startingIndex;
             }
             startingIndex++;
+        }
+    }
+
+    /**
+     * Checks if there is a cached view that can be used
+     *
+     * @return A cached view or, if none was found, null
+     */
+    private View getCachedView() {
+        if (mCachedItemViews.size() != 0) {
+            return mCachedItemViews.removeLast();
+        }
+        return null;
+    }
+
+
+    /**
+     * Adds views as cache to be used
+     *
+     */
+    private void cacheChildViews(){
+        /**
+         * getChildCount = number of stacks loaded,
+         * when one is removed it will not need to be cached,
+         * this is why we only cache all but the last item on stack
+         */
+        for(int i = 0; i < getChildCount()-1; i++){
+            mCachedItemViews.add(getChildAt(i));
         }
     }
 
@@ -205,8 +239,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         child.layout(childLeft, childTop, childLeft + w, childTop + h);
     }
 
-
-
+    public void removeTopItem()
+    {
+        mActiveCard = null;
+        mFlingListener.removeFirstObjectInAdapter();
+    }
 
     /**
     *  Set the top view and add the fling listener
@@ -215,13 +252,15 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         if(getChildCount()>0){
 
             mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
+            View nextCard = getChildAt(LAST_OBJECT_IN_STACK - 1);
             if(mActiveCard!=null) {
-
-                flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0),
-                        ROTATION_DEGREES, new FlingCardListener.FlingListener() {
+                if(mFlingListener!=null)mFlingListener.onTopViewLoaded(mActiveCard);
+                flingCardListener = new FlingCardListener(mActiveCard,nextCard, mAdapter.getItem(0),
+                         new FlingCardListener.FlingListener() {
 
                             @Override
-                            public void onCardExited() {
+                            public void onCardExited()
+                            {
                                 mActiveCard = null;
                                 mFlingListener.removeFirstObjectInAdapter();
                             }
@@ -249,8 +288,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                             }
                         });
 
-                if(ALLOW_CHILD_INPUT)addOnTouchListenersRecursive((ViewGroup) mActiveCard);
-                else mActiveCard.setOnTouchListener(flingCardListener);
+                if(!ALLOW_CHILD_INPUT) mActiveCard.setOnTouchListener(flingCardListener);
+                else addOnTouchListenersRecursive((ViewGroup) mActiveCard);
             }
         }
     }
@@ -342,6 +381,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         void onRightCardExit(Object dataObject);
         void onAdapterAboutToEmpty(int itemsInAdapter);
         void onScroll(float scrollProgressPercent);
+        void onTopViewLoaded(View topView);
     }
 
 
