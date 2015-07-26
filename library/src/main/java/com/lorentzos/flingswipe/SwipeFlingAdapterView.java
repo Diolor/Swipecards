@@ -9,6 +9,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
 
@@ -25,6 +26,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private int MAX_VISIBLE = 4;
     private int MIN_ADAPTER_STACK = 6;
     private float ROTATION_DEGREES = 15.f;
+    private boolean ALLOW_CHILD_INPUT = false;
 
     private Adapter mAdapter;
     private int LAST_OBJECT_IN_STACK = 0;
@@ -52,6 +54,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         MAX_VISIBLE = a.getInt(R.styleable.SwipeFlingAdapterView_max_visible, MAX_VISIBLE);
         MIN_ADAPTER_STACK = a.getInt(R.styleable.SwipeFlingAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
         ROTATION_DEGREES = a.getFloat(R.styleable.SwipeFlingAdapterView_rotation_degrees, ROTATION_DEGREES);
+        ALLOW_CHILD_INPUT = a.getBoolean(R.styleable.SwipeFlingAdapterView_allow_child_input, ALLOW_CHILD_INPUT);
         a.recycle();
     }
 
@@ -246,8 +249,19 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                             }
                         });
 
-                mActiveCard.setOnTouchListener(flingCardListener);
+                if(ALLOW_CHILD_INPUT)addOnTouchListenersRecursive((ViewGroup) mActiveCard);
+                else mActiveCard.setOnTouchListener(flingCardListener);
             }
+        }
+    }
+
+    public void addOnTouchListenersRecursive(ViewGroup vg)
+    {
+        vg.setOnTouchListener(flingCardListener);
+        for(int i=0; i< vg.getChildCount(); ++i) {
+            View nextChild = vg.getChildAt(i);
+            if(nextChild instanceof ViewGroup) addOnTouchListenersRecursive((ViewGroup)nextChild);
+            else nextChild.setOnTouchListener(flingCardListener);
         }
     }
 
