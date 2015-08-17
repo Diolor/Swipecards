@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.PointF;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,8 +71,13 @@ public class FlingCardListener implements View.OnTouchListener {
 
     }
 
-
     public boolean onTouch(View view, MotionEvent event) {
+
+        Pair<Boolean,Boolean> swipeEnablers = mFlingListener.isEnabled();
+        Boolean leftSwipeDisable = !swipeEnablers.first;
+        Boolean rightSwipeDisable = !swipeEnablers.second;
+        if(leftSwipeDisable && rightSwipeDisable)
+            return false; //completely disable swipe
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
@@ -146,23 +152,24 @@ public class FlingCardListener implements View.OnTouchListener {
                 final float dx = xMove - aDownTouchX;
                 final float dy = yMove - aDownTouchY;
 
-
                 // Move the frame
-                aPosX += dx;
-                aPosY += dy;
+                if(displacementAdheresToSwipeChecks(dx, leftSwipeDisable, rightSwipeDisable)) {
+                    aPosX += dx;
+                    aPosY += dy;
 
-                // calculate the rotation degrees
-                float distobjectX = aPosX - objectX;
-                float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
-                if (touchPosition == TOUCH_BELOW) {
-                    rotation = -rotation;
+                    // calculate the rotation degrees
+                    float distobjectX = aPosX - objectX;
+                    float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
+                    if (touchPosition == TOUCH_BELOW) {
+                        rotation = -rotation;
+                    }
+
+                    //in this area would be code for doing something with the view as the frame moves.
+                    frame.setX(aPosX);
+                    frame.setY(aPosY);
+                    frame.setRotation(rotation);
+                    mFlingListener.onScroll(getScrollProgressPercent());
                 }
-
-                //in this area would be code for doing something with the view as the frame moves.
-                frame.setX(aPosX);
-                frame.setY(aPosY);
-                frame.setRotation(rotation);
-                mFlingListener.onScroll(getScrollProgressPercent());
                 break;
 
             case MotionEvent.ACTION_CANCEL: {
@@ -173,6 +180,13 @@ public class FlingCardListener implements View.OnTouchListener {
         }
 
         return true;
+    }
+
+    private boolean displacementAdheresToSwipeChecks(float dx,boolean leftSwipeDisable,boolean rightSwipeDisable){
+        if (leftSwipeDisable)
+            return dx > 0;
+        else
+            return !rightSwipeDisable || dx < 0;
     }
 
     private float getScrollProgressPercent() {
@@ -334,6 +348,8 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     protected interface FlingListener {
+        Pair<Boolean,Boolean> isEnabled();
+
         void onCardExited();
 
         void leftExit(Object dataObject);

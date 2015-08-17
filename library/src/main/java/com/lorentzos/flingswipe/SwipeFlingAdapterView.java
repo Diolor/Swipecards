@@ -7,6 +7,7 @@ import android.database.DataSetObserver;
 import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
@@ -203,8 +204,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
 
-
-
     /**
     *  Set the top view and add the fling listener
     */
@@ -216,6 +215,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
                 flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0),
                         ROTATION_DEGREES, new FlingCardListener.FlingListener() {
+
+                            @Override
+                            public Pair<Boolean,Boolean> isEnabled() {
+                               return  mFlingListener.isEnabled();
+                            }
 
                             @Override
                             public void onCardExited() {
@@ -323,6 +327,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
     public interface onFlingListener {
+        Pair<Boolean,Boolean> isEnabled();
         void removeFirstObjectInAdapter();
         void onLeftCardExit(Object dataObject);
         void onRightCardExit(Object dataObject);
