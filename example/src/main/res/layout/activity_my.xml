@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:rotation_degrees="15.5"
+        app:card_offset_left="0dp"
+        app:card_offset_top="0dp"
         tools:context=".MyActivity" />
 
     <include layout="@layout/buttons" />
