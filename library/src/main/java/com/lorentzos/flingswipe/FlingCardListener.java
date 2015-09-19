@@ -153,12 +153,12 @@ public class FlingCardListener implements View.OnTouchListener {
                 final float dy = yMove - aDownTouchY;
 
                 // Move the frame
-                if(displacementAdheresToSwipeChecks(dx, leftSwipeDisable, rightSwipeDisable)) {
+                float distobjectX = aPosX - objectX;
+                if(displacementAdheresToSwipeChecks(distobjectX, leftSwipeDisable, rightSwipeDisable)) {
                     aPosX += dx;
                     aPosY += dy;
 
                     // calculate the rotation degrees
-                    float distobjectX = aPosX - objectX;
                     float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
                     if (touchPosition == TOUCH_BELOW) {
                         rotation = -rotation;
@@ -182,11 +182,12 @@ public class FlingCardListener implements View.OnTouchListener {
         return true;
     }
 
-    private boolean displacementAdheresToSwipeChecks(float dx,boolean leftSwipeDisable,boolean rightSwipeDisable){
+    private boolean displacementAdheresToSwipeChecks(float dx,
+                                                     boolean leftSwipeDisable,boolean rightSwipeDisable){
         if (leftSwipeDisable)
-            return dx > 0;
+            return dx >= 0;
         else
-            return !rightSwipeDisable || dx < 0;
+            return !rightSwipeDisable || dx <= 0;
     }
 
     private float getScrollProgressPercent() {
