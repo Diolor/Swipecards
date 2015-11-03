@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
     android:layout_width="250dp"
-    android:layout_height="170dp">
+    android:layout_height="170dp"
+    android:foreground="?android:selectableItemBackground">
 
     <TextView
         android:id="@+id/helloText"
@@ -11,7 +12,7 @@
         android:textColor="@android:color/white"
         android:background="#E339"
         android:gravity="center"
-        tools:text="@string/hello_world"
+        tools:text="Hello world"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

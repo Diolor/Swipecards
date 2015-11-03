@@ -16,12 +16,12 @@ import android.view.animation.OvershootInterpolator;
  * and project Swipe cards.
  * Use with caution dinausaurs might appear!
  */
-
-
 public class FlingCardListener implements View.OnTouchListener {
 
     private static final String TAG = FlingCardListener.class.getSimpleName();
     private static final int INVALID_POINTER_ID = -1;
+    private static final int TOUCH_ABOVE = 0;
+    private static final int TOUCH_BELOW = 1;
 
     private final float objectX;
     private final float objectY;
@@ -31,7 +31,7 @@ public class FlingCardListener implements View.OnTouchListener {
     private final FlingListener mFlingListener;
     private final Object dataObject;
     private final float halfWidth;
-    private float BASE_ROTATION_DEGREES;
+    private float baseRotationDegrees;
 
     private float aPosX;
     private float aPosY;
@@ -43,19 +43,15 @@ public class FlingCardListener implements View.OnTouchListener {
     private View frame = null;
 
 
-    private final int TOUCH_ABOVE = 0;
-    private final int TOUCH_BELOW = 1;
     private int touchPosition;
-    private final Object obj = new Object();
     private boolean isAnimationRunning = false;
     private float MAX_COS = (float) Math.cos(Math.toRadians(45));
-
 
     public FlingCardListener(View frame, Object itemAtPosition, FlingListener flingListener) {
         this(frame, itemAtPosition, 15f, flingListener);
     }
 
-    public FlingCardListener(View frame, Object itemAtPosition, float rotation_degrees, FlingListener flingListener) {
+    public FlingCardListener(View frame, Object itemAtPosition, float rotationDegrees, FlingListener flingListener) {
         super();
         this.frame = frame;
         this.objectX = frame.getX();
@@ -65,17 +61,17 @@ public class FlingCardListener implements View.OnTouchListener {
         this.halfWidth = objectW / 2f;
         this.dataObject = itemAtPosition;
         this.parentWidth = ((ViewGroup) frame.getParent()).getWidth();
-        this.BASE_ROTATION_DEGREES = rotation_degrees;
+        this.baseRotationDegrees = rotationDegrees;
         this.mFlingListener = flingListener;
 
     }
 
 
     public boolean onTouch(View view, MotionEvent event) {
-
+        // this enables all the touch feedback related events
+        view.onTouchEvent(event);
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-
                 // from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
                 // Save the ID of this pointer
 
@@ -135,7 +131,7 @@ public class FlingCardListener implements View.OnTouchListener {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-
+                frame.setPressed(false);
                 // Find the index of the active pointer and fetch its position
                 final int pointerIndexMove = event.findPointerIndex(mActivePointerId);
                 final float xMove = event.getX(pointerIndexMove);
@@ -153,7 +149,7 @@ public class FlingCardListener implements View.OnTouchListener {
 
                 // calculate the rotation degrees
                 float distobjectX = aPosX - objectX;
-                float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
+                float rotation = baseRotationDegrees * 2.f * distobjectX / parentWidth;
                 if (touchPosition == TOUCH_BELOW) {
                     rotation = -rotation;
                 }
@@ -299,7 +295,7 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     private float getExitRotation(boolean isLeft) {
-        float rotation = BASE_ROTATION_DEGREES * 2.f * (parentWidth - objectX) / parentWidth;
+        float rotation = baseRotationDegrees * 2.f * (parentWidth - objectX) / parentWidth;
         if (touchPosition == TOUCH_BELOW) {
             rotation = -rotation;
         }
@@ -322,7 +318,7 @@ public class FlingCardListener implements View.OnTouchListener {
 
 
     public void setRotationDegrees(float degrees) {
-        this.BASE_ROTATION_DEGREES = degrees;
+        this.baseRotationDegrees = degrees;
     }
 
     public boolean isTouching() {
@@ -344,7 +340,6 @@ public class FlingCardListener implements View.OnTouchListener {
 
         void onScroll(float scrollProgressPercent);
     }
-
 }
 
 
