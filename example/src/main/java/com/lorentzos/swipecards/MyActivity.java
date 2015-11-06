@@ -1,8 +1,8 @@
 package com.lorentzos.swipecards;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,7 +17,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 
-public class MyActivity extends Activity {
+public class MyActivity extends AppCompatActivity {
 
     private ArrayList<String> al;
     private ArrayAdapter<String> arrayAdapter;

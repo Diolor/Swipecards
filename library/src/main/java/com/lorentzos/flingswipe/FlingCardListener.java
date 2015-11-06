@@ -3,9 +3,11 @@ package com.lorentzos.flingswipe;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.PointF;
+import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -41,11 +43,15 @@ public class FlingCardListener implements View.OnTouchListener {
     // The active pointer is the one currently moving our object.
     private int mActivePointerId = INVALID_POINTER_ID;
     private View frame = null;
+    private CheckForTap pendingCheckForTap = null;
+    private UnsetPressedState unsetPressedState = null;
+    private PerformClick performClick = null;
 
 
     private int touchPosition;
     private boolean isAnimationRunning = false;
     private float MAX_COS = (float) Math.cos(Math.toRadians(45));
+    private boolean isTap = true;
 
     public FlingCardListener(View frame, Object itemAtPosition, FlingListener flingListener) {
         this(frame, itemAtPosition, 15f, flingListener);
@@ -68,8 +74,6 @@ public class FlingCardListener implements View.OnTouchListener {
 
 
     public boolean onTouch(View view, MotionEvent event) {
-        // this enables all the touch feedback related events
-        view.onTouchEvent(event);
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 // from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
@@ -104,6 +108,15 @@ public class FlingCardListener implements View.OnTouchListener {
                     } else {
                         touchPosition = TOUCH_BELOW;
                     }
+
+                    if (pendingCheckForTap == null) {
+                        pendingCheckForTap = new CheckForTap();
+                    }
+                    pendingCheckForTap.x = event.getX();
+                    pendingCheckForTap.y = event.getY();
+                    // delay the tap feedback because it might be a move
+                    frame.postDelayed(pendingCheckForTap, ViewConfiguration.getTapTimeout());
+                    isTap = true;
                 }
 
                 view.getParent().requestDisallowInterceptTouchEvent(true);
@@ -112,6 +125,32 @@ public class FlingCardListener implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 mActivePointerId = INVALID_POINTER_ID;
                 resetCardViewOnStack();
+
+                if (isTap && pendingCheckForTap != null) {
+                    pendingCheckForTap.run();
+                    //schedule the click action after the end of the visual effects
+                    if (performClick == null) {
+                        performClick = new PerformClick();
+                    }
+                    if (!frame.post(performClick)) {
+                        performClick.run();
+                    }
+                }
+
+                if (unsetPressedState == null) {
+                    unsetPressedState = new UnsetPressedState();
+                }
+                if (isTap) {
+                    // wait for the end of the pressed state before unsetting the pressed state
+                    frame.postDelayed(unsetPressedState, ViewConfiguration.getPressedStateDuration());
+                } else {
+                    // instantly unset the pressed state
+                    if (!frame.post(unsetPressedState)) {
+                        unsetPressedState.run();
+                    }
+                }
+                removeTapCallback();
+
                 view.getParent().requestDisallowInterceptTouchEvent(false);
                 break;
 
@@ -131,7 +170,6 @@ public class FlingCardListener implements View.OnTouchListener {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                frame.setPressed(false);
                 // Find the index of the active pointer and fetch its position
                 final int pointerIndexMove = event.findPointerIndex(mActivePointerId);
                 final float xMove = event.getX(pointerIndexMove);
@@ -142,6 +180,18 @@ public class FlingCardListener implements View.OnTouchListener {
                 final float dx = xMove - aDownTouchX;
                 final float dy = yMove - aDownTouchY;
 
+                if (Math.abs(dx) >= 3.0 || Math.abs(dy) >= 3.0) {
+                    // this is a clear move, cancel the tap to avoid drawable state change
+                    removeTapCallback();
+                    frame.setPressed(false);
+                } else {
+                    if (pendingCheckForTap != null) {
+                        pendingCheckForTap.x = xMove;
+                        pendingCheckForTap.y = yMove;
+                    }
+                    // don't update the view if we are not sure that's a real move
+                    break;
+                }
 
                 // Move the frame
                 aPosX += dx;
@@ -161,14 +211,21 @@ public class FlingCardListener implements View.OnTouchListener {
                 mFlingListener.onScroll(getScrollProgressPercent());
                 break;
 
-            case MotionEvent.ACTION_CANCEL: {
+            case MotionEvent.ACTION_CANCEL:
                 mActivePointerId = INVALID_POINTER_ID;
+                frame.setPressed(false);
                 view.getParent().requestDisallowInterceptTouchEvent(false);
                 break;
-            }
         }
 
         return true;
+    }
+
+    private void removeTapCallback() {
+        if (pendingCheckForTap != null) {
+            frame.removeCallbacks(pendingCheckForTap);
+            isTap = false;
+        }
     }
 
     private float getScrollProgressPercent() {
@@ -192,7 +249,6 @@ public class FlingCardListener implements View.OnTouchListener {
             onSelected(false, getExitPoint(parentWidth), 100);
             mFlingListener.onScroll(1.0f);
         } else {
-            float abslMoveDistance = Math.abs(aPosX - objectX);
             aPosX = 0;
             aPosY = 0;
             aDownTouchX = 0;
@@ -204,9 +260,6 @@ public class FlingCardListener implements View.OnTouchListener {
                     .y(objectY)
                     .rotation(0);
             mFlingListener.onScroll(0.0f);
-            if (abslMoveDistance < 4.0) {
-                mFlingListener.onClick(dataObject);
-            }
         }
         return false;
     }
@@ -303,6 +356,32 @@ public class FlingCardListener implements View.OnTouchListener {
             rotation = -rotation;
         }
         return rotation;
+    }
+
+    private final class CheckForTap implements Runnable {
+        public float x;
+        public float y;
+
+        @Override
+        public void run() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                frame.drawableHotspotChanged(x, y);
+            }
+            frame.setPressed(true);
+        }
+    }
+    private final class UnsetPressedState implements Runnable {
+        @Override
+        public void run() {
+            frame.setPressed(false);
+        }
+    }
+    private final class PerformClick implements Runnable {
+
+        @Override
+        public void run() {
+            mFlingListener.onClick(dataObject);
+        }
     }
 
 
