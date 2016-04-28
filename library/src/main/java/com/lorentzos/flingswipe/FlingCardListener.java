@@ -2,6 +2,7 @@ package com.lorentzos.flingswipe;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,6 +23,7 @@ public class FlingCardListener implements View.OnTouchListener {
 
     private static final String TAG = FlingCardListener.class.getSimpleName();
     private static final int INVALID_POINTER_ID = -1;
+    private static final int RESET_DURATION = 200;
 
     private final float objectX;
     private final float objectY;
@@ -197,16 +199,18 @@ public class FlingCardListener implements View.OnTouchListener {
             mFlingListener.onScroll(1.0f);
         } else {
             float abslMoveDistance = Math.abs(aPosX - objectX);
+            final OvershootInterpolator interpolator = new OvershootInterpolator(1.5f);
             aPosX = 0;
             aPosY = 0;
             aDownTouchX = 0;
             aDownTouchY = 0;
             frame.animate()
-                    .setDuration(200)
-                    .setInterpolator(new OvershootInterpolator(1.5f))
+                    .setDuration(RESET_DURATION)
+                    .setInterpolator(interpolator)
                     .x(objectX)
                     .y(objectY)
                     .rotation(0);
+            mFlingListener.onAnimate(interpolator, RESET_DURATION, objectX, objectY, 0);
             mFlingListener.onScroll(0.0f);
             if (abslMoveDistance < 4.0) {
                 mFlingListener.onClick(dataObject);
@@ -243,10 +247,12 @@ public class FlingCardListener implements View.OnTouchListener {
         } else {
             exitX = parentWidth + getRotationWidthOffset();
         }
+        float rotation = getExitRotation(isLeft);
+        final AccelerateInterpolator interpolator = new AccelerateInterpolator();
 
         this.frame.animate()
                 .setDuration(duration)
-                .setInterpolator(new AccelerateInterpolator())
+                .setInterpolator(interpolator)
                 .x(exitX)
                 .y(exitY)
                 .setListener(new AnimatorListenerAdapter() {
@@ -262,7 +268,9 @@ public class FlingCardListener implements View.OnTouchListener {
                         isAnimationRunning = false;
                     }
                 })
-                .rotation(getExitRotation(isLeft));
+                .rotation(rotation);
+
+        this.mFlingListener.onAnimate(interpolator, duration, exitX, exitY, rotation);
     }
 
 
@@ -343,6 +351,9 @@ public class FlingCardListener implements View.OnTouchListener {
         void onClick(Object dataObject);
 
         void onScroll(float scrollProgressPercent);
+
+        void onAnimate(TimeInterpolator interpolator, long duration,
+                       float exitX, float exitY, float exitRotation);
     }
 
 }
