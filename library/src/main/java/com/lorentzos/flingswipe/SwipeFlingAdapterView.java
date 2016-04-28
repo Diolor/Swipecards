@@ -248,9 +248,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                             }
 
                             @Override
-                            public void onAnimate(TimeInterpolator interpolator, long duration, float exitX, float exitY, float exitRotation) {
+                            public void onAnimate(TimeInterpolator interpolator, long duration,
+                                                  float exitX, float exitY, float exitRotation) {
                                 if (isAnimateFlingListener) {
-                                  ((onAnimateFlingListener) mFlingListener).onAnimate(interpolator, duration, exitX, exitY, exitRotation);
+                                    ((onAnimateFlingListener) mFlingListener).onAnimate(
+                                      interpolator, duration, exitX, exitY, exitRotation);
                                 }
                             }
                         });
