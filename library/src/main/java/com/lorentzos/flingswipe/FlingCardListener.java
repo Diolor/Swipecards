@@ -164,6 +164,7 @@ public class FlingCardListener implements View.OnTouchListener {
                 frame.setX(aPosX);
                 frame.setY(aPosY);
                 frame.setRotation(rotation);
+                mFlingListener.onScroll(getScrollProgressPercent());
                 break;
 
             case MotionEvent.ACTION_CANCEL: {
