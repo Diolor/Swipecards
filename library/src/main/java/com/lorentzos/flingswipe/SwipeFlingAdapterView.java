@@ -27,11 +27,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private float ROTATION_DEGREES = 15.f;
 
     private Adapter mAdapter;
-    private int LAST_OBJECT_IN_STACK = 0;
+    private int LAST_OBJECT_IN_STACK;
     private onFlingListener mFlingListener;
     private AdapterDataSetObserver mDataSetObserver;
-    private boolean mInLayout = false;
-    private View mActiveCard = null;
+    private boolean mInLayout;
+    private View mActiveCard;
     private OnItemClickListener mOnItemClickListener;
     private FlingCardListener flingCardListener;
     private PointF mLastTouchPoint;
@@ -62,7 +62,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
      * @param context The activity context which extends onFlingListener, OnItemClickListener or both
      * @param mAdapter The adapter you have to set.
      */
-    public void init(final Context context, Adapter mAdapter) {
+    public void init(Context context, Adapter mAdapter) {
         if(context instanceof onFlingListener) {
             mFlingListener = (onFlingListener) context;
         }else{
@@ -96,17 +96,17 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         }
 
         mInLayout = true;
-        final int adapterCount = mAdapter.getCount();
+        int adapterCount = mAdapter.getCount();
 
         if(adapterCount == 0) {
             removeAllViewsInLayout();
         }else {
             View topCard = getChildAt(LAST_OBJECT_IN_STACK);
             if(mActiveCard!=null && topCard!=null && topCard==mActiveCard) {
-                if (this.flingCardListener.isTouching()) {
-                    PointF lastPoint = this.flingCardListener.getLastPoint();
-                    if (this.mLastTouchPoint == null || !this.mLastTouchPoint.equals(lastPoint)) {
-                        this.mLastTouchPoint = lastPoint;
+                if (flingCardListener.isTouching()) {
+                    PointF lastPoint = flingCardListener.getLastPoint();
+                    if (mLastTouchPoint == null || !mLastTouchPoint.equals(lastPoint)) {
+                        mLastTouchPoint = lastPoint;
                         removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
                         layoutChildren(1, adapterCount);
                     }
@@ -143,7 +143,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
         addViewInLayout(child, 0, lp, true);
 
-        final boolean needToMeasure = child.isLayoutRequested();
+        boolean needToMeasure = child.isLayoutRequested();
         if (needToMeasure) {
             int childWidthSpec = getChildMeasureSpec(getWidthMeasureSpec(),
                     getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
@@ -167,8 +167,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
 
         int layoutDirection = getLayoutDirection();
-        final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
-        final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
+        int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
+        int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
 
         int childLeft;
         int childTop;
@@ -288,11 +288,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     }
 
     public void setFlingListener(onFlingListener onFlingListener) {
-        this.mFlingListener = onFlingListener;
+        mFlingListener = onFlingListener;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener){
-        this.mOnItemClickListener = onItemClickListener;
+        mOnItemClickListener = onItemClickListener;
     }
 
 
