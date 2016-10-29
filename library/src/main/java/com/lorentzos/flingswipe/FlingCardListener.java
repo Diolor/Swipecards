@@ -5,8 +5,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.lorentzos.flingswipe.internal.FrameData;
-import com.lorentzos.flingswipe.internal.TargetPosition;
+import com.lorentzos.flingswipe.internal.OnCardExited;
+import com.lorentzos.flingswipe.internal.ResultPosition;
 import com.lorentzos.flingswipe.internal.TouchEvent;
+import com.lorentzos.flingswipe.internal.UpdatePosition;
 
 import static java.lang.Math.abs;
 
@@ -28,7 +30,6 @@ public class FlingCardListener implements View.OnTouchListener {
 	private boolean isAnimationRunning;
 	private FrameData frameData;
 	private TouchEvent touchEvent;
-	private final CardFrame cardFrame;
 	private PointF framePosition;
 	private PointF lastTouchPosition;
 
@@ -42,7 +43,6 @@ public class FlingCardListener implements View.OnTouchListener {
 		BASE_ROTATION_DEGREES = rotation_degrees;
 		mFlingListener = flingListener;
 
-		cardFrame = new CardFrame(frame);
 	}
 
 	@Override
@@ -71,34 +71,26 @@ public class FlingCardListener implements View.OnTouchListener {
 					return false;
 				}
 
-				TargetPosition targetPosition = touchEvent.move(touchPosition);
+				UpdatePosition updatePosition = touchEvent.move(touchPosition);
 
-				frame.setTranslationX(targetPosition.getTranslationX());
-				frame.setTranslationY(targetPosition.getTranslationY());
-				frame.setRotation(targetPosition.getRotation());
+				frame.setTranslationX(updatePosition.getTranslationX());
+				frame.setTranslationY(updatePosition.getTranslationY());
+				frame.setRotation(updatePosition.getRotation());
 
-				mFlingListener.onScroll(targetPosition.getScrollProgress());
+				mFlingListener.onScroll(updatePosition.getScrollProgress());
 
 				lastTouchPosition = touchPosition;
 				return true;
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
 				lastTouchPosition = touchPosition;
+				isAnimationRunning = true;
 
-				switch (touchEvent.reset(x)) {
-					case RECENTER:
-						cardFrame.recenter();
-						mFlingListener.onScroll(0.0f);
-						return true;
-					case CLICK:
-						cardFrame.recenter();
-						mFlingListener.onScroll(0.0f);
-						return true;
-					case LEFT_ABOVE:
-						isAnimationRunning = true;
+				ResultPosition result = touchEvent.result(touchPosition);
 
-						// Left Swipe
-						cardFrame.selectedLeftTop(framePosition, new CardFrame.OnCardExited() {
+				switch (result.getResultState()) {
+					case LEFT_TOP:
+						frameData.getLeftExitPosition(framePosition, BASE_ROTATION_DEGREES).exit(frame, new OnCardExited() {
 							@Override
 							public void call() {
 								mFlingListener.onCardExited();
@@ -106,14 +98,10 @@ public class FlingCardListener implements View.OnTouchListener {
 								isAnimationRunning = false;
 							}
 						});
-						mFlingListener.onScroll(-1.0f);
+
 						break;
-
-					case LEFT_BELOW:
-						isAnimationRunning = true;
-
-						// Left Swipe
-						cardFrame.selectedLeftBottom(framePosition, new CardFrame.OnCardExited() {
+					case LEFT_BOTTOM:
+						frameData.getLeftExitPosition(framePosition, -BASE_ROTATION_DEGREES).exit(frame, new OnCardExited() {
 							@Override
 							public void call() {
 								mFlingListener.onCardExited();
@@ -121,13 +109,10 @@ public class FlingCardListener implements View.OnTouchListener {
 								isAnimationRunning = false;
 							}
 						});
-						mFlingListener.onScroll(-1.0f);
-						return true;
-					case RIGHT_ABOVE:
-						isAnimationRunning = true;
 
-						// Right Swipe
-						cardFrame.selectedRightTop(framePosition, new CardFrame.OnCardExited() {
+						break;
+					case RIGHT_TOP:
+						frameData.getRightExitPoint(framePosition, -BASE_ROTATION_DEGREES).exit(frame, new OnCardExited() {
 							@Override
 							public void call() {
 								mFlingListener.onCardExited();
@@ -135,13 +120,10 @@ public class FlingCardListener implements View.OnTouchListener {
 								isAnimationRunning = false;
 							}
 						});
-						mFlingListener.onScroll(1.0f);
-						return true;
-					case RIGHT_BELOW:
-						isAnimationRunning = true;
 
-						// Right Swipe
-						cardFrame.selectedRightBottom(framePosition, new CardFrame.OnCardExited() {
+						break;
+					case RIGHT_BOTTOM:
+						frameData.getRightExitPoint(framePosition, BASE_ROTATION_DEGREES).exit(frame, new OnCardExited() {
 							@Override
 							public void call() {
 								mFlingListener.onCardExited();
@@ -149,10 +131,16 @@ public class FlingCardListener implements View.OnTouchListener {
 								isAnimationRunning = false;
 							}
 						});
-						mFlingListener.onScroll(1.0f);
-						return true;
+
+						break;
+					case RECENTER:
+						frameData.getRecenterPosition().recenter(frame);
+						mFlingListener.onScroll(0.0f);
+
+						break;
 				}
 
+				mFlingListener.onScroll(result.getScrollProgress());
 				view.getParent().requestDisallowInterceptTouchEvent(false);
 				break;
 		}
@@ -167,7 +155,7 @@ public class FlingCardListener implements View.OnTouchListener {
 		if (isAnimationRunning) {
 			return;
 		}
-		//		selected(true, objectY, 200); // TODO: 29/10/16
+		//		exit(true, objectY, 200); // TODO: 29/10/16
 	}
 
 	/**
@@ -177,7 +165,7 @@ public class FlingCardListener implements View.OnTouchListener {
 		if (isAnimationRunning) {
 			return;
 		}
-		//		selected(false, objectY, 200); // TODO: 29/10/16
+		//		exit(false, objectY, 200); // TODO: 29/10/16
 	}
 
 	public boolean isTouching() {

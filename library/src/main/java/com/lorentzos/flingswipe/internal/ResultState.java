@@ -4,8 +4,8 @@ package com.lorentzos.flingswipe.internal;
  *
  */
 public enum ResultState {
-	CLICK, RECENTER,
-	LEFT_ABOVE, LEFT_BELOW,
-	RIGHT_ABOVE, RIGHT_BELOW
+	LEFT_TOP, LEFT_BOTTOM,
+	RIGHT_TOP, RIGHT_BOTTOM,
+	RECENTER
 
 }

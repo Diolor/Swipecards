@@ -3,13 +3,13 @@ package com.lorentzos.flingswipe.internal;
 /**
  *
  */
-public class TargetPosition {
+public class UpdatePosition {
 	private final float translationX;
 	private final float translationY;
 	private final float rotation;
 	private final float scrollProgress;
 
-	TargetPosition(float translationX, float translationY, float rotation, float scrollProgress) {
+	UpdatePosition(float translationX, float translationY, float rotation, float scrollProgress) {
 		this.translationX = translationX;
 		this.translationY = translationY;
 		this.rotation = rotation;
