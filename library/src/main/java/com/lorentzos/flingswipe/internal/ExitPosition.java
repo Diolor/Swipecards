@@ -26,8 +26,8 @@ class ExitPosition {
 		frame.animate()
 				.setInterpolator(ACCELERATE_INTERPOLATOR)
 				.setDuration(DURATION)
-				.x(exitX)
-				.y(exitY)
+				.translationX(exitX)
+				.translationY(exitY)
 				.rotation(exitRotation)
 				.setListener(onAnimationEnd);
 	}

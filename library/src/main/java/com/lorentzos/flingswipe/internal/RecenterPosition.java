@@ -20,8 +20,8 @@ class RecenterPosition extends PointF {
 		frame.animate()
 				.setDuration(DURATION)
 				.setInterpolator(OVERSHOOT_INTERPOLATOR)
-				.x(x)
-				.y(y)
+				.translationX(x)
+				.translationY(y)
 				.rotation(0);
 	}
 

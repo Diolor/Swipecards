@@ -1,6 +1,5 @@
 package com.lorentzos.flingswipe.internal;
 
-import android.graphics.PointF;
 import android.support.annotation.FloatRange;
 import android.view.View;
 
@@ -14,8 +13,8 @@ class FrameData {
 	@SuppressWarnings("ConstantMathCall")
 	private static final float MAX_COS = (float) StrictMath.cos(Math.toRadians(45));
 
-	private final float startX;
-	private final float startY;
+	public final float startX;
+	public final float startY;
 	private final float height;
 	private final float width;
 	private final float parentWidth;
@@ -54,8 +53,8 @@ class FrameData {
 		this.height = height;
 		this.width = width;
 		this.parentWidth = parentWidth;
-		leftBorder = parentWidth / 4.f;
-		rightBorder = parentWidth / 0.75f;
+		leftBorder = parentWidth * 0.25f;
+		rightBorder = parentWidth * 0.75f;
 
 		rotationWidthOffset = getRotationWidthOffset(width);
 	}
@@ -81,7 +80,7 @@ class FrameData {
 	 */
 	UpdatePosition createUpdatePosition(float dx, float dy, float rotationFactor) {
 		float rotation = 2.f * rotationFactor * dx / parentWidth;
-		float scrollProgress = getScrollProgress();
+		float scrollProgress = getScrollProgress(dx);
 
 		return new UpdatePosition(dx, dy, rotation, scrollProgress);
 	}
@@ -146,23 +145,33 @@ class FrameData {
 	/**
 	 * Generates the scroll progress based on the position of the view.
 	 *
+	 * @param dx
 	 * @return todo
 	 */
 	@FloatRange(from = -1, to = 1)
-	float getScrollProgress() {
-		float frameCenterX = startX + width / 2f;
+	float getScrollProgress(float dx) {
+		float currentCenterX = startX + dx + width / 2;
 
-		if (frameCenterX < leftBorder) {
+		if (currentCenterX < leftBorder) {
 			return -1;
 		}
 
-		if (frameCenterX > rightBorder) {
+		if (currentCenterX > rightBorder) {
 			return 1;
 		}
 
-		float movableFrameRange = rightBorder - leftBorder;
-		float zeroToOneValue = (frameCenterX - leftBorder) / movableFrameRange;
+		float halfMovableFrameRange = (rightBorder - leftBorder) / 2f;
 
-		return zeroToOneValue * 2f - 1f;
+		if (dx > 0) {
+			float distanceToRightBorder = rightBorder - currentCenterX;
+			return 1 - distanceToRightBorder / halfMovableFrameRange;
+		}
+
+		if (dx < 0) {
+			float distanceToLeftBorder = currentCenterX - leftBorder;
+			return distanceToLeftBorder / halfMovableFrameRange - 1;
+		}
+
+		return 0;
 	}
 }

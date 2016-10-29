@@ -2,15 +2,15 @@ package com.lorentzos.flingswipe.internal;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.graphics.PointF;
 import android.view.View;
 
 import static com.lorentzos.flingswipe.internal.Direction.LEFT;
 import static com.lorentzos.flingswipe.internal.Direction.RIGHT;
-import static com.lorentzos.flingswipe.internal.FrameData.fromView;
 import static com.lorentzos.flingswipe.internal.EndType.EXIT;
 import static com.lorentzos.flingswipe.internal.EndType.RECENTER;
+import static com.lorentzos.flingswipe.internal.FrameData.fromView;
 import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_BOTTOM;
+import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_TOP;
 
 /**
  * A touch event with its "lifecycle".
@@ -26,7 +26,7 @@ public class TouchEvent {
 
 	private static float adjustRotationFactor(float baseRotation, int touchType, int direction) {
 		float targetRotation = baseRotation;
-		if (touchType == TOUCH_BOTTOM) {
+		if (touchType == TOUCH_TOP) {
 			targetRotation *= -1;
 		}
 		if (direction == RIGHT) {
@@ -68,17 +68,20 @@ public class TouchEvent {
 		frame.setRotation(updatePosition.getRotation());
 
 		System.out.println(updatePosition);
+
 		return updatePosition.getScrollProgress();
 	}
 
 	/**
 	 * Notifies the view that a result should happen.
 	 *
+	 * @param endPosition  the position of the pointer at the given time.
 	 * @param onCardResult the callback triggered when the event finishes.
 	 * @return the scroll progress of the view
 	 */
-	public float resultView(final OnCardResult onCardResult) {
-		float scrollProgress = frameData.getScrollProgress();
+	public float resultView(PointF endPosition, final OnCardResult onCardResult) {
+		float dx = endPosition.x - initialPosition.x;
+		float scrollProgress = frameData.getScrollProgress(dx);
 
 		PointF framePosition = new PointF(frame.getX(), frame.getY());
 
