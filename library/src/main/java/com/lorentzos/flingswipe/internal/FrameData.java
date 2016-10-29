@@ -145,8 +145,8 @@ class FrameData {
 	/**
 	 * Generates the scroll progress based on the position of the view.
 	 *
-	 * @param dx
-	 * @return todo
+	 * @param dx the differential in x axis
+	 * @return the scroll progress between -1 and 1.
 	 */
 	@FloatRange(from = -1, to = 1)
 	float getScrollProgress(float dx) {
