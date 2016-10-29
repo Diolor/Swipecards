@@ -14,7 +14,7 @@ public class SimpleViewActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_simple_view);
 
 		View view = findViewById(R.id.activity_simple_view);
-		((View) view.getParent()).setOnTouchListener(new FlingCardListener(view, 0, new FlingCardListener.FlingListener() {
+		((View) view.getParent()).setOnTouchListener(new FlingCardListener(0, new FlingCardListener.FlingListener() {
 			@Override
 			public void onCardExited() {
 

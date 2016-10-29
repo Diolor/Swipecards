@@ -1,9 +1,9 @@
 package com.lorentzos.flingswipe.internal;
 
 /**
- *
+ * The updating position of the frame.
  */
-public class UpdatePosition {
+class UpdatePosition {
 	private final float translationX;
 	private final float translationY;
 	private final float rotation;
@@ -16,19 +16,29 @@ public class UpdatePosition {
 		this.scrollProgress = scrollProgress;
 	}
 
-	public float getTranslationX() {
+	float getTranslationX() {
 		return translationX;
 	}
 
-	public float getTranslationY() {
+	float getTranslationY() {
 		return translationY;
 	}
 
-	public float getRotation() {
+	float getRotation() {
 		return rotation;
 	}
 
-	public float getScrollProgress() {
+	float getScrollProgress() {
 		return scrollProgress;
+	}
+
+	@Override
+	public String toString() {
+		return "UpdatePosition{" +
+				"translationX=" + translationX +
+				", translationY=" + translationY +
+				", rotation=" + rotation +
+				", scrollProgress=" + scrollProgress +
+				'}';
 	}
 }

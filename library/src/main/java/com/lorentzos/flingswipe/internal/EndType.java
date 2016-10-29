@@ -7,13 +7,14 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
- *
+ * The ending type of a {@link TouchEvent}
  */
 @SuppressWarnings("ConstantDeclaredInInterface")
 @Retention(SOURCE)
-@IntDef({Type.TOUCH_TOP, Type.TOUCH_BOTTOM})
-public @interface Type {
+@IntDef({EndType.EXIT, EndType.RECENTER})
+public @interface EndType {
 
-	int TOUCH_TOP = 0;
-	int TOUCH_BOTTOM = 1;
+	int EXIT = 0;
+	int RECENTER = 1;
+
 }

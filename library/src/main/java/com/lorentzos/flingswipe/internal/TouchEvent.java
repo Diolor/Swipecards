@@ -1,33 +1,58 @@
 package com.lorentzos.flingswipe.internal;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.graphics.PointF;
+import android.view.View;
 
-import static com.lorentzos.flingswipe.internal.Type.TOUCH_BOTTOM;
-import static java.lang.Math.abs;
+import static com.lorentzos.flingswipe.internal.Direction.LEFT;
+import static com.lorentzos.flingswipe.internal.Direction.RIGHT;
+import static com.lorentzos.flingswipe.internal.FrameData.fromView;
+import static com.lorentzos.flingswipe.internal.EndType.EXIT;
+import static com.lorentzos.flingswipe.internal.EndType.RECENTER;
+import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_BOTTOM;
 
 /**
- *
+ * A touch event with its "lifecycle".
  */
 public class TouchEvent {
 
-	private static final double ON_CLICK_PIXEL_SENSITIVITY = 4.0;
-
 	private final float rotationFactor;
-	@Type
+	private final View frame;
+	@TouchType
 	private final int touchType;
 	private final FrameData frameData;
 	private final PointF initialPosition;
 
-	public TouchEvent(float rotationFactor, FrameData frameData, PointF initialPosition) {
+	private static float adjustRotationFactor(float baseRotation, int touchType, int direction) {
+		float targetRotation = baseRotation;
+		if (touchType == TOUCH_BOTTOM) {
+			targetRotation *= -1;
+		}
+		if (direction == RIGHT) {
+			targetRotation *= -1;
+		}
+		return targetRotation;
+	}
+
+	public TouchEvent(float rotationFactor, View frame, PointF initialPosition) {
 		this.rotationFactor = rotationFactor;
-		this.frameData = frameData;
+		frameData = fromView(frame);
+		this.frame = frame;
 
 		touchType = frameData.getTouchType(initialPosition.y);
 
 		this.initialPosition = initialPosition;
 	}
 
-	public UpdatePosition move(PointF movePosition) {
+	/**
+	 * Notifies to move the view based on the given touch
+	 * {@link android.view.MotionEvent#ACTION_MOVE} event.
+	 *
+	 * @param movePosition the position of the pointer at the given time.
+	 * @return the scroll progress of the view
+	 */
+	public float moveView(PointF movePosition) {
 		float dx = movePosition.x - initialPosition.x;
 		float dy = movePosition.y - initialPosition.y;
 
@@ -36,26 +61,61 @@ public class TouchEvent {
 			rotationFactor *= -1;
 		}
 
-		return frameData.createUpdatePosition(dx, dy, rotationFactor);
+		UpdatePosition updatePosition = frameData.createUpdatePosition(dx, dy, rotationFactor);
+
+		frame.setTranslationX(updatePosition.getTranslationX());
+		frame.setTranslationY(updatePosition.getTranslationY());
+		frame.setRotation(updatePosition.getRotation());
+
+		System.out.println(updatePosition);
+		return updatePosition.getScrollProgress();
 	}
 
-	public ResultPosition result(PointF endPosition) {
+	/**
+	 * Notifies the view that a result should happen.
+	 *
+	 * @param onCardResult the callback triggered when the event finishes.
+	 * @return the scroll progress of the view
+	 */
+	public float resultView(final OnCardResult onCardResult) {
 		float scrollProgress = frameData.getScrollProgress();
 
-		if (abs(scrollProgress + 1) == 0) {
-			if (touchType == TOUCH_BOTTOM) {
-				return new ResultPosition(ResultState.LEFT_BOTTOM, scrollProgress);
-			}
-			return new ResultPosition(ResultState.LEFT_TOP, scrollProgress);
-		}
-		if (abs(scrollProgress - 1) == 0) {
-			if (touchType == TOUCH_BOTTOM) {
-				return new ResultPosition(ResultState.RIGHT_BOTTOM, scrollProgress);
-			}
-			return new ResultPosition(ResultState.RIGHT_TOP, scrollProgress);
+		PointF framePosition = new PointF(frame.getX(), frame.getY());
+
+		FrameResult frameResult = FrameResult.fromScrollProgress(scrollProgress);
+		final int type = frameResult.getType();
+		final int direction = frameResult.getDirection();
+
+		switch (type) {
+			case EXIT:
+				float rotation = adjustRotationFactor(rotationFactor, touchType, direction);
+
+				getExitPosition(framePosition, direction, rotation).exit(frame, new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						onCardResult.onExit(type, direction);
+					}
+				});
+
+				break;
+			case RECENTER:
+				frameData.getRecenterPosition().recenter(frame);
+				onCardResult.onExit(type, direction);
+				break;
 		}
 
-		return new ResultPosition(ResultState.RECENTER, 0);
+		return scrollProgress;
+	}
+
+	private ExitPosition getExitPosition(PointF framePosition, @Direction int direction, float rotationFactor) {
+		switch (direction) {
+			case LEFT:
+				return frameData.getLeftExitPosition(framePosition, rotationFactor);
+			case RIGHT:
+				return frameData.getRightExitPoint(framePosition, rotationFactor);
+			default:
+				throw new IllegalStateException("Unsupported exit direction : " + direction);
+		}
 	}
 
 }

@@ -1,40 +1,34 @@
 package com.lorentzos.flingswipe.internal;
 
-import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
 /**
- *
+ * The exit position of the frame.
  */
-
-public class ExitPosition {
+class ExitPosition {
 
 	private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+	private static final int DURATION = 100;
 	private final float exitX;
 	private final float exitY;
 	private final float exitRotation;
 
-	public ExitPosition(float exitX, float exitY, float exitRotation) {
+	ExitPosition(float exitX, float exitY, float exitRotation) {
 
 		this.exitX = exitX;
 		this.exitY = exitY;
 		this.exitRotation = exitRotation;
 	}
 
-	public void exit(View frame, final OnCardExited onCardExited) {
+	void exit(View frame, AnimatorListenerAdapter onAnimationEnd) {
 		frame.animate()
 				.setInterpolator(ACCELERATE_INTERPOLATOR)
-				.setDuration(100)
+				.setDuration(DURATION)
 				.x(exitX)
 				.y(exitY)
 				.rotation(exitRotation)
-				.setListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						onCardExited.call();
-					}
-				});
+				.setListener(onAnimationEnd);
 	}
 }

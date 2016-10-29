@@ -201,7 +201,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 			mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
 			if (mActiveCard != null) {
 
-				flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0),
+				flingCardListener = new FlingCardListener(mAdapter.getItem(0),
 						ROTATION_DEGREES, new FlingCardListener.FlingListener() {
 
 					@Override

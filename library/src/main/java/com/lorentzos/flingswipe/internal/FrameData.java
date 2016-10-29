@@ -2,16 +2,15 @@ package com.lorentzos.flingswipe.internal;
 
 import android.graphics.PointF;
 import android.support.annotation.FloatRange;
-import android.util.Log;
 import android.view.View;
 
-import static com.lorentzos.flingswipe.internal.Type.TOUCH_BOTTOM;
-import static com.lorentzos.flingswipe.internal.Type.TOUCH_TOP;
+import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_BOTTOM;
+import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_TOP;
 
 /**
- *
+ * Helping class which contains the data and functionality for the flinging view.
  */
-public class FrameData {
+class FrameData {
 	@SuppressWarnings("ConstantMathCall")
 	private static final float MAX_COS = (float) StrictMath.cos(Math.toRadians(45));
 
@@ -30,12 +29,11 @@ public class FrameData {
 	 * @param view the view you would like to generate data from
 	 * @return a new object instance
 	 */
-	public static FrameData fromView(View view) {
+	static FrameData fromView(View view) {
 		PointF framePosition = new PointF(view.getX(), view.getY());
-		Size frameSize = new Size(view.getHeight(), view.getWidth());
 		int parentWidth = ((View) view.getParent()).getWidth();
 
-		return new FrameData(framePosition, frameSize, parentWidth);
+		return new FrameData(framePosition, view.getHeight(), view.getWidth(), parentWidth);
 	}
 
 	/**
@@ -50,11 +48,11 @@ public class FrameData {
 		return width / MAX_COS - width;
 	}
 
-	private FrameData(PointF framePosition, Size frameSize, float parentWidth) {
+	private FrameData(PointF framePosition, int height, int width, float parentWidth) {
 		startX = framePosition.x;
 		startY = framePosition.y;
-		height = frameSize.getHeight();
-		width = frameSize.getWidth();
+		this.height = height;
+		this.width = width;
 		this.parentWidth = parentWidth;
 		leftBorder = parentWidth / 4.f;
 		rightBorder = parentWidth / 0.75f;
@@ -66,10 +64,10 @@ public class FrameData {
 	 * Returns if the initial touch happened on the 50% top part or 50% bottom part.
 	 *
 	 * @param initialTouchY the y axis location of the initial touch
-	 * @return the {@link Type} of the initial touch on this view
+	 * @return the {@link TouchType} of the initial touch on this view
 	 */
-	@Type
-	public int getTouchType(float initialTouchY) {
+	@TouchType
+	int getTouchType(float initialTouchY) {
 		return initialTouchY < startX + height / 2f ? TOUCH_TOP : TOUCH_BOTTOM;
 	}
 
@@ -78,19 +76,20 @@ public class FrameData {
 	 *
 	 * @param dx             the differential in x axis
 	 * @param dy             the differential in y axis
-	 * @param rotationFactor todo
+	 * @param rotationFactor the base rotation factor to calculate the rotation
 	 * @return the new position this frame should take
 	 */
-	public UpdatePosition createUpdatePosition(float dx, float dy, float rotationFactor) {
+	UpdatePosition createUpdatePosition(float dx, float dy, float rotationFactor) {
 		float rotation = 2.f * rotationFactor * dx / parentWidth;
 		float scrollProgress = getScrollProgress();
-		Log.wtf("FrameData", "createUpdatePosition " + scrollProgress);
 
 		return new UpdatePosition(dx, dy, rotation, scrollProgress);
 	}
 
-	// TODO: 29/10/16
-	public RecenterPosition getRecenterPosition() {
+	/**
+	 * Creates a {@link RecenterPosition} for the view.
+	 */
+	RecenterPosition getRecenterPosition() {
 		return new RecenterPosition(startX, startY);
 	}
 
@@ -101,11 +100,11 @@ public class FrameData {
 	 * The position is required to make a smooth linear exit from the center.
 	 *
 	 * @param framePosition  the current position of the view.
-	 * @param rotationFactor todo
+	 * @param rotationFactor the base rotation factor to calculate the rotation
 	 * @return the left {@link ExitPosition} of the view
 	 * @see #getRightExitPoint(PointF, float)
 	 */
-	public ExitPosition getLeftExitPosition(PointF framePosition, float rotationFactor) {
+	ExitPosition getLeftExitPosition(PointF framePosition, float rotationFactor) {
 		float exitX = -width - rotationWidthOffset;
 		float exitY = calculateExitY(framePosition, exitX);
 		float exitRotation = getExitRotation(rotationFactor);
@@ -113,8 +112,18 @@ public class FrameData {
 		return new ExitPosition(exitX, exitY, exitRotation);
 	}
 
-	// TODO: 29/10/16
-	public ExitPosition getRightExitPoint(PointF framePosition, float rotationFactor) {
+	/**
+	 * Returns the target right {@link ExitPosition} of the view for the given
+	 * current position and rotation factor.
+	 * <p>
+	 * The position is required to make a smooth linear exit from the center.
+	 *
+	 * @param framePosition  the current position of the view.
+	 * @param rotationFactor the base rotation factor to calculate the rotation
+	 * @return the right {@link ExitPosition} of the view
+	 * @see #getLeftExitPosition(PointF, float)
+	 */
+	ExitPosition getRightExitPoint(PointF framePosition, float rotationFactor) {
 		float exitX = parentWidth;
 		float exitY = calculateExitY(framePosition, exitX);
 		float exitRotation = getExitRotation(rotationFactor);
@@ -134,8 +143,13 @@ public class FrameData {
 		return 2.f * rotationFactor * (width - startX) / parentWidth;
 	}
 
+	/**
+	 * Generates the scroll progress based on the position of the view.
+	 *
+	 * @return todo
+	 */
 	@FloatRange(from = -1, to = 1)
-	public float getScrollProgress() {
+	float getScrollProgress() {
 		float frameCenterX = startX + width / 2f;
 
 		if (frameCenterX < leftBorder) {
