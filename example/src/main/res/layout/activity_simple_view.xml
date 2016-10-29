@@ -11,12 +11,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.lorentzos.swipecards.SimpleViewActivity">
 
-    <TextView
+    <FrameLayout
         android:id="@+id/simpleView"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:background="@android:color/holo_red_dark"/>
+        android:background="@android:color/holo_red_dark">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center"
+            android:background="#FFF"/>
+
+    </FrameLayout>
 
 </RelativeLayout>
