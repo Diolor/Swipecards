@@ -67,6 +67,7 @@ public class TouchEvent {
 		frame.setTranslationY(updatePosition.getTranslationY());
 		frame.setRotation(updatePosition.getRotation());
 
+//		Log.wtf("FrameData", "dx " + dx+ " ScrollProgress "+ updatePosition.getScrollProgress());
 		System.out.println(updatePosition);
 
 		return updatePosition.getScrollProgress();

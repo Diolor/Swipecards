@@ -124,7 +124,7 @@ public class TopTouchEventTest extends TouchEventTest {
 	@Test
 	public void bottomRightInside() throws Exception {
 		// Given
-		PointF bottomRightTouch = new PointF(290f, 160f);
+		PointF bottomRightTouch = new PointF(230f, 160f);
 
 		// When
 		float progress = touchEvent.moveView(bottomRightTouch);

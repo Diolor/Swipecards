@@ -162,12 +162,12 @@ class FrameData {
 
 		float halfMovableFrameRange = (rightBorder - leftBorder) / 2f;
 
-		if (dx > 0) {
+		if (dx > 0f) {
 			float distanceToRightBorder = rightBorder - currentCenterX;
 			return 1 - distanceToRightBorder / halfMovableFrameRange;
 		}
 
-		if (dx < 0) {
+		if (dx < 0f) {
 			float distanceToLeftBorder = currentCenterX - leftBorder;
 			return distanceToLeftBorder / halfMovableFrameRange - 1;
 		}
