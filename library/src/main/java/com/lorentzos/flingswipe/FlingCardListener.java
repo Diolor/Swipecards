@@ -284,18 +284,11 @@ public class FlingCardListener implements View.OnTouchListener {
 
 
     private float getExitPoint(int exitXPoint) {
-        float[] x = new float[2];
-        x[0] = objectX;
-        x[1] = aPosX;
-
-        float[] y = new float[2];
-        y[0] = objectY;
-        y[1] = aPosY;
-
-        LinearRegression regression = new LinearRegression(x, y);
+        float slope = (aPosY - objectY) / (aPosX - objectX);
+        float intercept = objectY - slope * objectX;
 
         //Your typical y = ax+b linear regression
-        return (float) regression.slope() * exitXPoint + (float) regression.intercept();
+        return slope * exitXPoint + intercept;
     }
 
     private float getExitRotation(boolean isLeft) {
