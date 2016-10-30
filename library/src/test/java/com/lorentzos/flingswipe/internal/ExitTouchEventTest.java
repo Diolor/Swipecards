@@ -22,7 +22,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		View mockView = MockViewFactory.createWithAnimate();
 		PointF middlishTouch = new PointF(120f, 120f);
 
-		touchEvent = new TouchEvent(15f, mockView, middlishTouch);
+		touchEvent = new TouchEvent(15f, mockView, middlishTouch, 40f);
 	}
 
 	@Test

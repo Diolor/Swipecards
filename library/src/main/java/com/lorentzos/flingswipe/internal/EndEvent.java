@@ -11,10 +11,11 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  */
 @SuppressWarnings("ConstantDeclaredInInterface")
 @Retention(SOURCE)
-@IntDef({EndType.EXIT, EndType.RECENTER})
-public @interface EndType {
+@IntDef({EndEvent.EXIT, EndEvent.RECENTER, EndEvent.CLICK})
+public @interface EndEvent {
 
-	int EXIT = 0;
+	int CLICK = 0;
 	int RECENTER = 1;
+	int EXIT = 2;
 
 }

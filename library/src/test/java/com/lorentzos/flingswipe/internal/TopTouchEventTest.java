@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.lorentzos.flingswipe.internal.MockViewFactory.INITIAL_VIEW_X;
+import static com.lorentzos.flingswipe.internal.MockViewFactory.INITIAL_VIEW_Y;
 import static org.mockito.ArgumentMatchers.floatThat;
 import static org.mockito.Mockito.verify;
 
@@ -20,14 +22,14 @@ public class TopTouchEventTest extends TouchEventTest {
 
 	private View mockView;
 	private TouchEvent touchEvent;
-	private PointF middlishTouch;
+	private PointF initialTouch;
 
 	@Before
 	public void setUp() throws Exception {
 		mockView = MockViewFactory.create();
-		middlishTouch = new PointF(120f, 120f);
+		initialTouch = new PointF(120f, 120f);
 
-		touchEvent = new TouchEvent(15f, mockView, middlishTouch);
+		touchEvent = new TouchEvent(15f, mockView, initialTouch, 40f);
 	}
 
 	@Test
@@ -143,22 +145,21 @@ public class TopTouchEventTest extends TouchEventTest {
 		float progress = touchEvent.moveView(verticalTouch);
 
 		// Then
-		verify(mockView).setTranslationX(0);
-		verify(mockView).setTranslationY(verticalTouch.y - middlishTouch.y);
+		verify(mockView).setX(INITIAL_VIEW_X);
+		verify(mockView).setY(verticalTouch.y - initialTouch.y + INITIAL_VIEW_Y);
 		verify(mockView).setRotation(0);
 		Truth.assertThat(progress).isWithin(0);
 	}
 
-	private void verifyLeft(PointF bottomLeftTouch) {
-		verify(mockView).setTranslationX(bottomLeftTouch.x - middlishTouch.x);
-		verify(mockView).setTranslationY(bottomLeftTouch.y - middlishTouch.y);
+	private void verifyLeft(PointF moveTouch) {
+		verify(mockView).setX(moveTouch.x - initialTouch.x + INITIAL_VIEW_X);
+		verify(mockView).setY(moveTouch.y - initialTouch.y + INITIAL_VIEW_Y);
 		verify(mockView).setRotation(floatThat(RotationMatcher.NEGATIVE));
 	}
 
-	private void verifyRight(PointF topRightTouch) {
-		verify(mockView).setTranslationX(topRightTouch.x - middlishTouch.x);
-		verify(mockView).setTranslationY(topRightTouch.y - middlishTouch.y);
+	private void verifyRight(PointF moveTouch) {
+		verify(mockView).setX(moveTouch.x - initialTouch.x + INITIAL_VIEW_X);
+		verify(mockView).setY(moveTouch.y - initialTouch.y + INITIAL_VIEW_Y);
 		verify(mockView).setRotation(floatThat(RotationMatcher.POSITIVE));
 	}
-
 }

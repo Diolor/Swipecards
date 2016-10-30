@@ -6,8 +6,9 @@ import android.view.View;
 
 import static com.lorentzos.flingswipe.internal.Direction.LEFT;
 import static com.lorentzos.flingswipe.internal.Direction.RIGHT;
-import static com.lorentzos.flingswipe.internal.EndType.EXIT;
-import static com.lorentzos.flingswipe.internal.EndType.RECENTER;
+import static com.lorentzos.flingswipe.internal.EndEvent.CLICK;
+import static com.lorentzos.flingswipe.internal.EndEvent.EXIT;
+import static com.lorentzos.flingswipe.internal.EndEvent.RECENTER;
 import static com.lorentzos.flingswipe.internal.FrameData.fromView;
 import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_BOTTOM;
 import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_TOP;
@@ -35,12 +36,12 @@ public class TouchEvent {
 		return targetRotation;
 	}
 
-	public TouchEvent(float rotationFactor, View frame, PointF initialPosition) {
+	public TouchEvent(float rotationFactor, View frame, PointF initialPosition, float relativeY) {
 		this.rotationFactor = rotationFactor;
 		frameData = fromView(frame);
 		this.frame = frame;
 
-		touchType = frameData.getTouchType(initialPosition.y);
+		touchType = frameData.getTouchType(relativeY);
 
 		this.initialPosition = initialPosition;
 	}
@@ -63,8 +64,8 @@ public class TouchEvent {
 
 		UpdatePosition updatePosition = frameData.createUpdatePosition(dx, dy, rotationFactor);
 
-		frame.setTranslationX(updatePosition.getTranslationX());
-		frame.setTranslationY(updatePosition.getTranslationY());
+		frame.setX(updatePosition.getUpdateX());
+		frame.setY(updatePosition.getUpdateY());
 		frame.setRotation(updatePosition.getRotation());
 
 		return updatePosition.getScrollProgress();
@@ -83,25 +84,29 @@ public class TouchEvent {
 
 		PointF framePosition = new PointF(frame.getX(), frame.getY());
 
-		FrameResult frameResult = FrameResult.fromScrollProgress(scrollProgress);
-		final int type = frameResult.getType();
-		final int direction = frameResult.getDirection();
+		final FrameResult frameResult;
+		if (TouchUtil.minorMovement(endPosition, initialPosition)) {
+			frameResult = FrameResult.click();
+		} else {
+			frameResult = FrameResult.fromScrollProgress(scrollProgress);
+		}
 
-		switch (type) {
+		switch (frameResult.getEndEvent()) {
 			case EXIT:
-				float rotation = adjustRotationFactor(rotationFactor, touchType, direction);
+				float rotation = adjustRotationFactor(rotationFactor, touchType, frameResult.getDirection());
 
-				getExitPosition(framePosition, direction, rotation).exit(frame, new AnimatorListenerAdapter() {
+				getExitPosition(framePosition, frameResult.getDirection(), rotation).exit(frame, new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationEnd(Animator animation) {
-						onCardResult.onExit(type, direction);
+						onCardResult.onExit(frameResult);
 					}
 				});
 
 				break;
+			case CLICK:
 			case RECENTER:
 				frameData.getRecenterPosition().recenter(frame);
-				onCardResult.onExit(type, direction);
+				onCardResult.onExit(frameResult);
 				break;
 		}
 

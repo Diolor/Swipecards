@@ -6,7 +6,7 @@ import com.google.common.truth.Truth;
 /**
  *
  */
-public class TouchEventTest {
+class TouchEventTest {
 
 	static void verifyPositiveEndingProgress(float progress) {
 		Truth.assertThat(progress).isWithin(1f);
@@ -23,5 +23,4 @@ public class TouchEventTest {
 	static void verifyNegativeProgress(float progress) {
 		Truth.assertThat(progress).isIn(Range.closed(-1f, 0f));
 	}
-
 }

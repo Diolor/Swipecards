@@ -13,8 +13,8 @@ class FrameData {
 	@SuppressWarnings("ConstantMathCall")
 	private static final float MAX_COS = (float) StrictMath.cos(Math.toRadians(45));
 
-	public final float startX;
-	public final float startY;
+	private final float startX;
+	private final float startY;
 	private final float height;
 	private final float width;
 	private final float parentWidth;
@@ -62,12 +62,12 @@ class FrameData {
 	/**
 	 * Returns if the initial touch happened on the 50% top part or 50% bottom part.
 	 *
-	 * @param initialTouchY the y axis location of the initial touch
+	 * @param initialTouchY the y axis location of the initial touch relative to this view.
 	 * @return the {@link TouchType} of the initial touch on this view
 	 */
 	@TouchType
 	int getTouchType(float initialTouchY) {
-		return initialTouchY < startX + height / 2f ? TOUCH_TOP : TOUCH_BOTTOM;
+		return initialTouchY < height / 2f ? TOUCH_TOP : TOUCH_BOTTOM;
 	}
 
 	/**
@@ -79,10 +79,12 @@ class FrameData {
 	 * @return the new position this frame should take
 	 */
 	UpdatePosition createUpdatePosition(float dx, float dy, float rotationFactor) {
+		float updateX = dx + startX;
+		float updateY = dy + startY;
 		float rotation = 2.f * rotationFactor * dx / parentWidth;
 		float scrollProgress = getScrollProgress(dx);
 
-		return new UpdatePosition(dx, dy, rotation, scrollProgress);
+		return new UpdatePosition(updateX, updateY, rotation, scrollProgress);
 	}
 
 	/**

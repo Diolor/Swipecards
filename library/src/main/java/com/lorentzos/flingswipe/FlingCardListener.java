@@ -2,16 +2,14 @@ package com.lorentzos.flingswipe;
 
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.lorentzos.flingswipe.internal.Direction;
-import com.lorentzos.flingswipe.internal.EndType;
+import com.lorentzos.flingswipe.internal.EndEvent;
+import com.lorentzos.flingswipe.internal.FrameResult;
 import com.lorentzos.flingswipe.internal.OnCardResult;
 import com.lorentzos.flingswipe.internal.PointF;
 import com.lorentzos.flingswipe.internal.TouchEvent;
-
-import static java.lang.Math.abs;
+import com.lorentzos.flingswipe.internal.TouchUtil;
 
 /**
  * Created by dionysis_lorentzos on 5/8/14
@@ -20,51 +18,45 @@ import static java.lang.Math.abs;
  * Use with caution dinausaurs might appear!
  */
 
-public class FlingCardListener implements View.OnTouchListener, OnCardResult {
-
-	private static final double ON_CLICK_PIXEL_SENSITIVITY = 4.0;
+public class FlingCardListener implements View.OnTouchListener {
 
 	private final FlingListener flingListener;
-	private final Object dataObject;
 	private final float baseRotationDegrees;
 	private boolean isAnimationRunning;
 	private TouchEvent touchEvent;
 	private PointF lastTouchPosition;
 
-	public FlingCardListener(Object itemAtPosition, FlingListener flingListener) {
-		this(itemAtPosition, 15f, flingListener);
+	public FlingCardListener() {
+		this(15f);
+
 	}
 
-	public FlingCardListener(Object itemAtPosition, float rotation_degrees, FlingListener flingListener) {
-		dataObject = itemAtPosition;
-		baseRotationDegrees = rotation_degrees;
-		this.flingListener = flingListener;
-
+	public FlingCardListener(float rotationDegrees) {
+		baseRotationDegrees = rotationDegrees;
+		flingListener = new SimpleFlingListener();
 	}
 
 	@Override
-	public boolean onTouch(View view, MotionEvent event) {
-		if (event.getActionIndex() != 0) {
+	public boolean onTouch(final View view, MotionEvent event) {
+		if (event.getActionIndex() != 0 || isAnimationRunning) {
 			return false;
 		}
-		boolean b = view instanceof TextView;
-		view = ((ViewGroup) view).getChildAt(0); // TODO: 29/10/16
 
-		float x = event.getX();
-		float y = event.getY();
-		PointF touchPosition = new PointF(x, y);
+		view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+		float relativeY = event.getY();
+		float windowX = event.getRawX();
+		float windowY = event.getRawY();
+		PointF touchPosition = new PointF(windowX, windowY);
 
 		switch (event.getActionMasked()) {
 			case MotionEvent.ACTION_DOWN:
-				if (!isAnimationRunning) {
-					touchEvent = new TouchEvent(baseRotationDegrees, view, touchPosition);
-					lastTouchPosition = touchPosition;
-				}
+				touchEvent = new TouchEvent(baseRotationDegrees, view, touchPosition, relativeY);
+				lastTouchPosition = touchPosition;
 				return true;
 
 			case MotionEvent.ACTION_MOVE:
-				if (abs(touchPosition.x - lastTouchPosition.x) < ON_CLICK_PIXEL_SENSITIVITY &&
-						abs(touchPosition.y - lastTouchPosition.y) < ON_CLICK_PIXEL_SENSITIVITY) {
+				if (TouchUtil.minorMovement(touchPosition, lastTouchPosition)) {
 					return false;
 				}
 
@@ -78,7 +70,25 @@ public class FlingCardListener implements View.OnTouchListener, OnCardResult {
 			case MotionEvent.ACTION_CANCEL:
 				isAnimationRunning = true;
 
-				float scrollResult = touchEvent.resultView(touchPosition, this);
+				float scrollResult = touchEvent.resultView(touchPosition, new OnCardResult() {
+					@Override
+					public void onExit(FrameResult frameResult) {
+						isAnimationRunning = false;
+						view.setLayerType(View.LAYER_TYPE_NONE, null);
+
+						switch (frameResult.getEndEvent()) {
+							case EndEvent.EXIT:
+								flingListener.onCardExited(frameResult.getDirection());
+								break;
+							case EndEvent.CLICK:
+								flingListener.onClick(view);
+								break;
+							case EndEvent.RECENTER:
+								flingListener.onRecenter();
+								break;
+						}
+					}
+				});
 				flingListener.onScroll(scrollResult);
 
 				lastTouchPosition = touchPosition;
@@ -86,25 +96,6 @@ public class FlingCardListener implements View.OnTouchListener, OnCardResult {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void onExit(@EndType int exit, @Direction int direction) {
-		isAnimationRunning = false;
-		flingListener.onCardExited();
-
-		if (exit == EndType.EXIT) {
-			if (direction == Direction.LEFT) {
-				flingListener.leftExit(dataObject);
-			}
-			if (direction == Direction.RIGHT) {
-				flingListener.rightExit(dataObject);
-			}
-		}
-
-		if (exit == EndType.RECENTER) {
-			flingListener.onClick(dataObject);
-		}
 	}
 
 	/**
@@ -137,15 +128,13 @@ public class FlingCardListener implements View.OnTouchListener, OnCardResult {
 	}
 
 	public interface FlingListener {
-		void onCardExited();
-
-		void leftExit(Object dataObject);
-
-		void rightExit(Object dataObject);
-
-		void onClick(Object dataObject);
+		void onCardExited(@Direction int direction);
 
 		void onScroll(float scrollProgressPercent);
+
+		void onRecenter();
+
+		void onClick(View view);
 	}
 
 }

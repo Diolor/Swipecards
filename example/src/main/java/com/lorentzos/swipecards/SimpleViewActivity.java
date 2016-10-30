@@ -13,33 +13,9 @@ public class SimpleViewActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_simple_view);
 
-		View view = findViewById(R.id.activity_simple_view);
-		((View) view.getParent()).setOnTouchListener(new FlingCardListener(0, new FlingCardListener.FlingListener() {
-			@Override
-			public void onCardExited() {
+		View view = findViewById(R.id.simpleView);
 
-			}
-
-			@Override
-			public void leftExit(Object dataObject) {
-
-			}
-
-			@Override
-			public void rightExit(Object dataObject) {
-
-			}
-
-			@Override
-			public void onClick(Object dataObject) {
-
-			}
-
-			@Override
-			public void onScroll(float scrollProgressPercent) {
-
-			}
-		}));
+		view.setOnTouchListener(new FlingCardListener());
 
 	}
 }

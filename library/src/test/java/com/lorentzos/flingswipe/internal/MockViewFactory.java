@@ -18,14 +18,18 @@ import static org.mockito.Mockito.when;
  */
 class MockViewFactory {
 
+	private static final int SIDE_SIZE_PIXELS = 100;
+	static final float INITIAL_VIEW_Y = 100f;
+	static final float INITIAL_VIEW_X = 100f;
+
 	static View create() {
 		View mockView = Mockito.mock(View.class);
 		View mockParent = Mockito.mock(ViewGroup.class);
 
-		when(mockView.getX()).thenReturn(100f);
-		when(mockView.getY()).thenReturn(100f);
-		when(mockView.getHeight()).thenReturn(100);
-		when(mockView.getWidth()).thenReturn(100);
+		when(mockView.getX()).thenReturn(INITIAL_VIEW_X);
+		when(mockView.getY()).thenReturn(INITIAL_VIEW_Y);
+		when(mockView.getHeight()).thenReturn(SIDE_SIZE_PIXELS);
+		when(mockView.getWidth()).thenReturn(SIDE_SIZE_PIXELS);
 
 		when(mockParent.getWidth()).thenReturn(400);
 		when((View) mockView.getParent()).thenReturn(mockParent);
@@ -38,10 +42,10 @@ class MockViewFactory {
 		View mockParent = Mockito.mock(ViewGroup.class);
 		ViewPropertyAnimator mockViewPropertyAnimator = Mockito.mock(ViewPropertyAnimator.class, Answers.RETURNS_SELF);
 
-		when(mockView.getX()).thenReturn(100f);
-		when(mockView.getY()).thenReturn(100f);
-		when(mockView.getHeight()).thenReturn(100);
-		when(mockView.getWidth()).thenReturn(100);
+		when(mockView.getX()).thenReturn(INITIAL_VIEW_X);
+		when(mockView.getY()).thenReturn(INITIAL_VIEW_Y);
+		when(mockView.getHeight()).thenReturn(SIDE_SIZE_PIXELS);
+		when(mockView.getWidth()).thenReturn(SIDE_SIZE_PIXELS);
 		when(mockView.animate()).thenReturn(mockViewPropertyAnimator);
 
 		when(mockParent.getWidth()).thenReturn(400);

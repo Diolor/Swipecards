@@ -1,19 +1,20 @@
 package com.lorentzos.flingswipe.internal;
 
-import static com.lorentzos.flingswipe.internal.Direction.LEFT;
 import static com.lorentzos.flingswipe.internal.Direction.CENTER;
+import static com.lorentzos.flingswipe.internal.Direction.LEFT;
 import static com.lorentzos.flingswipe.internal.Direction.RIGHT;
-import static com.lorentzos.flingswipe.internal.EndType.EXIT;
-import static com.lorentzos.flingswipe.internal.EndType.RECENTER;
+import static com.lorentzos.flingswipe.internal.EndEvent.EXIT;
+import static com.lorentzos.flingswipe.internal.EndEvent.RECENTER;
 import static java.lang.Math.abs;
 
 /**
  * The resulting details for the view when the user moves up or cancels
  * the drag events.
  */
-class FrameResult {
+public class FrameResult {
 
-	private final int type;
+	private static final FrameResult CLICK = new FrameResult(EndEvent.CLICK, CENTER);
+	private final int endEventYpe;
 	private final int direction;
 
 	/**
@@ -35,18 +36,27 @@ class FrameResult {
 		return new FrameResult(RECENTER, CENTER);
 	}
 
-	private FrameResult(@EndType int type, @Direction int direction) {
-		this.type = type;
+	/**
+	 * Creates a instance related to a click event.
+	 *
+	 * @return a new instance of {@link FrameResult}
+	 */
+	static FrameResult click() {
+		return CLICK;
+	}
+
+	private FrameResult(@EndEvent int endEventYpe, @Direction int direction) {
+		this.endEventYpe = endEventYpe;
 		this.direction = direction;
 	}
 
-	@EndType
-	int getType() {
-		return type;
+	@EndEvent
+	public int getEndEvent() {
+		return endEventYpe;
 	}
 
 	@Direction
-	int getDirection() {
+	public int getDirection() {
 		return direction;
 	}
 
