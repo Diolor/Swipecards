@@ -33,7 +33,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(topLeftTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -50,7 +50,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(bottomLeftTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -67,7 +67,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(topRightTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -84,7 +84,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(bottomRightTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -101,7 +101,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(topLeftTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -118,7 +118,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(bottomLeftTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -135,7 +135,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(topRightTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -152,7 +152,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(bottomRightTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
@@ -169,7 +169,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		// When
 		float progress = touchEvent.resultView(verticalTouch, new OnCardResult() {
 			@Override
-			public void onExit(@EndType int exit, @Direction int direction) {
+			public void onExit(FrameResult frameResult) {
 
 			}
 		});
