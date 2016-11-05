@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.floatThat;
 import static org.mockito.Mockito.verify;
 
 /**
- *
+ * Tests when the user touches the top part of the view.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TopTouchEventTest extends TouchEventTest {

@@ -15,6 +15,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ExitTouchEventTest extends TouchEventTest {
 
+	private static final OnCardResult ON_CARD_RESULT = new OnCardResult() {
+		@Override
+		public void onExit(FrameResult frameResult) {
+
+		}
+	};
 	private TouchEvent touchEvent;
 
 	@Before
@@ -31,12 +37,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topLeftTouch = new PointF(10f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topLeftTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(topLeftTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyNegativeEndingProgress(progress);
@@ -48,12 +49,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomLeftTouch = new PointF(10f, 200f);
 
 		// When
-		float progress = touchEvent.resultView(bottomLeftTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(bottomLeftTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyNegativeEndingProgress(progress);
@@ -65,12 +61,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topRightTouch = new PointF(330f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topRightTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(topRightTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyPositiveEndingProgress(progress);
@@ -82,12 +73,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomRightTouch = new PointF(330f, 330f);
 
 		// When
-		float progress = touchEvent.resultView(bottomRightTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(bottomRightTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyPositiveEndingProgress(progress);
@@ -99,12 +85,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topLeftTouch = new PointF(110f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topLeftTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(topLeftTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyNegativeProgress(progress);
@@ -116,12 +97,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomLeftTouch = new PointF(110f, 200f);
 
 		// When
-		float progress = touchEvent.resultView(bottomLeftTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(bottomLeftTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyNegativeProgress(progress);
@@ -133,12 +109,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topRightTouch = new PointF(290f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topRightTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(topRightTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyPositiveProgress(progress);
@@ -150,12 +121,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomRightTouch = new PointF(290f, 160f);
 
 		// When
-		float progress = touchEvent.resultView(bottomRightTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(bottomRightTouch, ON_CARD_RESULT);
 
 		// Then
 		verifyPositiveProgress(progress);
@@ -167,12 +133,7 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF verticalTouch = new PointF(120f, 160f);
 
 		// When
-		float progress = touchEvent.resultView(verticalTouch, new OnCardResult() {
-			@Override
-			public void onExit(FrameResult frameResult) {
-
-			}
-		});
+		float progress = touchEvent.resultView(verticalTouch, ON_CARD_RESULT);
 
 		// Then
 		Truth.assertThat(progress).isWithin(0);
