@@ -3,7 +3,6 @@ package com.lorentzos.flingswipe;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.lorentzos.flingswipe.internal.Direction;
 import com.lorentzos.flingswipe.internal.EndEvent;
 import com.lorentzos.flingswipe.internal.FrameResult;
 import com.lorentzos.flingswipe.internal.OnCardResult;
@@ -12,28 +11,27 @@ import com.lorentzos.flingswipe.internal.TouchEvent;
 import com.lorentzos.flingswipe.internal.TouchUtil;
 
 /**
- * Created by dionysis_lorentzos on 5/8/14
- * for package com.lorentzos.swipecards
- * and project Swipe cards.
- * Use with caution dinausaurs might appear!
+ *
  */
+public class SwipeOperator implements View.OnTouchListener {
 
-public class FlingCardListener implements View.OnTouchListener {
-
-	private final FlingListener flingListener;
+	private final CardEventListener cardEventListener;
 	private final float baseRotationDegrees;
 	private boolean isAnimationRunning;
 	private TouchEvent touchEvent;
 	private PointF lastTouchPosition;
 
-	public FlingCardListener() {
-		this(15f);
-
+	public SwipeOperator() {
+		this(15f, new SimpleCardEventListener());
 	}
 
-	public FlingCardListener(float rotationDegrees) {
+	public SwipeOperator(CardEventListener flingEventListener) {
+		this(15f, flingEventListener);
+	}
+
+	public SwipeOperator(float rotationDegrees, CardEventListener cardEventListener) {
 		baseRotationDegrees = rotationDegrees;
-		flingListener = new SimpleFlingListener();
+		this.cardEventListener = cardEventListener;
 	}
 
 	@Override
@@ -61,7 +59,7 @@ public class FlingCardListener implements View.OnTouchListener {
 				}
 
 				float scrollProgress = touchEvent.moveView(touchPosition);
-				flingListener.onScroll(scrollProgress);
+				cardEventListener.onScroll(view, scrollProgress);
 
 				lastTouchPosition = touchPosition;
 				return true;
@@ -78,18 +76,18 @@ public class FlingCardListener implements View.OnTouchListener {
 
 						switch (frameResult.getEndEvent()) {
 							case EndEvent.EXIT:
-								flingListener.onCardExited(frameResult.getDirection());
+								cardEventListener.onCardExited(view, frameResult.getDirection());
 								break;
 							case EndEvent.CLICK:
-								flingListener.onClick(view);
+								cardEventListener.onClick(view);
 								break;
 							case EndEvent.RECENTER:
-								flingListener.onRecenter();
+								cardEventListener.onRecenter(view);
 								break;
 						}
 					}
 				});
-				flingListener.onScroll(scrollResult);
+				cardEventListener.onScroll(view, scrollResult);
 
 				lastTouchPosition = touchPosition;
 				break;
@@ -101,40 +99,20 @@ public class FlingCardListener implements View.OnTouchListener {
 	/**
 	 * Starts a default left exit animation.
 	 */
-	public void selectLeft() {
-		if (isAnimationRunning) {
-			return;
-		}
+	void selectLeft() {
+
+		//		touchEvent.resultView(touchPosition, cardEventListener)
 		//		exit(true, objectY, 200); // TODO: 29/10/16
 	}
 
 	/**
 	 * Starts a default right exit animation.
 	 */
-	public void selectRight() {
+	void selectRight() {
 		if (isAnimationRunning) {
 			return;
 		}
 		//		exit(false, objectY, 200); // TODO: 29/10/16
-	}
-
-	public boolean isTouching() {
-		return true;
-		//		return mActivePointerId != INVALID_POINTER_ID;
-	}
-
-	public android.graphics.PointF getLastPoint() {
-		return new android.graphics.PointF(0, 0); // TODO: 29/10/16
-	}
-
-	public interface FlingListener {
-		void onCardExited(@Direction int direction);
-
-		void onScroll(float scrollProgressPercent);
-
-		void onRecenter();
-
-		void onClick(View view);
 	}
 
 }

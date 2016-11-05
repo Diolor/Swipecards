@@ -3,14 +3,14 @@ package com.lorentzos.flingswipe;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.database.DataSetObserver;
-import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
+
+import com.lorentzos.flingswipe.internal.Direction;
 
 /**
  * Created by dionysis_lorentzos on 5/8/14
@@ -19,139 +19,92 @@ import android.widget.FrameLayout;
  * Use with caution dinosaurs might appear!
  */
 
-public class SwipeFlingAdapterView extends BaseFlingAdapterView {
+public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardEventListener {
 
-	private int MAX_VISIBLE = 4;
-	private int MIN_ADAPTER_STACK = 6;
-	private float ROTATION_DEGREES = 15.f;
+	private static final int MAX_VISIBLE = 4;
+	private static final int MIN_ADAPTER_STACK = 6;
+	private static final float ROTATION_DEGREES = 15.f;
+	private final int maxVisible;
+	private final SwipeOperator swipeOperator = new SwipeOperator(this);
+	private final RequestLayoutObserver dataSetObserver = new RequestLayoutObserver(this);
+	private final Object object = new Object();
+	private boolean inLayout;
+	private boolean nextLayoutPass;
+	private OnExitListener onExitListener;
+	private Adapter adapter;
+	private View topView;
 
-	private Adapter mAdapter;
-	private int LAST_OBJECT_IN_STACK;
-	private onFlingListener mFlingListener;
-	private AdapterDataSetObserver mDataSetObserver;
-	private boolean mInLayout;
-	private View mActiveCard;
-	private OnItemClickListener mOnItemClickListener;
-	private FlingCardListener flingCardListener;
-	private PointF mLastTouchPoint;
+	private static FrameLayout.LayoutParams createDefaultParams() {
+		return new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	}
 
 	public SwipeFlingAdapterView(Context context) {
 		this(context, null);
 	}
 
 	public SwipeFlingAdapterView(Context context, AttributeSet attrs) {
-		this(context, attrs, R.attr.SwipeFlingStyle);
+		this(context, attrs, R.attr.SwipeStyle);
 	}
 
 	public SwipeFlingAdapterView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeFlingAdapterView, defStyle, 0);
-		MAX_VISIBLE = a.getInt(R.styleable.SwipeFlingAdapterView_max_visible, MAX_VISIBLE);
-		MIN_ADAPTER_STACK = a.getInt(R.styleable.SwipeFlingAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
-		ROTATION_DEGREES = a.getFloat(R.styleable.SwipeFlingAdapterView_rotation_degrees, ROTATION_DEGREES);
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeAdapterView, defStyle, 0);
+		maxVisible = a.getInt(R.styleable.SwipeAdapterView_max_visible, MAX_VISIBLE);
+		int minAdapterStack = a.getInt(R.styleable.SwipeAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
+		float rotationDegress = a.getFloat(R.styleable.SwipeAdapterView_rotation_degrees, ROTATION_DEGREES);
 		a.recycle();
-	}
-
-	/**
-	 * A shortcut method to set both the listeners and the adapter.
-	 *
-	 * @param context  The activity context which extends onFlingListener, OnItemClickListener or both
-	 * @param mAdapter The adapter you have to set.
-	 */
-	public void init(Context context, Adapter mAdapter) {
-		if (context instanceof onFlingListener) {
-			mFlingListener = (onFlingListener) context;
-		} else {
-			throw new RuntimeException("Activity does not implement SwipeFlingAdapterView.onFlingListener");
-		}
-		if (context instanceof OnItemClickListener) {
-			mOnItemClickListener = (OnItemClickListener) context;
-		}
-		setAdapter(mAdapter);
-	}
-
-	@Override
-	public View getSelectedView() {
-		return mActiveCard;
 	}
 
 	@Override
 	public void requestLayout() {
-		if (!mInLayout) {
+		if (!inLayout) {
 			super.requestLayout();
 		}
 	}
 
-	@Override
-	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-		super.onLayout(changed, left, top, right, bottom);
-		// if we don't have an adapter, we don't need to do anything
-		if (mAdapter == null) {
-			return;
-		}
-
-		mInLayout = true;
-		int adapterCount = mAdapter.getCount();
-
-		if (adapterCount == 0) {
-			removeAllViewsInLayout();
-		} else {
-			View topCard = getChildAt(LAST_OBJECT_IN_STACK);
-			if (mActiveCard != null && topCard != null && topCard == mActiveCard) {
-				PointF lastPoint = flingCardListener.getLastPoint();
-				if (mLastTouchPoint == null || !mLastTouchPoint.equals(lastPoint)) {
-					mLastTouchPoint = lastPoint;
-					removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
-					layoutChildren(1, adapterCount);
-				}
-			} else {
-				// Reset the UI and set top view listener
-				removeAllViewsInLayout();
-				layoutChildren(0, adapterCount);
-				setTopView();
-			}
-		}
-
-		mInLayout = false;
-
-		if (adapterCount <= MIN_ADAPTER_STACK) mFlingListener.onAdapterAboutToEmpty(adapterCount);
-	}
-
 	private void layoutChildren(int startingIndex, int adapterCount) {
-		while (startingIndex < Math.min(adapterCount, MAX_VISIBLE)) {
-			View newUnderChild = mAdapter.getView(startingIndex, null, this);
-			if (newUnderChild.getVisibility() != GONE) {
-				makeAndAddView(newUnderChild);
-				LAST_OBJECT_IN_STACK = startingIndex;
+		int min = Math.min(adapterCount, maxVisible);
+
+		while (startingIndex < min) {
+
+			View child = adapter.getView(startingIndex, null, this);
+
+			if (child.getVisibility() != GONE) {
+				makeAndAddView(child);
+				//				lastObjectInStack = startingIndex;
 			}
+
+			if (startingIndex == 0) {
+				setTopView(child);
+			}
+
 			startingIndex++;
 		}
+
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private void makeAndAddView(View child) {
 
-		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
-		addViewInLayout(child, 0, lp, true);
+		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) child.getLayoutParams();
+		if (params == null) {
+			params = createDefaultParams();
+		}
 
-		boolean needToMeasure = child.isLayoutRequested();
-		if (needToMeasure) {
-			int childWidthSpec = getChildMeasureSpec(getWidthMeasureSpec(),
-					getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
-					lp.width);
-			int childHeightSpec = getChildMeasureSpec(getHeightMeasureSpec(),
-					getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin,
-					lp.height);
-			child.measure(childWidthSpec, childHeightSpec);
+		addViewInLayout(child, 0, params, true);
+
+		boolean needsMeasure = child.isLayoutRequested();
+		if (needsMeasure) {
+			measureChild(child, params);
 		} else {
 			cleanupLayoutState(child);
 		}
 
-		int w = child.getMeasuredWidth();
-		int h = child.getMeasuredHeight();
+		int width = child.getMeasuredWidth();
+		int height = child.getMeasuredHeight();
 
-		int gravity = lp.gravity;
+		int gravity = params.gravity;
 		if (gravity == -1) {
 			gravity = Gravity.TOP | Gravity.START;
 		}
@@ -160,125 +113,116 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 		int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
 		int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
 
-		int childLeft;
-		int childTop;
+		int childLeft = getChildLeftPosition(params, width, absoluteGravity);
+		int childTop = getChildTopPosition(params, height, verticalGravity);
+
+		child.layout(childLeft, childTop, childLeft + width, childTop + height);
+	}
+
+	private void measureChild(View child, FrameLayout.LayoutParams lp) {
+
+		int horizontalPadding = getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin;
+		int verticalPadding = getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin;
+
+		int childWidthSpec = getChildMeasureSpec(getWidthMeasureSpec(), horizontalPadding, lp.width);
+		int childHeightSpec = getChildMeasureSpec(getHeightMeasureSpec(), verticalPadding, lp.height);
+
+		child.measure(childWidthSpec, childHeightSpec);
+	}
+
+	private int getChildLeftPosition(FrameLayout.LayoutParams params, int width, int absoluteGravity) {
 		switch (absoluteGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
 			case Gravity.CENTER_HORIZONTAL:
-				childLeft = (getWidth() + getPaddingLeft() - getPaddingRight() - w) / 2 +
-						lp.leftMargin - lp.rightMargin;
-				break;
+				int parentMiddleX = (getWidth() + getPaddingLeft() - getPaddingRight() - width) / 2;
+				return parentMiddleX + params.leftMargin - params.rightMargin;
+
 			case Gravity.END:
-				childLeft = getWidth() + getPaddingRight() - w - lp.rightMargin;
-				break;
+				return getWidth() + getPaddingRight() - width - params.rightMargin;
+
 			case Gravity.START:
 			default:
-				childLeft = getPaddingLeft() + lp.leftMargin;
-				break;
+				return getPaddingLeft() + params.leftMargin;
 		}
+	}
+
+	private int getChildTopPosition(FrameLayout.LayoutParams params, int height, int verticalGravity) {
+
 		switch (verticalGravity) {
 			case Gravity.CENTER_VERTICAL:
-				childTop = (getHeight() + getPaddingTop() - getPaddingBottom() - h) / 2 +
-						lp.topMargin - lp.bottomMargin;
-				break;
+				int parentMiddleY = (getHeight() + getPaddingTop() - getPaddingBottom() - height) / 2;
+				return parentMiddleY + params.topMargin - params.bottomMargin;
+
 			case Gravity.BOTTOM:
-				childTop = getHeight() - getPaddingBottom() - h - lp.bottomMargin;
-				break;
+				return getHeight() - getPaddingBottom() - height - params.bottomMargin;
+
 			case Gravity.TOP:
 			default:
-				childTop = getPaddingTop() + lp.topMargin;
-				break;
-		}
+				return getPaddingTop() + params.topMargin;
 
-		child.layout(childLeft, childTop, childLeft + w, childTop + h);
+		}
 	}
 
 	/**
 	 * Set the top view and add the fling listener
 	 */
-	private void setTopView() {
-		if (getChildCount() > 0) {
-
-			mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
-			if (mActiveCard != null) {
-
-				flingCardListener = new FlingCardListener(mAdapter.getItem(0),
-						ROTATION_DEGREES, new FlingCardListener.FlingListener() {
-
-					@Override
-					public void onCardExited() {
-						mActiveCard = null;
-						mFlingListener.removeFirstObjectInAdapter();
-					}
-
-					@Override
-					public void leftExit(Object dataObject) {
-						mFlingListener.onLeftCardExit(dataObject);
-					}
-
-					@Override
-					public void rightExit(Object dataObject) {
-						mFlingListener.onRightCardExit(dataObject);
-					}
-
-					@Override
-					public void onClick(Object dataObject) {
-						if (mOnItemClickListener != null)
-							mOnItemClickListener.onItemClicked(0, dataObject);
-
-					}
-
-					@Override
-					public void onScroll(float scrollProgressPercent) {
-						mFlingListener.onScroll(scrollProgressPercent);
-					}
-				});
-
-				mActiveCard.setOnTouchListener(flingCardListener);
-			}
-		}
-	}
-
-	public FlingCardListener getTopCardListener() throws NullPointerException {
-		if (flingCardListener == null) {
-			throw new NullPointerException();
-		}
-		return flingCardListener;
-	}
-
-	public void setMaxVisible(int MAX_VISIBLE) {
-		this.MAX_VISIBLE = MAX_VISIBLE;
-	}
-
-	public void setMinStackInAdapter(int MIN_ADAPTER_STACK) {
-		this.MIN_ADAPTER_STACK = MIN_ADAPTER_STACK;
+	private void setTopView(View topView) {
+		this.topView = topView;
+		this.topView.setOnTouchListener(swipeOperator);
 	}
 
 	@Override
 	public Adapter getAdapter() {
-		return mAdapter;
+		return adapter;
 	}
 
 	@Override
 	public void setAdapter(Adapter adapter) {
-		if (mAdapter != null && mDataSetObserver != null) {
-			mAdapter.unregisterDataSetObserver(mDataSetObserver);
-			mDataSetObserver = null;
+		if (adapter == null) {
+			throw new IllegalStateException("Passed adapter was null.");
 		}
 
-		mAdapter = adapter;
-
-		if (mAdapter != null && mDataSetObserver == null) {
-			mDataSetObserver = new AdapterDataSetObserver();
-			mAdapter.registerDataSetObserver(mDataSetObserver);
+		if (this.adapter != null) {
+			this.adapter.unregisterDataSetObserver(dataSetObserver);
 		}
+
+		this.adapter = adapter;
+		this.adapter.registerDataSetObserver(dataSetObserver);
 	}
 
-	public void setFlingListener(onFlingListener onFlingListener) {
-		mFlingListener = onFlingListener;
+	@Override
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		super.onLayout(changed, left, top, right, bottom);
+		// if we don't have an adapter, we don't need to do anything
+		if (adapter == null) {
+			return;
+		}
+
+		inLayout = true;
+		int adapterCount = adapter.getCount();
+
+		if (adapterCount == 0) {
+			removeAllViewsInLayout();
+		} else {
+
+			int count = adapter.getCount();
+
+			for (int i = 0; i < count; i++) {
+				removeAllViewsInLayout();
+				layoutChildren(0, adapterCount);
+			}
+		}
+
+		inLayout = false;
+		nextLayoutPass = false;
 	}
 
-	public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-		mOnItemClickListener = onItemClickListener;
+	@Override
+	public View getSelectedView() {
+		return topView;
+	}
+
+	public void setOnExitListener(OnExitListener onExitListener) {
+		this.onExitListener = onExitListener;
 	}
 
 	@Override
@@ -286,33 +230,47 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 		return new FrameLayout.LayoutParams(getContext(), attrs);
 	}
 
-	private class AdapterDataSetObserver extends DataSetObserver {
-		@Override
-		public void onChanged() {
-			requestLayout();
+	@Override
+	public void onCardExited(View view, @Direction int direction) {
+		if (onExitListener == null) {
+			return;
 		}
 
-		@Override
-		public void onInvalidated() {
-			requestLayout();
+		onExitListener.onExit(view, direction);
+	}
+
+	@Override
+	public void onScroll(View view, float scrollProgressPercent) {
+
+	}
+
+	@Override
+	public void onRecenter(View view) {
+
+	}
+
+	@Override
+	public void onClick(View view) {
+		performItemClick(view, 0, 0);
+	}
+
+	public void swipeRight() {
+		synchronized (object) {
+			if (nextLayoutPass) {
+				return;
+			}
+			nextLayoutPass = true;
+			swipeOperator.selectLeft();
 		}
-
 	}
 
-	public interface OnItemClickListener {
-		void onItemClicked(int itemPosition, Object dataObject);
+	public void swipeLeft() {
+		synchronized (object) {
+			if (nextLayoutPass) {
+				return;
+			}
+			nextLayoutPass = true;
+			swipeOperator.selectRight();
+		}
 	}
-
-	public interface onFlingListener {
-		void removeFirstObjectInAdapter();
-
-		void onLeftCardExit(Object dataObject);
-
-		void onRightCardExit(Object dataObject);
-
-		void onAdapterAboutToEmpty(int itemsInAdapter);
-
-		void onScroll(float scrollProgressPercent);
-	}
-
 }

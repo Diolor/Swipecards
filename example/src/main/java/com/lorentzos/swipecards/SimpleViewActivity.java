@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.lorentzos.flingswipe.FlingCardListener;
+import com.lorentzos.flingswipe.SwipeOperator;
 
 public class SimpleViewActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class SimpleViewActivity extends AppCompatActivity {
 
 		View view = findViewById(R.id.simpleView);
 
-		view.setOnTouchListener(new FlingCardListener());
+		view.setOnTouchListener(new SwipeOperator());
 
 	}
 }

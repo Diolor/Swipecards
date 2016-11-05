@@ -10,9 +10,6 @@ import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_TOP;
  * Helping class which contains the data and functionality for the flinging view.
  */
 class FrameData {
-	@SuppressWarnings("ConstantMathCall")
-	private static final float MAX_COS = (float) StrictMath.cos(Math.toRadians(45));
-
 	private final float startX;
 	private final float startY;
 	private final float height;
@@ -20,7 +17,6 @@ class FrameData {
 	private final float parentWidth;
 	private final float leftBorder;
 	private final float rightBorder;
-	private final float rotationWidthOffset;
 
 	/**
 	 * Creates a new instance of {@link FrameData} from a given view.
@@ -37,14 +33,14 @@ class FrameData {
 
 	/**
 	 * When the object rotates it's width becomes bigger.
-	 * The maximum width is at 45 degrees.
 	 * <p>
-	 * The below method calculates the width offset of the rotation.
+	 * The below method calculates the width offset for the given the rotation.
 	 *
-	 * @param width the width of the view with 0 degrees rotation.
+	 * @param width          the width of the view with 0 degrees rotation.
+	 * @param rotationFactor the base rotation factor to calculate the width offset
 	 */
-	private static float getRotationWidthOffset(float width) {
-		return width / MAX_COS - width;
+	private static float getRotationWidthOffset(float width, float rotationFactor) {
+		return (float) (width / StrictMath.cos(Math.toRadians(2 * rotationFactor)) - width);
 	}
 
 	private FrameData(PointF framePosition, int height, int width, float parentWidth) {
@@ -55,8 +51,6 @@ class FrameData {
 		this.parentWidth = parentWidth;
 		leftBorder = parentWidth * 0.25f;
 		rightBorder = parentWidth * 0.75f;
-
-		rotationWidthOffset = getRotationWidthOffset(width);
 	}
 
 	/**
@@ -106,7 +100,7 @@ class FrameData {
 	 * @see #getRightExitPoint(PointF, float)
 	 */
 	ExitPosition getLeftExitPosition(PointF framePosition, float rotationFactor) {
-		float exitX = -width - rotationWidthOffset;
+		float exitX = -width - getRotationWidthOffset(width, rotationFactor);
 		float exitY = calculateExitY(framePosition, exitX);
 		float exitRotation = getExitRotation(rotationFactor);
 
@@ -125,7 +119,7 @@ class FrameData {
 	 * @see #getLeftExitPosition(PointF, float)
 	 */
 	ExitPosition getRightExitPoint(PointF framePosition, float rotationFactor) {
-		float exitX = parentWidth;
+		float exitX = parentWidth + getRotationWidthOffset(width, rotationFactor);
 		float exitY = calculateExitY(framePosition, exitX);
 		float exitRotation = getExitRotation(rotationFactor);
 
