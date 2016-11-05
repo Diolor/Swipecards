@@ -3,6 +3,8 @@ package com.lorentzos.flingswipe.internal;
 import android.support.annotation.FloatRange;
 import android.view.View;
 
+import static com.lorentzos.flingswipe.internal.Direction.LEFT;
+import static com.lorentzos.flingswipe.internal.Direction.RIGHT;
 import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_BOTTOM;
 import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_TOP;
 
@@ -89,6 +91,30 @@ class FrameData {
 	}
 
 	/**
+	 * Returns the target {@link ExitPosition} of the view for the given
+	 * current position and rotation factor.
+	 * <p>
+	 * The position is required to make a smooth linear exit from the center.
+	 *
+	 * @param framePosition  the current position of the view.
+	 * @param direction      the dirrection of the exit event
+	 * @param rotationFactor the base rotation factor to calculate the rotation
+	 * @return the {@link ExitPosition} of the view
+	 * @see #getRightExitPoint(PointF, float)
+	 * @see #getLeftExitPosition(PointF, float)
+	 */
+	public ExitPosition getExitPosition(PointF framePosition, @Direction int direction, float rotationFactor) {
+		switch (direction) {
+			case LEFT:
+				return getLeftExitPosition(framePosition, rotationFactor);
+			case RIGHT:
+				return getRightExitPoint(framePosition, rotationFactor);
+			default:
+				throw new IllegalStateException("Unsupported exit direction : " + direction);
+		}
+	}
+
+	/**
 	 * Returns the target left {@link ExitPosition} of the view for the given
 	 * current position and rotation factor.
 	 * <p>
@@ -99,7 +125,7 @@ class FrameData {
 	 * @return the left {@link ExitPosition} of the view
 	 * @see #getRightExitPoint(PointF, float)
 	 */
-	ExitPosition getLeftExitPosition(PointF framePosition, float rotationFactor) {
+	private ExitPosition getLeftExitPosition(PointF framePosition, float rotationFactor) {
 		float exitX = -width - getRotationWidthOffset(width, rotationFactor);
 		float exitY = calculateExitY(framePosition, exitX);
 		float exitRotation = getExitRotation(rotationFactor);
@@ -118,7 +144,7 @@ class FrameData {
 	 * @return the right {@link ExitPosition} of the view
 	 * @see #getLeftExitPosition(PointF, float)
 	 */
-	ExitPosition getRightExitPoint(PointF framePosition, float rotationFactor) {
+	private ExitPosition getRightExitPoint(PointF framePosition, float rotationFactor) {
 		float exitX = parentWidth + getRotationWidthOffset(width, rotationFactor);
 		float exitY = calculateExitY(framePosition, exitX);
 		float exitRotation = getExitRotation(rotationFactor);
@@ -127,6 +153,10 @@ class FrameData {
 	}
 
 	private float calculateExitY(PointF framePosition, float exitXPoint) {
+		if (Float.compare(framePosition.y, startY) == 0) {
+			return startY;
+		}
+
 		float slope = (framePosition.y - startY) / (framePosition.x - startX);
 		float intercept = startY - slope * startX;
 

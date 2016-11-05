@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 
-import static com.lorentzos.flingswipe.internal.Direction.LEFT;
 import static com.lorentzos.flingswipe.internal.Direction.RIGHT;
 import static com.lorentzos.flingswipe.internal.EndEvent.CLICK;
 import static com.lorentzos.flingswipe.internal.EndEvent.EXIT;
@@ -95,7 +94,7 @@ public class TouchEvent {
 			case EXIT:
 				float rotation = adjustRotationFactor(rotationFactor, touchType, frameResult.getDirection());
 
-				getExitPosition(framePosition, frameResult.getDirection(), rotation).exit(frame, new AnimatorListenerAdapter() {
+				frameData.getExitPosition(framePosition, frameResult.getDirection(), rotation).exit(frame, new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationEnd(Animator animation) {
 						onCardResult.onExit(frameResult);
@@ -111,17 +110,6 @@ public class TouchEvent {
 		}
 
 		return scrollProgress;
-	}
-
-	private ExitPosition getExitPosition(PointF framePosition, @Direction int direction, float rotationFactor) {
-		switch (direction) {
-			case LEFT:
-				return frameData.getLeftExitPosition(framePosition, rotationFactor);
-			case RIGHT:
-				return frameData.getRightExitPoint(framePosition, rotationFactor);
-			default:
-				throw new IllegalStateException("Unsupported exit direction : " + direction);
-		}
 	}
 
 }

@@ -16,7 +16,6 @@ class ExitPosition {
 	private final float exitRotation;
 
 	ExitPosition(float exitX, float exitY, float exitRotation) {
-
 		this.exitX = exitX;
 		this.exitY = exitY;
 		this.exitRotation = exitRotation;

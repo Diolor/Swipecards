@@ -1,24 +1,24 @@
 package com.lorentzos.flingswipe;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
 
 import com.lorentzos.flingswipe.internal.Direction;
+import com.lorentzos.flingswipe.internal.SwipeEvent;
 
 /**
- * Created by dionysis_lorentzos on 5/8/14
- * for package com.lorentzos.swipecards
- * and project Swipe cards.
- * Use with caution dinosaurs might appear!
+ *
  */
-
 public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardEventListener {
 
 	private static final int MAX_VISIBLE = 4;
@@ -66,20 +66,21 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 	private void layoutChildren(int startingIndex, int adapterCount) {
 		int min = Math.min(adapterCount, maxVisible);
 
-		while (startingIndex < min) {
+		boolean noTopView = true;
 
-			View child = adapter.getView(startingIndex, null, this);
+		for (int i = startingIndex; i < min; i++) {
+			View child = adapter.getView(i, null, this);
+
+			Log.wtf("SwipeFlingAdapterView", "layoutChildren i: " + i);
 
 			if (child.getVisibility() != GONE) {
 				makeAndAddView(child);
-				//				lastObjectInStack = startingIndex;
 			}
 
-			if (startingIndex == 0) {
+			if (noTopView) {
+				noTopView = false;
 				setTopView(child);
 			}
-
-			startingIndex++;
 		}
 
 	}
@@ -198,18 +199,13 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 		}
 
 		inLayout = true;
+		removeAllViewsInLayout();
+		topView = null;
+
 		int adapterCount = adapter.getCount();
 
-		if (adapterCount == 0) {
-			removeAllViewsInLayout();
-		} else {
-
-			int count = adapter.getCount();
-
-			for (int i = 0; i < count; i++) {
-				removeAllViewsInLayout();
-				layoutChildren(0, adapterCount);
-			}
+		if (adapterCount != 0) {
+			layoutChildren(0, adapterCount);
 		}
 
 		inLayout = false;
@@ -256,21 +252,31 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 
 	public void swipeRight() {
 		synchronized (object) {
-			if (nextLayoutPass) {
-				return;
-			}
-			nextLayoutPass = true;
-			swipeOperator.selectLeft();
+			swipe(Direction.RIGHT);
 		}
 	}
 
 	public void swipeLeft() {
 		synchronized (object) {
-			if (nextLayoutPass) {
-				return;
-			}
-			nextLayoutPass = true;
-			swipeOperator.selectRight();
+			swipe(Direction.LEFT);
 		}
+	}
+
+	private void swipe(final int direction) {
+		if (nextLayoutPass) {
+			return;
+		}
+
+		if (topView == null) {
+			throw new IllegalStateException("Tried to swipe the top view but the adapterview has not been.");
+		}
+		nextLayoutPass = true;
+
+		new SwipeEvent(15f, topView).exit(direction, new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				onExitListener.onExit(topView, direction);
+			}
+		});
 	}
 }

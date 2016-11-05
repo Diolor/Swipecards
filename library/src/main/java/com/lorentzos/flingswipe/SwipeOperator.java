@@ -71,7 +71,6 @@ public class SwipeOperator implements View.OnTouchListener {
 				float scrollResult = touchEvent.resultView(touchPosition, new OnCardResult() {
 					@Override
 					public void onExit(FrameResult frameResult) {
-						isAnimationRunning = false;
 						view.setLayerType(View.LAYER_TYPE_NONE, null);
 
 						switch (frameResult.getEndEvent()) {
@@ -85,6 +84,7 @@ public class SwipeOperator implements View.OnTouchListener {
 								cardEventListener.onRecenter(view);
 								break;
 						}
+						isAnimationRunning = false;
 					}
 				});
 				cardEventListener.onScroll(view, scrollResult);
@@ -94,25 +94,6 @@ public class SwipeOperator implements View.OnTouchListener {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Starts a default left exit animation.
-	 */
-	void selectLeft() {
-
-		//		touchEvent.resultView(touchPosition, cardEventListener)
-		//		exit(true, objectY, 200); // TODO: 29/10/16
-	}
-
-	/**
-	 * Starts a default right exit animation.
-	 */
-	void selectRight() {
-		if (isAnimationRunning) {
-			return;
-		}
-		//		exit(false, objectY, 200); // TODO: 29/10/16
 	}
 
 }
