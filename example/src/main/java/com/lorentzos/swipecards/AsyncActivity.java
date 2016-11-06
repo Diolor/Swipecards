@@ -5,27 +5,35 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import com.lorentzos.flingswipe.OnExitListener;
 import com.lorentzos.flingswipe.OnRecenterListener;
 import com.lorentzos.flingswipe.OnScrollListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.lorentzos.flingswipe.internal.Direction;
+import com.lorentzos.swipecards.data.GitHubService;
+import com.lorentzos.swipecards.data.Member;
+import com.lorentzos.swipecards.data.MemberAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
-public class MyActivity extends Activity {
+import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
+import static io.reactivex.schedulers.Schedulers.newThread;
 
-	private ArrayList<String> list;
-	private ArrayAdapter<String> arrayAdapter;
+public class AsyncActivity extends Activity {
+
+	private final List<Member> list = new ArrayList<>();
 
 	@InjectView(R.id.frame)
 	SwipeFlingAdapterView flingContainer;
+	private Disposable disposable;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +41,15 @@ public class MyActivity extends Activity {
 		setContentView(R.layout.activity_my);
 		ButterKnife.inject(this);
 
-		list = new ArrayList<>();
-		list.add("php");
-		list.add("c");
-		list.add("python");
-		list.add("java");
-		list.add("html");
-		list.add("c++");
-		list.add("css");
-		list.add("javascript");
+		final MemberAdapter memberAdapter = new MemberAdapter(this, list);
 
-		arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, list);
-
-		flingContainer.setAdapter(arrayAdapter);
+		flingContainer.setAdapter(memberAdapter);
 		flingContainer.setOnExitListener(new OnExitListener() {
 			@Override
 			public void onExit(View view, @Direction int direction) {
 				Log.i("MyActivity", "onExit " + direction);
 				list.remove(0);
-				arrayAdapter.notifyDataSetChanged();
+				memberAdapter.notifyDataSetChanged();
 			}
 		});
 
@@ -75,6 +73,24 @@ public class MyActivity extends Activity {
 				Log.i("MyActivity", "onRecenter");
 			}
 		});
+
+		disposable = GitHubService.create().listOrgMembers("ReactiveX")
+				.subscribeOn(newThread())
+				.observeOn(mainThread())
+				.subscribe(new Consumer<List<Member>>() {
+					@Override
+					public void accept(List<Member> members) throws Exception {
+						list.addAll(members);
+						memberAdapter.notifyDataSetChanged();
+					}
+				});
+
+	}
+
+	@Override
+	protected void onDestroy() {
+		disposable.dispose();
+		super.onDestroy();
 	}
 
 	@OnClick(R.id.right)
