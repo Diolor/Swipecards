@@ -12,6 +12,10 @@ android:
     - build-tools-25.0.0
     - android-25
 
+    licenses:
+      - 'android-sdk-license-.+'
+      - 'google-gdk-license-.+'
+
 notifications:
   email: false
 
