@@ -21,3 +21,6 @@ cache:
     - $HOME/.gradle
 
 script: ./gradlew clean build check test
+
+after_failure:
+  script: cat ~/Desktop/Swipecards/example/build/outputs/lint-results-debug.xml
