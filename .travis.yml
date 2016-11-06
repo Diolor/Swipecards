@@ -7,9 +7,12 @@ android:
   components:
     - platform-tools
     - tools
+    - extra-android-support
 
     - build-tools-25.0.0
     - android-25
 
+notifications:
+  email: false
 
 script: ./gradlew build check test
