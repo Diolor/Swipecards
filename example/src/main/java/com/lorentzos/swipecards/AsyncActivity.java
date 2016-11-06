@@ -1,6 +1,8 @@
 package com.lorentzos.swipecards;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +17,6 @@ import com.lorentzos.swipecards.data.GitHubService;
 import com.lorentzos.swipecards.data.Member;
 import com.lorentzos.swipecards.data.MemberAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -33,10 +34,12 @@ import static io.reactivex.schedulers.Schedulers.newThread;
  */
 public class AsyncActivity extends AppCompatActivity {
 
-	private final List<Member> list = new ArrayList<>();
-
+	public static final String MEMBERS = "MEMBERS";
 	@InjectView(R.id.frame)
 	SwipeAdapterView flingContainer;
+	@InjectView(R.id.coordinator_layout)
+	CoordinatorLayout coordinatorLayout;
+	private MemberAdapter memberAdapter;
 	private Disposable disposable;
 
 	@Override
@@ -45,14 +48,30 @@ public class AsyncActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.inject(this);
 
-		final MemberAdapter memberAdapter = new MemberAdapter(this, list);
+		memberAdapter = new MemberAdapter(this);
+		if (savedInstanceState == null) {
+			disposable = GitHubService.createOrgs().listOrgMembers("ReactiveX")
+					.subscribeOn(newThread())
+					.retry() //naive retry
+					.observeOn(mainThread())
+					.subscribe(new Consumer<List<Member>>() {
+						@Override
+						public void accept(List<Member> members) throws Exception {
+							memberAdapter.addAll(members);
+							memberAdapter.notifyDataSetChanged();
+						}
+					});
+		} else {
+			List<Member> members = savedInstanceState.getParcelableArrayList(MEMBERS);
+			memberAdapter.addAll(members);
+		}
 
 		flingContainer.setAdapter(memberAdapter);
 		flingContainer.setOnExitListener(new OnExitListener() {
 			@Override
 			public void onExit(View view, @Direction int direction) {
 				Log.i("MyActivity", "onExit " + direction);
-				list.remove(0);
+				memberAdapter.remove(0);
 				memberAdapter.notifyDataSetChanged();
 			}
 		});
@@ -81,33 +100,38 @@ public class AsyncActivity extends AppCompatActivity {
 			}
 		});
 
-		disposable = GitHubService.createOrgs().listOrgMembers("ReactiveX")
-				.subscribeOn(newThread())
-				.observeOn(mainThread())
-				.subscribe(new Consumer<List<Member>>() {
-					@Override
-					public void accept(List<Member> members) throws Exception {
-						list.addAll(members);
-						memberAdapter.notifyDataSetChanged();
-					}
-				});
+	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putParcelableArrayList(MEMBERS, memberAdapter.getAll());
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	protected void onDestroy() {
-		disposable.dispose();
+		if (disposable != null) {
+			disposable.dispose();
+		}
 		super.onDestroy();
 	}
 
 	@OnClick(R.id.right)
 	public void swipeRight() {
+		if (memberAdapter.isEmpty()) {
+			Snackbar.make(coordinatorLayout, "Cannot swipe right. Adapter is empty.", Snackbar.LENGTH_SHORT).show();
+			return;
+		}
 		//Trigger the right event manually.
 		flingContainer.swipeRight();
 	}
 
 	@OnClick(R.id.left)
 	public void swipeLeft() {
+		if (memberAdapter.isEmpty()) {
+			Snackbar.make(coordinatorLayout, "Cannot swipe left. Adapter is empty.", Snackbar.LENGTH_SHORT).show();
+			return;
+		}
 		//Trigger the right event manually.
 		flingContainer.swipeLeft();
 	}

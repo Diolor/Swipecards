@@ -1,9 +1,12 @@
-<FrameLayout
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinator_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingBottom="@dimen/naive_snackbar_help_padding"
     tools:context=".AsyncActivity">
 
     <include layout="@layout/buttons"/>
@@ -13,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:swipe_rotation="15.5"
-        tools:context=".MyActivity" />
+        tools:context=".MyActivity"/>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
 

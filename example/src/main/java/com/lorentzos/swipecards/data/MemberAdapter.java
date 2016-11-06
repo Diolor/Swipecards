@@ -11,22 +11,22 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.lorentzos.swipecards.R;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- *
+ * Adapter for {@link Member} list
  */
-
 public class MemberAdapter extends BaseAdapter {
 
 	private final LayoutInflater layoutInflater;
 	private final Context context;
-	private final List<Member> list;
+	private final ArrayList<Member> list = new ArrayList<>();
 
-	public MemberAdapter(Context context, List<Member> list) {
+	public MemberAdapter(Context context) {
 		layoutInflater = LayoutInflater.from(context);
 		this.context = context;
-		this.list = list;
 	}
 
 	@Override
@@ -65,6 +65,27 @@ public class MemberAdapter extends BaseAdapter {
 				.into(viewHolder.avatar);
 
 		return view;
+	}
+
+	/**
+	 * @see List#remove(Object)
+	 */
+	public void remove(int i) {
+		list.remove(i);
+	}
+
+	/**
+	 * @see List#addAll(Collection)
+	 */
+	public void addAll(List<Member> members) {
+		list.addAll(members);
+	}
+
+	/**
+	 * Returns the {@link Member} {@link List}
+	 */
+	public ArrayList<Member> getAll() {
+		return list;
 	}
 
 	private static class ViewHolder {
