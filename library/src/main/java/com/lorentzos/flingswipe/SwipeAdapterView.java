@@ -42,7 +42,7 @@ public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventL
 		this(context, null);
 	}
 
-	public SwipeFlingAdapterView(Context context, AttributeSet attrs) {
+	public SwipeAdapterView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
