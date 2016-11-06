@@ -21,7 +21,12 @@ class SwipeEvent {
 	void resultView(@Direction int direction, AnimatorListenerAdapter onAnimationEnd) {
 		PointF f = new PointF(frame.getX(), frame.getY());
 
-		frameData.getExitPosition(f, direction, rotationFactor)
+		float adjustedFactor = rotationFactor;
+		if (direction == Direction.LEFT) {
+			adjustedFactor *= -1;
+		}
+
+		frameData.getExitPosition(f, direction, adjustedFactor)
 				.exit(frame, onAnimationEnd);
 	}
 
