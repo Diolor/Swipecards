@@ -54,8 +54,6 @@ Temporary Items
 !.idea/codeStyleSettings.xml
 .idea
 
-# Mongo Explorer plugin:
-.idea/mongoSettings.xml
 
 ## File-based project format:
 *.iws
