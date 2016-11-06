@@ -8,7 +8,7 @@
         android:background="#ffeee9e2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:rotation_degrees="15.5"
+        app:swipe_rotation="15.5"
         tools:context=".MyActivity" />
 
     <include layout="@layout/buttons" />

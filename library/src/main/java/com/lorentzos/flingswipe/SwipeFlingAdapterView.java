@@ -43,14 +43,14 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 	}
 
 	public SwipeFlingAdapterView(Context context, AttributeSet attrs) {
-		this(context, attrs, R.attr.SwipeStyle);
+		this(context, attrs, 0);
 	}
 
 	public SwipeFlingAdapterView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeAdapterView, defStyle, 0);
-		float rotationDegrees = a.getFloat(R.styleable.SwipeAdapterView_rotation_degrees, ROTATION_DEGREES);
+		float rotationDegrees = a.getFloat(R.styleable.SwipeAdapterView_swipe_rotation, ROTATION_DEGREES);
 		a.recycle();
 
 		swipeOperator = new SwipeOperator(rotationDegrees, this);
