@@ -3,32 +3,14 @@ language: android
 jdk:
   - oraclejdk8
 
-#before_install:
-#
-#  # workaround for travis-ci/travis-ci#2279
-#  - 'sudo mv /usr/local/android-sdk/tools/android-* /usr/local/bin'
-#  # Accept all licenses (workaround for travis-ci/travis-ci#2466)
-#  # Upgrade 'platform-tools' before 'tools' (workaround for travis-ci/travis-ci#2470)
-#  # Run dinstinct 'android update sdk' commands
-#  - "android-update-sdk --components='platform-tools,tools' --accept-licenses='.+'"
-#  - "android-update-sdk --components='build-tools-20.0.0' --accept-licenses='.+'"
-#  - "android-update-sdk --components='android-20' --accept-licenses='.+'"
-#  - "android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
-
-
 android:
   components:
     - tools
-#    - platform-tools
     - android-25
     - build-tools-25.0.0
     - extra-google-m2repository
     - extra-android-m2repository
     - extra-android-support
-
-#  licenses:
-#    - android-sdk-license-.+
-#    - google-gdk-license-.+
 
 notifications:
   email: false
