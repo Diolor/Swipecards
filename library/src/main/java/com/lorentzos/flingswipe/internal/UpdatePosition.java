@@ -1,5 +1,7 @@
 package com.lorentzos.flingswipe.internal;
 
+import android.view.View;
+
 /**
  * The updating position of the frame.
  */
@@ -16,20 +18,13 @@ class UpdatePosition {
 		this.scrollProgress = scrollProgress;
 	}
 
-	float getUpdateX() {
-		return updateX;
-	}
-
-	float getUpdateY() {
-		return updateY;
-	}
-
-	float getRotation() {
-		return rotation;
-	}
-
 	float getScrollProgress() {
 		return scrollProgress;
 	}
 
+	void move(View frame) {
+		frame.setX(updateX);
+		frame.setY(updateY);
+		frame.setRotation(rotation);
+	}
 }

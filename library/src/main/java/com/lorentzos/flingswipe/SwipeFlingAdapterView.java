@@ -1,7 +1,5 @@
 package com.lorentzos.flingswipe;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,8 +11,10 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
 
+import com.lorentzos.flingswipe.internal.CardEventListener;
 import com.lorentzos.flingswipe.internal.Direction;
-import com.lorentzos.flingswipe.internal.SwipeEvent;
+import com.lorentzos.flingswipe.internal.SwipeOperator;
+import com.lorentzos.flingswipe.internal.TopView;
 
 /**
  *
@@ -31,8 +31,10 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 	private boolean inLayout;
 	private boolean nextLayoutPass;
 	private OnExitListener onExitListener;
+	private OnScrollListener onScrollListener;
+	private OnRecenterListener onRecenterListener;
 	private Adapter adapter;
-	private View topView;
+	private TopView topView;
 
 	private static FrameLayout.LayoutParams createDefaultParams() {
 		return new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -79,7 +81,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 
 			if (noTopView) {
 				noTopView = false;
-				setTopView(child);
+
+				topView = new TopView(child);
+				swipeOperator.setSwipeView(topView);
 			}
 		}
 
@@ -163,14 +167,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 		}
 	}
 
-	/**
-	 * Set the top view and add the fling listener
-	 */
-	private void setTopView(View topView) {
-		this.topView = topView;
-		this.topView.setOnTouchListener(swipeOperator);
-	}
-
 	@Override
 	public Adapter getAdapter() {
 		return adapter;
@@ -214,11 +210,19 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 
 	@Override
 	public View getSelectedView() {
-		return topView;
+		return topView.get();
 	}
 
 	public void setOnExitListener(OnExitListener onExitListener) {
 		this.onExitListener = onExitListener;
+	}
+
+	public void setOnScrollListener(OnScrollListener onScrollListener) {
+		this.onScrollListener = onScrollListener;
+	}
+
+	public void setOnRecenterListener(OnRecenterListener onRecenterListener) {
+		this.onRecenterListener = onRecenterListener;
 	}
 
 	@Override
@@ -237,12 +241,12 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 
 	@Override
 	public void onScroll(View view, float scrollProgressPercent) {
-
+		onScrollListener.onScroll(view, scrollProgressPercent);
 	}
 
 	@Override
 	public void onRecenter(View view) {
-
+		onRecenterListener.onRecenter(view);
 	}
 
 	@Override
@@ -262,21 +266,12 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 		}
 	}
 
-	private void swipe(final int direction) {
+	private void swipe(int direction) {
 		if (nextLayoutPass) {
 			return;
 		}
-
-		if (topView == null) {
-			throw new IllegalStateException("Tried to swipe the top view but the adapterview has not been.");
-		}
 		nextLayoutPass = true;
-
-		new SwipeEvent(15f, topView).exit(direction, new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				onExitListener.onExit(topView, direction);
-			}
-		});
+		topView.swipe(direction);
 	}
+
 }

@@ -1,19 +1,16 @@
-package com.lorentzos.flingswipe;
+package com.lorentzos.flingswipe.internal;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.lorentzos.flingswipe.internal.EndEvent;
-import com.lorentzos.flingswipe.internal.FrameResult;
-import com.lorentzos.flingswipe.internal.OnCardResult;
-import com.lorentzos.flingswipe.internal.PointF;
-import com.lorentzos.flingswipe.internal.TouchEvent;
-import com.lorentzos.flingswipe.internal.TouchUtil;
+import com.lorentzos.flingswipe.SimpleCardEventListener;
 
 /**
- *
+ * Responsible for the swipe operations of the given view.
  */
-public class SwipeOperator implements View.OnTouchListener {
+public class SwipeOperator implements View.OnTouchListener, OnSwipeListener {
 
 	private final CardEventListener cardEventListener;
 	private final float baseRotationDegrees;
@@ -32,6 +29,14 @@ public class SwipeOperator implements View.OnTouchListener {
 	public SwipeOperator(float rotationDegrees, CardEventListener cardEventListener) {
 		baseRotationDegrees = rotationDegrees;
 		this.cardEventListener = cardEventListener;
+	}
+
+	/**
+	 * Sets the {@link TopView} which should be given the swiping possibility.
+	 */
+	public void setSwipeView(TopView view) {
+		view.setOnTouchListener(this);
+		view.setOnSwipeListener(this);
 	}
 
 	@Override
@@ -96,6 +101,15 @@ public class SwipeOperator implements View.OnTouchListener {
 		return false;
 	}
 
+	@Override
+	public void swipe(final View view, @Direction final int direction) {
+		new SwipeEvent(baseRotationDegrees, view).resultView(direction, new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				cardEventListener.onCardExited(view, direction);
+			}
+		});
+	}
 }
 
 

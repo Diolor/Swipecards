@@ -3,6 +3,6 @@ package com.lorentzos.flingswipe.internal;
 /**
  *
  */
-public interface OnCardResult {
+interface OnCardResult {
 	void onExit(FrameResult frameResult);
 }

@@ -2,6 +2,7 @@ package com.lorentzos.flingswipe;
 
 import android.view.View;
 
+import com.lorentzos.flingswipe.internal.CardEventListener;
 import com.lorentzos.flingswipe.internal.Direction;
 
 /**

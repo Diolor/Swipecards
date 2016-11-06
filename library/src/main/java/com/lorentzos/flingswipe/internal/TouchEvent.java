@@ -15,7 +15,7 @@ import static com.lorentzos.flingswipe.internal.TouchType.TOUCH_TOP;
 /**
  * A touch event with its "lifecycle".
  */
-public class TouchEvent {
+class TouchEvent {
 
 	private final float rotationFactor;
 	private final View frame;
@@ -35,7 +35,7 @@ public class TouchEvent {
 		return targetRotation;
 	}
 
-	public TouchEvent(float rotationFactor, View frame, PointF initialPosition, float relativeY) {
+	TouchEvent(float rotationFactor, View frame, PointF initialPosition, float relativeY) {
 		this.rotationFactor = rotationFactor;
 		frameData = fromView(frame);
 		this.frame = frame;
@@ -52,7 +52,7 @@ public class TouchEvent {
 	 * @param movePosition the position of the pointer at the given time.
 	 * @return the scroll progress of the view
 	 */
-	public float moveView(PointF movePosition) {
+	float moveView(PointF movePosition) {
 		float dx = movePosition.x - initialPosition.x;
 		float dy = movePosition.y - initialPosition.y;
 
@@ -62,10 +62,7 @@ public class TouchEvent {
 		}
 
 		UpdatePosition updatePosition = frameData.createUpdatePosition(dx, dy, rotationFactor);
-
-		frame.setX(updatePosition.getUpdateX());
-		frame.setY(updatePosition.getUpdateY());
-		frame.setRotation(updatePosition.getRotation());
+		updatePosition.move(frame);
 
 		return updatePosition.getScrollProgress();
 	}
@@ -77,7 +74,7 @@ public class TouchEvent {
 	 * @param onCardResult the callback triggered when the event finishes.
 	 * @return the scroll progress of the view
 	 */
-	public float resultView(PointF endPosition, final OnCardResult onCardResult) {
+	float resultView(PointF endPosition, final OnCardResult onCardResult) {
 		float dx = endPosition.x - initialPosition.x;
 		float scrollProgress = frameData.getScrollProgress(dx);
 

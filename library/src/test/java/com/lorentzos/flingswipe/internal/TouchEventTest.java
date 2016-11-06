@@ -4,7 +4,7 @@ import com.google.common.collect.Range;
 import com.google.common.truth.Truth;
 
 /**
- *
+ * Base {@link TouchEvent} test class with reusable methods.
  */
 class TouchEventTest {
 

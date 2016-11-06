@@ -5,7 +5,8 @@ import static java.lang.Math.abs;
 /**
  * Utility class related to touch events.
  */
-public class TouchUtil {
+enum TouchUtil {
+	;
 
 	/**
 	 * The sensitivity of the the card movements.
@@ -17,7 +18,7 @@ public class TouchUtil {
 	 *
 	 * @see #ON_CLICK_PIXEL_SENSITIVITY
 	 */
-	public static boolean minorMovement(PointF touchPosition, PointF lastTouchPosition) {
+	static boolean minorMovement(PointF touchPosition, PointF lastTouchPosition) {
 		return abs(touchPosition.x - lastTouchPosition.x) < ON_CLICK_PIXEL_SENSITIVITY &&
 				abs(touchPosition.y - lastTouchPosition.y) < ON_CLICK_PIXEL_SENSITIVITY;
 	}

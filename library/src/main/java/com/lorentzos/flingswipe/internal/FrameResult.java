@@ -11,7 +11,7 @@ import static java.lang.Math.abs;
  * The resulting details for the view when the user moves up or cancels
  * the drag events.
  */
-public class FrameResult {
+class FrameResult {
 
 	private static final FrameResult CLICK = new FrameResult(EndEvent.CLICK, CENTER);
 	private final int endEventYpe;
@@ -51,12 +51,12 @@ public class FrameResult {
 	}
 
 	@EndEvent
-	public int getEndEvent() {
+	int getEndEvent() {
 		return endEventYpe;
 	}
 
 	@Direction
-	public int getDirection() {
+	int getDirection() {
 		return direction;
 	}
 

@@ -103,7 +103,7 @@ class FrameData {
 	 * @see #getRightExitPoint(PointF, float)
 	 * @see #getLeftExitPosition(PointF, float)
 	 */
-	public ExitPosition getExitPosition(PointF framePosition, @Direction int direction, float rotationFactor) {
+	ExitPosition getExitPosition(PointF framePosition, @Direction int direction, float rotationFactor) {
 		switch (direction) {
 			case LEFT:
 				return getLeftExitPosition(framePosition, rotationFactor);

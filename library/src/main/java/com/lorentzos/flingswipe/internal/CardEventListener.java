@@ -1,8 +1,6 @@
-package com.lorentzos.flingswipe;
+package com.lorentzos.flingswipe.internal;
 
 import android.view.View;
-
-import com.lorentzos.flingswipe.internal.Direction;
 
 /**
  *
