@@ -9,4 +9,4 @@ android:
     - android-22
 
 
-script: ./gradlew build check
+script: ./gradlew build check test
