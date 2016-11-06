@@ -3,14 +3,14 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 android {
-	compileSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
-	buildToolsVersion "22.0.1"
+	compileSdkVersion rootProject.ext.compileSdkVersion
+	buildToolsVersion rootProject.ext.buildToolsVersion
 
 	defaultConfig {
-		minSdkVersion MIN_SDK_VERSION
-		targetSdkVersion project.TARGET_SDK_VERSION
-		versionCode Integer.parseInt(project.VERSION_CODE)
-		versionName project.VERSION_NAME
+		minSdkVersion rootProject.ext.minSdkVersion
+//		targetSdkVersion project.TARGET_SDK_VERSION
+//		versionCode Integer.parseInt(project.VERSION_CODE)
+//		versionName project.VERSION_NAME
 	}
 	buildTypes {
 		release {
