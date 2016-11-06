@@ -6,7 +6,7 @@ android:
     - tools
 
     - build-tools-22.0.1
-    - android-22
+    - android-24
 
 
 script: ./gradlew build check test
