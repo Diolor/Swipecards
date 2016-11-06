@@ -14,12 +14,12 @@
 
     <TextView
         android:id="@+id/name"
+        style="@style/Base.TextAppearance.AppCompat.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/avatar"
         android:layout_centerHorizontal="true"
-        android:textColor="@android:color/black"
-        android:textSize="30sp"
+        android:padding="5dp"
         tools:text="Hello world"/>
 
     <View
