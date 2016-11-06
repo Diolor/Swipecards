@@ -16,4 +16,8 @@ android:
 notifications:
   email: false
 
-script: ./gradlew build check test
+cache:
+  directories:
+    - $HOME/.gradle
+
+script: ./gradlew clean build check test
