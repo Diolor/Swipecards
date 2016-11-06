@@ -6,11 +6,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal|bottom"
-    android:layout_marginBottom="20dp"
-    android:orientation="horizontal">
+    android:layout_marginBottom="80dp"
+    android:orientation="horizontal"
+    tools:showIn="@layout/activity_main">
 
     <Button
         android:id="@+id/left"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -19,6 +21,7 @@
 
     <Button
         android:id="@+id/right"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

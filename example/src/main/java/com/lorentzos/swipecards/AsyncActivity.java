@@ -1,7 +1,7 @@
 package com.lorentzos.swipecards;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import com.lorentzos.flingswipe.OnExitListener;
 import com.lorentzos.flingswipe.OnRecenterListener;
 import com.lorentzos.flingswipe.OnScrollListener;
-import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import com.lorentzos.flingswipe.SwipeAdapterView;
 import com.lorentzos.flingswipe.internal.Direction;
 import com.lorentzos.swipecards.data.GitHubService;
 import com.lorentzos.swipecards.data.Member;
@@ -27,18 +27,22 @@ import io.reactivex.functions.Consumer;
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static io.reactivex.schedulers.Schedulers.newThread;
 
-public class AsyncActivity extends Activity {
+/**
+ * Activity with example of a network call to obtain the data and load the avatars
+ * in the image views.
+ */
+public class AsyncActivity extends AppCompatActivity {
 
 	private final List<Member> list = new ArrayList<>();
 
 	@InjectView(R.id.frame)
-	SwipeFlingAdapterView flingContainer;
+	SwipeAdapterView flingContainer;
 	private Disposable disposable;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_my);
+		setContentView(R.layout.activity_main);
 		ButterKnife.inject(this);
 
 		final MemberAdapter memberAdapter = new MemberAdapter(this, list);
@@ -53,7 +57,7 @@ public class AsyncActivity extends Activity {
 			}
 		});
 
-		// Optionally add an OnItemClickListener
+		// Optionally add an onItemClickListener
 		flingContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -61,12 +65,15 @@ public class AsyncActivity extends Activity {
 			}
 		});
 
+		// Optionally add an onScrollListener
 		flingContainer.setOnScrollListener(new OnScrollListener() {
 			@Override
 			public void onScroll(View view, float scrollProgressPercent) {
 				Log.i("MyActivity", "onScroll " + scrollProgressPercent);
 			}
 		});
+
+		// Optionally add an onRecenterListener
 		flingContainer.setOnRecenterListener(new OnRecenterListener() {
 			@Override
 			public void onRecenter(View view) {
@@ -74,7 +81,7 @@ public class AsyncActivity extends Activity {
 			}
 		});
 
-		disposable = GitHubService.create().listOrgMembers("ReactiveX")
+		disposable = GitHubService.createOrgs().listOrgMembers("ReactiveX")
 				.subscribeOn(newThread())
 				.observeOn(mainThread())
 				.subscribe(new Consumer<List<Member>>() {

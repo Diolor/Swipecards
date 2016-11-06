@@ -1,7 +1,6 @@
 package com.lorentzos.swipecards.data;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,19 +47,34 @@ public class MemberAdapter extends BaseAdapter {
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
 
-		View child = (View) layoutInflater.inflate(R.layout.item, viewGroup, false);
+		ViewHolder viewHolder;
+		if (view == null) {
+			view = layoutInflater.inflate(R.layout.card, viewGroup, false);
+			viewHolder = new ViewHolder(view);
+			view.setTag(viewHolder);
+		} else {
+			viewHolder = (ViewHolder) view.getTag();
+		}
 
 		Member member = getItem(i);
 
-		((TextView) child.findViewById(R.id.name)).setText(member.login);
-		ImageView imageView = (ImageView) child.findViewById(R.id.image_placeholder);
-
-		Log.wtf("MemberAdapter", "getView " + member.avatarUrl);
+		viewHolder.name.setText(member.login);
 		Glide.with(context)
 				.load(member.avatarUrl)
 				.centerCrop()
-				.into(imageView);
+				.into(viewHolder.avatar);
 
-		return child;
+		return view;
 	}
+
+	private static class ViewHolder {
+		TextView name;
+		ImageView avatar;
+
+		ViewHolder(View convertView) {
+			name = (TextView) convertView.findViewById(R.id.name);
+			avatar = (ImageView) convertView.findViewById(R.id.avatar);
+		}
+	}
+
 }
