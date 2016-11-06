@@ -5,20 +5,16 @@ jdk:
 
 android:
   components:
-    - platform-tools
-    - tools
-    - android-25
     - build-tools-25.0.0
+#    - platform-tools
+#    - tools
+    - android-25
     - extra-google-m2repository
     - extra-android-m2repository
     - extra-android-support
 
 notifications:
   email: false
-
-cache:
-  directories:
-    - $HOME/.gradle
 
 script: ./gradlew clean build check test
 
