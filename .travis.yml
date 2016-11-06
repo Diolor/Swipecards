@@ -18,5 +18,3 @@ notifications:
   email: false
 
 script: ./gradlew clean build check test
-
-after_failure: cat /home/travis/build/Diolor/Swipecards/example/build/outputs/lint-results-debug.xml
