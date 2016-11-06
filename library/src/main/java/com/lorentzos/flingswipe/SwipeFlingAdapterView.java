@@ -210,6 +210,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 
 	@Override
 	public View getSelectedView() {
+		if (topView == null) {
+			return null;
+		}
 		return topView.get();
 	}
 
