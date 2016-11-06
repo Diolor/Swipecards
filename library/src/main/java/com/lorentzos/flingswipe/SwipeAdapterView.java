@@ -19,7 +19,7 @@ import com.lorentzos.flingswipe.internal.TopView;
 /**
  *
  */
-public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardEventListener {
+public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventListener {
 
 	private static final int MAX_VISIBLE = 4;
 	private static final float ROTATION_DEGREES = 15.f;
@@ -38,15 +38,15 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 		return new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 	}
 
-	public SwipeFlingAdapterView(Context context) {
+	public SwipeAdapterView(Context context) {
 		this(context, null);
 	}
 
-	public SwipeFlingAdapterView(Context context, AttributeSet attrs) {
-		this(context, attrs, R.attr.SwipeStyle);
+	public SwipeAdapterView(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
 	}
 
-	public SwipeFlingAdapterView(Context context, AttributeSet attrs, int defStyle) {
+	public SwipeAdapterView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeAdapterView, defStyle, 0);

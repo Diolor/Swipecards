@@ -15,12 +15,12 @@ import static org.mockito.Mockito.verify;
 public class RequestLayoutObserverTest {
 
 	@Mock
-	private SwipeFlingAdapterView mockSwipeFlingAdapterView;
+	private SwipeAdapterView mockSwipeAdapterView;
 	private RequestLayoutObserver layoutObserver;
 
 	@Before
 	public void setUp() throws Exception {
-		layoutObserver = new RequestLayoutObserver(mockSwipeFlingAdapterView);
+		layoutObserver = new RequestLayoutObserver(mockSwipeAdapterView);
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class RequestLayoutObserverTest {
 		layoutObserver.onChanged();
 
 		// Then
-		verify(mockSwipeFlingAdapterView).requestLayout();
+		verify(mockSwipeAdapterView).requestLayout();
 	}
 
 	@Test
@@ -42,6 +42,6 @@ public class RequestLayoutObserverTest {
 		layoutObserver.onInvalidated();
 
 		// Then
-		verify(mockSwipeFlingAdapterView).requestLayout();
+		verify(mockSwipeAdapterView).requestLayout();
 	}
 }

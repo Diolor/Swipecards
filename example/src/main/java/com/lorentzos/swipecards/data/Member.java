@@ -2,10 +2,13 @@ package com.lorentzos.swipecards.data;
 
 import com.squareup.moshi.Json;
 
+/**
+ * A member data object.
+ */
 public class Member {
 
-	public String login;
+	String login;
 	@Json(name = "avatar_url")
-	public String avatarUrl;
+	String avatarUrl;
 
 }

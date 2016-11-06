@@ -2,7 +2,6 @@
 <resources>
 
     <declare-styleable name="SwipeAdapterView">
-        <attr name="SwipeStyle" format="reference"/>
         <attr name="rotation_degrees" format="float"/>
     </declare-styleable>
 
