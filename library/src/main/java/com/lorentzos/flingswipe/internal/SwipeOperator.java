@@ -53,6 +53,7 @@ public class SwipeOperator implements View.OnTouchListener, OnSwipeListener {
 				return true;
 
 			case MotionEvent.ACTION_MOVE:
+
 				if (TouchUtil.minorMovement(touchPosition, lastTouchPosition)) {
 					return false;
 				}
@@ -64,7 +65,6 @@ public class SwipeOperator implements View.OnTouchListener, OnSwipeListener {
 				return true;
 
 			case MotionEvent.ACTION_UP:
-			case MotionEvent.ACTION_CANCEL:
 				isAnimationRunning = true;
 
 				float scrollResult = touchEvent.resultView(touchPosition, new OnCardResult() {
@@ -89,6 +89,10 @@ public class SwipeOperator implements View.OnTouchListener, OnSwipeListener {
 				cardEventListener.onScroll(view, scrollResult);
 
 				lastTouchPosition = touchPosition;
+				touchEvent = null;
+				break;
+			case MotionEvent.ACTION_CANCEL:
+				touchEvent = null;
 				break;
 		}
 
