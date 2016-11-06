@@ -1,12 +1,20 @@
 language: android
 
+jdk:
+  - oraclejdk8
+
 android:
   components:
-    - platform-tools
     - tools
+    - tools
+    - platform-tools
+    - build-tools-25.0.0
+    - android-25
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - extra-android-support
 
-    - build-tools-22.0.1
-    - android-22
+notifications:
+  email: false
 
-
-script: ./gradlew build check
+script: ./gradlew clean build check test
