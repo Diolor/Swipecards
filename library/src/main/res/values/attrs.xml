@@ -4,8 +4,6 @@
     <declare-styleable name="SwipeAdapterView">
         <attr name="SwipeStyle" format="reference"/>
         <attr name="rotation_degrees" format="float"/>
-        <attr name="min_adapter_stack" format="integer"/>
-        <attr name="max_visible" format="integer"/>
     </declare-styleable>
 
 </resources>

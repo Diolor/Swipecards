@@ -22,10 +22,8 @@ import com.lorentzos.flingswipe.internal.TopView;
 public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardEventListener {
 
 	private static final int MAX_VISIBLE = 4;
-	private static final int MIN_ADAPTER_STACK = 6;
 	private static final float ROTATION_DEGREES = 15.f;
-	private final int maxVisible;
-	private final SwipeOperator swipeOperator = new SwipeOperator(this);
+	private final SwipeOperator swipeOperator;
 	private final RequestLayoutObserver dataSetObserver = new RequestLayoutObserver(this);
 	private final Object object = new Object();
 	private boolean inLayout;
@@ -52,10 +50,10 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 		super(context, attrs, defStyle);
 
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwipeAdapterView, defStyle, 0);
-		maxVisible = a.getInt(R.styleable.SwipeAdapterView_max_visible, MAX_VISIBLE);
-		int minAdapterStack = a.getInt(R.styleable.SwipeAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
-		float rotationDegress = a.getFloat(R.styleable.SwipeAdapterView_rotation_degrees, ROTATION_DEGREES);
+		float rotationDegrees = a.getFloat(R.styleable.SwipeAdapterView_rotation_degrees, ROTATION_DEGREES);
 		a.recycle();
+
+		swipeOperator = new SwipeOperator(rotationDegrees, this);
 	}
 
 	@Override
@@ -66,7 +64,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 	}
 
 	private void layoutChildren(int startingIndex, int adapterCount) {
-		int min = Math.min(adapterCount, maxVisible);
+		int min = Math.min(adapterCount, MAX_VISIBLE);
 
 		boolean noTopView = true;
 
@@ -216,18 +214,6 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 		return topView.get();
 	}
 
-	public void setOnExitListener(OnExitListener onExitListener) {
-		this.onExitListener = onExitListener;
-	}
-
-	public void setOnScrollListener(OnScrollListener onScrollListener) {
-		this.onScrollListener = onScrollListener;
-	}
-
-	public void setOnRecenterListener(OnRecenterListener onRecenterListener) {
-		this.onRecenterListener = onRecenterListener;
-	}
-
 	@Override
 	public LayoutParams generateLayoutParams(AttributeSet attrs) {
 		return new FrameLayout.LayoutParams(getContext(), attrs);
@@ -244,17 +230,35 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView implements CardE
 
 	@Override
 	public void onScroll(View view, float scrollProgressPercent) {
+		if (onScrollListener == null) {
+			return;
+		}
 		onScrollListener.onScroll(view, scrollProgressPercent);
 	}
 
 	@Override
 	public void onRecenter(View view) {
+		if (onRecenterListener == null) {
+			return;
+		}
 		onRecenterListener.onRecenter(view);
 	}
 
 	@Override
 	public void onClick(View view) {
 		performItemClick(view, 0, 0);
+	}
+
+	public void setOnExitListener(OnExitListener onExitListener) {
+		this.onExitListener = onExitListener;
+	}
+
+	public void setOnScrollListener(OnScrollListener onScrollListener) {
+		this.onScrollListener = onScrollListener;
+	}
+
+	public void setOnRecenterListener(OnRecenterListener onRecenterListener) {
+		this.onRecenterListener = onRecenterListener;
 	}
 
 	public void swipeRight() {

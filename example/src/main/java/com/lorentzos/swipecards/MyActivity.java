@@ -1,15 +1,15 @@
 package com.lorentzos.swipecards;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.lorentzos.flingswipe.OnExitListener;
+import com.lorentzos.flingswipe.OnRecenterListener;
+import com.lorentzos.flingswipe.OnScrollListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.lorentzos.flingswipe.internal.Direction;
 
@@ -21,9 +21,8 @@ import butterknife.OnClick;
 
 public class MyActivity extends Activity {
 
-	private ArrayList<String> al;
+	private ArrayList<String> list;
 	private ArrayAdapter<String> arrayAdapter;
-	private int i;
 
 	@InjectView(R.id.frame)
 	SwipeFlingAdapterView flingContainer;
@@ -34,79 +33,48 @@ public class MyActivity extends Activity {
 		setContentView(R.layout.activity_my);
 		ButterKnife.inject(this);
 
-		al = new ArrayList<>();
-		al.add("php");
-		al.add("c");
-		al.add("python");
-		al.add("java");
-		al.add("html");
-		al.add("c++");
-		al.add("css");
-		al.add("javascript");
+		list = new ArrayList<>();
+		list.add("php");
+		list.add("c");
+		list.add("python");
+		list.add("java");
+		list.add("html");
+		list.add("c++");
+		list.add("css");
+		list.add("javascript");
 
-		arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al);
+		arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, list);
 
 		flingContainer.setAdapter(arrayAdapter);
 		flingContainer.setOnExitListener(new OnExitListener() {
 			@Override
 			public void onExit(View view, @Direction int direction) {
-				Log.wtf("MyActivity", "onExit " + direction);
-				al.remove(0);
+				Log.i("MyActivity", "onExit " + direction);
+				list.remove(0);
 				arrayAdapter.notifyDataSetChanged();
 			}
 		});
-
-		//		flingContainer.setOnExitListener(new OnExitListener() {
-		//			@Override
-		//			public void removeFirstObjectInAdapter() {
-		//				// this is the simplest way to delete an object from the Adapter (/AdapterView)
-		//				Log.d("LIST", "removed object!");
-		//				al.remove(0);
-		//				arrayAdapter.notifyDataSetChanged();
-		//			}
-		//
-		//			@Override
-		//			public void onLeftCardExit(Object dataObject) {
-		//				//Do something on the left!
-		//				//You also have access to the original object.
-		//				//If you want to use it just cast it (String) dataObject
-		//				makeToast(MyActivity.this, "Left!");
-		//			}
-		//
-		//			@Override
-		//			public void onRightCardExit(Object dataObject) {
-		//				makeToast(MyActivity.this, "Right!");
-		//			}
-		//
-		//			@Override
-		//			public void onAdapterAboutToEmpty(int itemsInAdapter) {
-		//				// Ask for more data here
-		//				al.add("XML ".concat(String.valueOf(i)));
-		//				arrayAdapter.notifyDataSetChanged();
-		//				Log.d("LIST", "notified");
-		//				i++;
-		//			}
-		//
-		//			@Override
-		//			public void onScroll(float scrollProgressPercent) {
-		//				View view = flingContainer.getSelectedView();
-		//				view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
-		//				view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
-		//			}
-		//		});
 
 		// Optionally add an OnItemClickListener
 		flingContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Log.wtf("MyActivity", "onItemClick " + position);
+				Log.i("MyActivity", "onItemClick " + position);
 			}
 		});
 
-	}
-
-	static void makeToast(Context ctx, String s) {
-		Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
+		flingContainer.setOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScroll(View view, float scrollProgressPercent) {
+				Log.i("MyActivity", "onScroll " + scrollProgressPercent);
+			}
+		});
+		flingContainer.setOnRecenterListener(new OnRecenterListener() {
+			@Override
+			public void onRecenter(View view) {
+				Log.i("MyActivity", "onRecenter");
+			}
+		});
 	}
 
 	@OnClick(R.id.right)

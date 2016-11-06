@@ -5,8 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.lorentzos.flingswipe.SimpleCardEventListener;
-
 /**
  * Responsible for the swipe operations of the given view.
  */
@@ -18,11 +16,7 @@ public class SwipeOperator implements View.OnTouchListener, OnSwipeListener {
 	private TouchEvent touchEvent;
 	private PointF lastTouchPosition;
 
-	public SwipeOperator() {
-		this(15f, new SimpleCardEventListener());
-	}
-
-	public SwipeOperator(CardEventListener flingEventListener) {
+	SwipeOperator(CardEventListener flingEventListener) {
 		this(15f, flingEventListener);
 	}
 
