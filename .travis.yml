@@ -5,13 +5,12 @@ jdk:
 
 android:
   components:
-    - build-tools-25.0.0
+    - platform-tools
+    - tools
     - android-25
-#    - platform-tools
-#    - tools
-#    - extra-android-support
+    - build-tools-25.0.0
     - extra-google-m2repository
-
+#    - extra-android-support
 
 #  licenses:
 #    - android-sdk-license-.+
