@@ -7,14 +7,12 @@ buildscript {
 	}
 	dependencies {
 		classpath 'com.android.tools.build:gradle:2.2.2'
-
-
 	}
 }
 
 subprojects {
-	version = VERSION_NAME
-	group = GROUP
+//	version = VERSION_NAME
+//	group = GROUP
 
 	repositories {
 		jcenter()
