@@ -10,10 +10,14 @@ buildscript {
 	}
 }
 
-subprojects {
+allprojects {
 //	version = VERSION_NAME
 //	group = GROUP
-
+	buildscript {
+		repositories {
+			jcenter()
+		}
+	}
 	repositories {
 		jcenter()
 	}

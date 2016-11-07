@@ -7,9 +7,9 @@ import android.database.DataSetObserver;
  */
 class RequestLayoutObserver extends DataSetObserver {
 
-	private final SwipeFlingAdapterView adapterView;
+	private final SwipeAdapterView adapterView;
 
-	RequestLayoutObserver(SwipeFlingAdapterView adapterView) {
+	RequestLayoutObserver(SwipeAdapterView adapterView) {
 		this.adapterView = adapterView;
 	}
 
