@@ -7,17 +7,19 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/left"
+    <ToggleButton
+        android:id="@+id/left_enable_switch"
         android:layout_margin="10dp"
-        android:text="Left"
+        android:textOff="Enable Left"
+        android:textOn="Disable Left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/right"
+    <ToggleButton
+        android:id="@+id/right_enable_switch"
         android:layout_margin="10dp"
-        android:text="Right"
+        android:textOff="Enable Right"
+        android:textOn="Disable Right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

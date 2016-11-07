@@ -4,17 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 
 public class MyActivity extends Activity {
@@ -22,16 +24,18 @@ public class MyActivity extends Activity {
     private ArrayList<String> al;
     private ArrayAdapter<String> arrayAdapter;
     private int i;
+    private boolean left_enable_switch = false;
+    private boolean right_enable_switch = false;
 
-    @InjectView(R.id.frame) SwipeFlingAdapterView flingContainer;
-
+    @Bind(R.id.frame) SwipeFlingAdapterView flingContainer;
+    @Bind(R.id.left_enable_switch) ToggleButton lToggle;
+    @Bind(R.id.right_enable_switch) ToggleButton rToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-        ButterKnife.inject(this);
-
+        ButterKnife.bind(this);
 
         al = new ArrayList<>();
         al.add("php");
@@ -45,9 +49,16 @@ public class MyActivity extends Activity {
 
         arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
 
-
         flingContainer.setAdapter(arrayAdapter);
-        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+
+          final SwipeFlingAdapterView.onFlingListener listener =
+                        new SwipeFlingAdapterView.onFlingListener() {
+
+            @Override
+            public Pair<Boolean,Boolean> isEnabled() {
+                return new Pair<>(left_enable_switch,right_enable_switch);
+            }
+
             @Override
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
@@ -84,8 +95,9 @@ public class MyActivity extends Activity {
                 view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
                 view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
             }
-        });
+        };
 
+        flingContainer.setFlingListener(listener);
 
         // Optionally add an OnItemClickListener
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
@@ -95,27 +107,22 @@ public class MyActivity extends Activity {
             }
         });
 
+        lToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                left_enable_switch = isChecked;
+            }
+        });
+
+        rToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                right_enable_switch = isChecked;
+            }
+        });
     }
 
     static void makeToast(Context ctx, String s){
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
     }
-
-
-    @OnClick(R.id.right)
-    public void right() {
-        /**
-         * Trigger the right event manually.
-         */
-        flingContainer.getTopCardListener().selectRight();
-    }
-
-    @OnClick(R.id.left)
-    public void left() {
-        flingContainer.getTopCardListener().selectLeft();
-    }
-
-
 
 
 }

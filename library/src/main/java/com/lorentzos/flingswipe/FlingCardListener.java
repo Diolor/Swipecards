@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.PointF;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,6 @@ public class FlingCardListener implements View.OnTouchListener {
         this.mFlingListener = flingListener;
 
     }
-
 
     public boolean onTouch(View view, MotionEvent event) {
 
@@ -146,13 +146,12 @@ public class FlingCardListener implements View.OnTouchListener {
                 final float dx = xMove - aDownTouchX;
                 final float dy = yMove - aDownTouchY;
 
-
                 // Move the frame
+                float distobjectX = aPosX - objectX;
                 aPosX += dx;
                 aPosY += dy;
 
                 // calculate the rotation degrees
-                float distobjectX = aPosX - objectX;
                 float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
                 if (touchPosition == TOUCH_BELOW) {
                     rotation = -rotation;
@@ -163,6 +162,7 @@ public class FlingCardListener implements View.OnTouchListener {
                 frame.setY(aPosY);
                 frame.setRotation(rotation);
                 mFlingListener.onScroll(getScrollProgressPercent());
+
                 break;
 
             case MotionEvent.ACTION_CANCEL: {
@@ -187,11 +187,16 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     private boolean resetCardViewOnStack() {
-        if (movedBeyondLeftBorder()) {
+
+        Pair<Boolean,Boolean> swipeEnablers = mFlingListener.isEnabled();
+        Boolean leftSwipeEnable = swipeEnablers.first;
+        Boolean rightSwipeEnable = swipeEnablers.second;
+
+        if (movedBeyondLeftBorder() && leftSwipeEnable) {
             // Left Swipe
             onSelected(true, getExitPoint(-objectW), 100);
             mFlingListener.onScroll(-1.0f);
-        } else if (movedBeyondRightBorder()) {
+        } else if (movedBeyondRightBorder() && rightSwipeEnable) {
             // Right Swipe
             onSelected(false, getExitPoint(parentWidth), 100);
             mFlingListener.onScroll(1.0f);
@@ -334,6 +339,8 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     protected interface FlingListener {
+        Pair<Boolean,Boolean> isEnabled();
+
         void onCardExited();
 
         void leftExit(Object dataObject);
