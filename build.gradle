@@ -2,21 +2,29 @@
 //apply plugin: 'maven'
 
 buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
-
-
-    }
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:2.2.2'
+	}
 }
 
 allprojects {
-    version = VERSION_NAME
-    group = GROUP
+//	version = VERSION_NAME
+//	group = GROUP
+	buildscript {
+		repositories {
+			jcenter()
+		}
+	}
+	repositories {
+		jcenter()
+	}
+}
 
-    repositories {
-        jcenter()
-    }
+ext {
+	minSdkVersion = 15
+	compileSdkVersion = 25
+	buildToolsVersion = '25.0.0'
 }

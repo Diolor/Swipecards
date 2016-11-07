@@ -1,26 +1,43 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
-    buildToolsVersion "22.0.1"
+	compileSdkVersion rootProject.ext.compileSdkVersion
+	buildToolsVersion rootProject.ext.buildToolsVersion
 
-    defaultConfig {
-        applicationId "com.lorentzos.swipecards.example"
-        minSdkVersion 15
-        targetSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION_NAME
-    }
-    buildTypes {
-        release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            minifyEnabled false
-        }
-    }
+	defaultConfig {
+		applicationId "com.lorentzos.swipecards.example"
+		minSdkVersion rootProject.ext.minSdkVersion
+
+//		targetSdkVersion 25
+//		versionCode Integer.parseInt(project.VERSION_CODE)
+//		versionName project.VERSION_NAME
+	}
+	buildTypes {
+		release {
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+			minifyEnabled false
+		}
+	}
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':library')
-    compile 'com.jakewharton:butterknife:5.1.2'
+	compile project(':library')
+
+	compile 'com.android.support:appcompat-v7:25.0.0'
+	compile 'com.android.support:design:25.0.0'
+	compile 'com.android.support:support-v4:25.0.0'
+
+	compile 'com.squareup.moshi:moshi:1.3.1'
+	compile 'com.squareup.okio:okio:1.11.0'
+	compile 'com.squareup.retrofit2:retrofit:2.1.0'
+	compile 'com.squareup.retrofit2:converter-moshi:2.1.0'
+
+	compile 'com.jakewharton:butterknife:5.1.2'
+	compile 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+
+	compile 'io.reactivex.rxjava2:rxandroid:2.0.0'
+	compile 'io.reactivex.rxjava2:rxjava:2.0.0'
+
+	compile 'com.github.bumptech.glide:glide:3.7.0'
+
 }

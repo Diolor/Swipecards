@@ -3,77 +3,81 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 android {
-    compileSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
-    buildToolsVersion "22.0.1"
+	compileSdkVersion rootProject.ext.compileSdkVersion
+	buildToolsVersion rootProject.ext.buildToolsVersion
 
-    defaultConfig {
-        minSdkVersion MIN_SDK_VERSION
-        targetSdkVersion project.TARGET_SDK_VERSION
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION_NAME
-    }
-    buildTypes {
-        release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            minifyEnabled false
-        }
-    }
+	defaultConfig {
+		minSdkVersion rootProject.ext.minSdkVersion
+//		targetSdkVersion project.TARGET_SDK_VERSION
+//		versionCode Integer.parseInt(project.VERSION_CODE)
+//		versionName project.VERSION_NAME
+	}
+	buildTypes {
+		release {
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+			minifyEnabled false
+		}
+	}
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+	compile 'com.android.support:support-annotations:25.0.0'
+
+	testCompile 'com.google.truth:truth:0.30'
+	testCompile 'org.mockito:mockito-core:2.2.9'
+	testCompile 'junit:junit:4.12'
 }
 
 
 
-
-signing {
-    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
 
 
 uploadArchives {
-    configuration = configurations.archives
+	configuration = configurations.archives
 
-    repositories.mavenDeployer {
+	repositories.mavenDeployer {
 
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+		beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername, password: sonatypePassword )
-        }
+		repository(url: sonatypeRepo) {
+			authentication(userName: sonatypeUsername, password: sonatypePassword)
+		}
 
-        snapshotRepository(url: snapshotRepo) {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-        }
+		snapshotRepository(url: snapshotRepo) {
+			authentication(userName: sonatypeUsername, password: sonatypePassword)
+		}
 
-        pom.project {
-            name POM_NAME
-            description POM_DESC
-            packaging 'aar'
-            url POM_URL
+		pom.project {
+			name POM_NAME
+			description POM_DESC
+			packaging 'aar'
+			url POM_URL
 
-            scm {
-                url POM_SCM_URL
-                connection POM_SCM_CONN
-                developerConnection POM_SCM_DEV_CONN
-            }
+			scm {
+				url POM_SCM_URL
+				connection POM_SCM_CONN
+				developerConnection POM_SCM_DEV_CONN
+			}
 
-            licenses {
-                license {
-                    name LICENCE_NAME
-                    url LICENCE_URL
-                    distribution 'repo'
-                }
-            }
+			licenses {
+				license {
+					name LICENCE_NAME
+					url LICENCE_URL
+					distribution 'repo'
+				}
+			}
 
-            developers {
-                developer {
-                    id POM_DEV
-                    name POM_DEV_NAME
-                }
-            }
-        }
-    }
+			developers {
+				developer {
+					id POM_DEV
+					name POM_DEV_NAME
+				}
+			}
+		}
+	}
 }
+
+//signing {
+//	required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+//	sign configurations.archives
+//}
