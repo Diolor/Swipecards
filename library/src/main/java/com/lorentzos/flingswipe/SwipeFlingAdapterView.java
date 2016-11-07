@@ -25,6 +25,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private int MAX_VISIBLE = 4;
     private int MIN_ADAPTER_STACK = 6;
     private float ROTATION_DEGREES = 15.f;
+    private int ANIMATION_DURATION = 200;
 
     private Adapter mAdapter;
     private int LAST_OBJECT_IN_STACK = 0;
@@ -52,6 +53,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         MAX_VISIBLE = a.getInt(R.styleable.SwipeFlingAdapterView_max_visible, MAX_VISIBLE);
         MIN_ADAPTER_STACK = a.getInt(R.styleable.SwipeFlingAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
         ROTATION_DEGREES = a.getFloat(R.styleable.SwipeFlingAdapterView_rotation_degrees, ROTATION_DEGREES);
+        ANIMATION_DURATION = a.getInt(R.styleable.SwipeFlingAdapterView_animation_duration, ANIMATION_DURATION);
         a.recycle();
     }
 
@@ -72,6 +74,12 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             mOnItemClickListener = (OnItemClickListener) context;
         }
         setAdapter(mAdapter);
+    }
+    
+    
+    public void setAnimationDuration(int animationDuration)
+    {
+        ANIMATION_DURATION = animationDuration;
     }
 
  	@Override
@@ -214,8 +222,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
             mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
             if(mActiveCard!=null) {
 
-                flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0),
-                        ROTATION_DEGREES, new FlingCardListener.FlingListener() {
+                flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0), ROTATION_DEGREES,
+                        ANIMATION_DURATION, new FlingCardListener.FlingListener() {
 
                             @Override
                             public void onCardExited() {
