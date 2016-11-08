@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.lorentzos.swipecards.example"
-        minSdkVersion 15
+        minSdkVersion 9
         targetSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
@@ -23,4 +23,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':library')
     compile 'com.jakewharton:butterknife:5.1.2'
+    compile 'com.android.support:support-v4:22.2.0'
 }
