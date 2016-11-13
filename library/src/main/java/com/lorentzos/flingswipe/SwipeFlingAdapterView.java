@@ -213,8 +213,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
             mActiveCard = getChildAt(LAST_OBJECT_IN_STACK);
             if(mActiveCard!=null) {
-
-                flingCardListener = new FlingCardListener(mActiveCard, mAdapter.getItem(0),
+                final Object dataObject = mAdapter.getItem(0);
+                flingCardListener = new FlingCardListener(mActiveCard, dataObject,
                         ROTATION_DEGREES, new FlingCardListener.FlingListener() {
 
                             @Override
@@ -247,6 +247,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                         });
 
                 mActiveCard.setOnTouchListener(flingCardListener);
+                mFlingListener.onCardActive(dataObject);
             }
         }
     }
@@ -328,6 +329,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         void onRightCardExit(Object dataObject);
         void onAdapterAboutToEmpty(int itemsInAdapter);
         void onScroll(float scrollProgressPercent);
+        void onCardActive(Object dataObject);
     }
 
 
