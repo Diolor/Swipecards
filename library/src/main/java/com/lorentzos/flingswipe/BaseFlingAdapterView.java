@@ -2,7 +2,6 @@ package com.lorentzos.flingswipe;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.AdapterView;
 
 /**
@@ -13,10 +12,8 @@ import android.widget.AdapterView;
  */
 abstract class BaseFlingAdapterView extends AdapterView {
 
-    private int heightMeasureSpec;
-    private int widthMeasureSpec;
-
-
+    private int mHeightMeasureSpec;
+    private int mWidthMeasureSpec;
 
     public BaseFlingAdapterView(Context context) {
         super(context);
@@ -38,20 +35,15 @@ abstract class BaseFlingAdapterView extends AdapterView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        this.widthMeasureSpec = widthMeasureSpec;
-        this.heightMeasureSpec = heightMeasureSpec;
+        this.mWidthMeasureSpec = widthMeasureSpec;
+        this.mHeightMeasureSpec = heightMeasureSpec;
     }
 
-
     public int getWidthMeasureSpec() {
-        return widthMeasureSpec;
+        return mWidthMeasureSpec;
     }
 
     public int getHeightMeasureSpec() {
-        return heightMeasureSpec;
+        return mHeightMeasureSpec;
     }
-
-
-
-
 }
