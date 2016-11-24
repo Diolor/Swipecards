@@ -141,6 +141,11 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private void makeAndAddView(View child) {
 
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        
+        if (lp == null) {
+            lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);   
+        }
+        
         addViewInLayout(child, 0, lp, true);
 
         final boolean needToMeasure = child.isLayoutRequested();
