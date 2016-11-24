@@ -3,7 +3,7 @@
 
     <declare-styleable name="SwipeFlingAdapterView">
         <attr name="SwipeFlingStyle" format="reference"/>
-        <attr name="rotation_degrees" format="float"/>
+        <attr name="allow_child_input" format="boolean"/>
         <attr name="min_adapter_stack" format="integer"/>
         <attr name="max_visible" format="integer"/>
     </declare-styleable>
