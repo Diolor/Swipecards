@@ -101,22 +101,10 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         if(adapterCount == 0) {
             removeAllViewsInLayout();
         }else {
-            View topCard = getChildAt(LAST_OBJECT_IN_STACK);
-            if(mActiveCard!=null && topCard!=null && topCard==mActiveCard) {
-                if (this.flingCardListener.isTouching()) {
-                    PointF lastPoint = this.flingCardListener.getLastPoint();
-                    if (this.mLastTouchPoint == null || !this.mLastTouchPoint.equals(lastPoint)) {
-                        this.mLastTouchPoint = lastPoint;
-                        removeViewsInLayout(0, LAST_OBJECT_IN_STACK);
-                        layoutChildren(1, adapterCount);
-                    }
-                }
-            }else{
-                // Reset the UI and set top view listener
-                removeAllViewsInLayout();
-                layoutChildren(0, adapterCount);
-                setTopView();
-            }
+            // Reset the UI and set top view listener
+            removeAllViewsInLayout();
+            layoutChildren(0, adapterCount);
+            setTopView();
         }
 
         mInLayout = false;
