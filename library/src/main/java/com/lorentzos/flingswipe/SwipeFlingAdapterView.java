@@ -1,5 +1,6 @@
 package com.lorentzos.flingswipe;
 
+import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -29,6 +30,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private Adapter mAdapter;
     private int LAST_OBJECT_IN_STACK = 0;
     private onFlingListener mFlingListener;
+    private boolean isAnimateFlingListener;
     private AdapterDataSetObserver mDataSetObserver;
     private boolean mInLayout = false;
     private View mActiveCard = null;
@@ -64,7 +66,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
      */
     public void init(final Context context, Adapter mAdapter) {
         if(context instanceof onFlingListener) {
-            mFlingListener = (onFlingListener) context;
+            setFlingListener((onFlingListener) context);
         }else{
             throw new RuntimeException("Activity does not implement SwipeFlingAdapterView.onFlingListener");
         }
@@ -120,7 +122,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         }
 
         mInLayout = false;
-        
+
         if(adapterCount <= MIN_ADAPTER_STACK) mFlingListener.onAdapterAboutToEmpty(adapterCount);
     }
 
@@ -244,6 +246,15 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                             public void onScroll(float scrollProgressPercent) {
                                 mFlingListener.onScroll(scrollProgressPercent);
                             }
+
+                            @Override
+                            public void onAnimate(TimeInterpolator interpolator, long duration,
+                                                  float exitX, float exitY, float exitRotation) {
+                                if (isAnimateFlingListener) {
+                                    ((onAnimateFlingListener) mFlingListener).onAnimate(
+                                      interpolator, duration, exitX, exitY, exitRotation);
+                                }
+                            }
                         });
 
                 mActiveCard.setOnTouchListener(flingCardListener);
@@ -289,6 +300,7 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
     public void setFlingListener(onFlingListener onFlingListener) {
         this.mFlingListener = onFlingListener;
+        this.isAnimateFlingListener = onFlingListener instanceof onAnimateFlingListener;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener){
@@ -330,5 +342,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         void onScroll(float scrollProgressPercent);
     }
 
+    public interface onAnimateFlingListener extends onFlingListener {
+        void onAnimate(TimeInterpolator interpolator, long duration,
+                       float exitX, float exitY, float exitRotation);
+    }
 
 }
