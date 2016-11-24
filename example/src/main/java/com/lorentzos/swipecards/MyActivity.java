@@ -23,7 +23,8 @@ public class MyActivity extends Activity {
     private ArrayAdapter<String> arrayAdapter;
     private int i;
 
-    @InjectView(R.id.frame) SwipeFlingAdapterView flingContainer;
+    @InjectView(R.id.frame)
+    SwipeFlingAdapterView flingContainer;
 
 
     @Override
@@ -43,7 +44,7 @@ public class MyActivity extends Activity {
         al.add("css");
         al.add("javascript");
 
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
+        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al);
 
 
         flingContainer.setAdapter(arrayAdapter);
@@ -73,7 +74,7 @@ public class MyActivity extends Activity {
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
                 // Ask for more data here
                 al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
+//                arrayAdapter.notifyDataSetChanged();
                 Log.d("LIST", "notified");
                 i++;
             }
@@ -81,8 +82,10 @@ public class MyActivity extends Activity {
             @Override
             public void onScroll(float scrollProgressPercent) {
                 View view = flingContainer.getSelectedView();
-                view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
-                view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
+                view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ?
+                        -scrollProgressPercent : 0);
+                view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ?
+                        scrollProgressPercent : 0);
             }
         });
 
@@ -97,7 +100,7 @@ public class MyActivity extends Activity {
 
     }
 
-    static void makeToast(Context ctx, String s){
+    static void makeToast(Context ctx, String s) {
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
     }
 
@@ -114,8 +117,6 @@ public class MyActivity extends Activity {
     public void left() {
         flingContainer.getTopCardListener().selectLeft();
     }
-
-
 
 
 }
