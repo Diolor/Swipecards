@@ -25,6 +25,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
     private int MAX_VISIBLE = 4;
     private int MIN_ADAPTER_STACK = 6;
     private float ROTATION_DEGREES = 15.f;
+    private float CARD_OFFSET_TOP = 0.0f;
+    private float CARD_OFFSET_LEFT = 0.0f;
 
     private Adapter mAdapter;
     private int LAST_OBJECT_IN_STACK = 0;
@@ -52,6 +54,8 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
         MAX_VISIBLE = a.getInt(R.styleable.SwipeFlingAdapterView_max_visible, MAX_VISIBLE);
         MIN_ADAPTER_STACK = a.getInt(R.styleable.SwipeFlingAdapterView_min_adapter_stack, MIN_ADAPTER_STACK);
         ROTATION_DEGREES = a.getFloat(R.styleable.SwipeFlingAdapterView_rotation_degrees, ROTATION_DEGREES);
+        CARD_OFFSET_LEFT = a.getDimension(R.styleable.SwipeFlingAdapterView_card_offset_left, CARD_OFFSET_LEFT);
+        CARD_OFFSET_TOP = a.getDimension(R.styleable.SwipeFlingAdapterView_card_offset_top, CARD_OFFSET_TOP);
         a.recycle();
     }
 
@@ -198,6 +202,9 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
                 childTop = getPaddingTop() + lp.topMargin;
                 break;
         }
+
+        childTop += CARD_OFFSET_TOP;
+        childLeft += CARD_OFFSET_LEFT;
 
         child.layout(childLeft, childTop, childLeft + w, childTop + h);
     }
