@@ -24,7 +24,7 @@ public class SingleViewActivity extends AppCompatActivity {
 			}
 
 			@Override
-			public void onScroll(View view, float scrollProgressPercent) {
+			public void onScroll(View view, float scrollProgressPercent, @Direction int direction) {
 
 			}
 

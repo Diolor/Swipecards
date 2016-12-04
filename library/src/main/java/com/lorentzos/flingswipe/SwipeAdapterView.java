@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Adapter;
@@ -70,8 +69,6 @@ public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventL
 
 		for (int i = startingIndex; i < min; i++) {
 			View child = adapter.getView(i, null, this);
-
-			Log.wtf("SwipeFlingAdapterView", "layoutChildren i: " + i);
 
 			if (child.getVisibility() != GONE) {
 				makeAndAddView(child);
@@ -229,11 +226,11 @@ public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventL
 	}
 
 	@Override
-	public void onScroll(View view, float scrollProgressPercent) {
+	public void onScroll(View view, float scrollProgressPercent, @Direction int direction) {
 		if (onScrollListener == null) {
 			return;
 		}
-		onScrollListener.onScroll(view, scrollProgressPercent);
+		onScrollListener.onScroll(view, scrollProgressPercent, direction);
 	}
 
 	@Override
@@ -270,6 +267,18 @@ public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventL
 	public void swipeLeft() {
 		synchronized (object) {
 			swipe(Direction.LEFT);
+		}
+	}
+
+	public void swipeUp() {
+		synchronized (object) {
+			swipe(Direction.UP);
+		}
+	}
+
+	public void swipeDown() {
+		synchronized (object) {
+			swipe(Direction.DOWN);
 		}
 	}
 

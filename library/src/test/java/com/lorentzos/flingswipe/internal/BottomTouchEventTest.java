@@ -39,11 +39,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF topLeftTouch = new PointF(10f, 10f);
 
 		// When
-		float progress = touchEvent.moveView(topLeftTouch);
+		ScrollProgress progress = touchEvent.moveView(topLeftTouch);
 
 		// Then
 		verifyLeft(topLeftTouch);
-		verifyNegativeEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
 	}
 
 	@Test
@@ -52,11 +52,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF bottomLeftTouch = new PointF(10f, 200f);
 
 		// When
-		float progress = touchEvent.moveView(bottomLeftTouch);
+		ScrollProgress progress = touchEvent.moveView(bottomLeftTouch);
 
 		// Then
 		verifyLeft(bottomLeftTouch);
-		verifyNegativeEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
 	}
 
 	@Test
@@ -65,11 +65,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF topRightTouch = new PointF(330f, 10f);
 
 		// When
-		float progress = touchEvent.moveView(topRightTouch);
+		ScrollProgress progress = touchEvent.moveView(topRightTouch);
 
 		// Then
 		verifyRight(topRightTouch);
-		verifyPositiveEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
 	}
 
 	@Test
@@ -78,11 +78,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF bottomRightTouch = new PointF(330f, 330f);
 
 		// When
-		float progress = touchEvent.moveView(bottomRightTouch);
+		ScrollProgress progress = touchEvent.moveView(bottomRightTouch);
 
 		// Then
 		verifyRight(bottomRightTouch);
-		verifyPositiveEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
 	}
 
 	@Test
@@ -91,11 +91,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF topLeftTouch = new PointF(110f, 10f);
 
 		// When
-		float progress = touchEvent.moveView(topLeftTouch);
+		ScrollProgress progress = touchEvent.moveView(topLeftTouch);
 
 		// Then
 		verifyLeft(topLeftTouch);
-		verifyNegativeProgress(progress);
+		verifyPositiveProgress(progress.progress);
 	}
 
 	@Test
@@ -104,11 +104,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF bottomLeftTouch = new PointF(110f, 200f);
 
 		// When
-		float progress = touchEvent.moveView(bottomLeftTouch);
+		ScrollProgress progress = touchEvent.moveView(bottomLeftTouch);
 
 		// Then
 		verifyLeft(bottomLeftTouch);
-		verifyNegativeProgress(progress);
+		verifyPositiveProgress(progress.progress);
 	}
 
 	@Test
@@ -117,11 +117,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF topRightTouch = new PointF(290f, 10f);
 
 		// When
-		float progress = touchEvent.moveView(topRightTouch);
+		ScrollProgress progress = touchEvent.moveView(topRightTouch);
 
 		// Then
 		verifyRight(topRightTouch);
-		verifyPositiveProgress(progress);
+		verifyPositiveProgress(progress.progress);
 	}
 
 	@Test
@@ -130,11 +130,11 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF bottomRightTouch = new PointF(290f, 160f);
 
 		// When
-		float progress = touchEvent.moveView(bottomRightTouch);
+		ScrollProgress progress = touchEvent.moveView(bottomRightTouch);
 
 		// Then
 		verifyRight(bottomRightTouch);
-		verifyPositiveProgress(progress);
+		verifyPositiveProgress(progress.progress);
 	}
 
 	@Test
@@ -143,13 +143,13 @@ public class BottomTouchEventTest extends TouchEventTest {
 		PointF verticalTouch = new PointF(120f, 160f);
 
 		// When
-		float progress = touchEvent.moveView(verticalTouch);
+		ScrollProgress progress = touchEvent.moveView(verticalTouch);
 
 		// Then
 		verify(mockView).setX(INITIAL_VIEW_X);
 		verify(mockView).setY(verticalTouch.y - initialTouch.y + INITIAL_VIEW_Y);
 		verify(mockView).setRotation(eq(-0f));
-		Truth.assertThat(progress).isWithin(0);
+		Truth.assertThat(progress.progress).isWithin(0);
 	}
 
 	private void verifyLeft(PointF moveTouch) {

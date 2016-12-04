@@ -10,7 +10,7 @@ import android.view.animation.AccelerateInterpolator;
 class ExitPosition {
 
 	private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
-	private static final int DURATION = 100;
+	private static final int DURATION = 100*10;
 	private final float exitX;
 	private final float exitY;
 	private final float exitRotation;

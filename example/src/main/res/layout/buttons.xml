@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -11,10 +11,21 @@
     tools:showIn="@layout/activity_main">
 
     <Button
+        android:id="@+id/up"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="Up"
+        tools:ignore="HardcodedText"/>
+
+    <Button
         android:id="@+id/left"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/up"
         android:layout_margin="10dp"
         android:text="Left"
         tools:ignore="HardcodedText"/>
@@ -24,8 +35,21 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_below="@id/up"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/left"
         android:text="Right"
         tools:ignore="HardcodedText"/>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/down"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/left"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="Down"
+        tools:ignore="HardcodedText"/>
+
+</RelativeLayout>
