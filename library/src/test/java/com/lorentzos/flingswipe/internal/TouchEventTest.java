@@ -12,15 +12,8 @@ class TouchEventTest {
 		Truth.assertThat(progress).isWithin(1f);
 	}
 
-	static void verifyNegativeEndingProgress(float progress) {
-		Truth.assertThat(progress).isWithin(-1f);
-	}
-
 	static void verifyPositiveProgress(float progress) {
-		Truth.assertThat(progress).isIn(Range.closed(0f, 1f));
+		Truth.assertThat(progress).isIn(Range.greaterThan(0f));
 	}
 
-	static void verifyNegativeProgress(float progress) {
-		Truth.assertThat(progress).isIn(Range.closed(-1f, 0f));
-	}
 }

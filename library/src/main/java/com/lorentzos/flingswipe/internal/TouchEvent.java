@@ -46,13 +46,13 @@ class TouchEvent {
 	}
 
 	/**
-	 * Notifies to move the view based on the given touch
-	 * {@link android.view.MotionEvent#ACTION_MOVE} event.
+	 * Notifies to move the view based on the given touch {@link android.view.MotionEvent#ACTION_MOVE}
+	 * event.
 	 *
 	 * @param movePosition the position of the pointer at the given time.
 	 * @return the scroll progress of the view
 	 */
-	float moveView(PointF movePosition) {
+	ScrollProgress moveView(PointF movePosition) {
 		float dx = movePosition.x - initialPosition.x;
 		float dy = movePosition.y - initialPosition.y;
 
@@ -64,7 +64,7 @@ class TouchEvent {
 		UpdatePosition updatePosition = frameData.createUpdatePosition(dx, dy, rotationFactor);
 		updatePosition.move(frame);
 
-		return updatePosition.getScrollProgress();
+		return updatePosition.scrollProgress;
 	}
 
 	/**
@@ -74,11 +74,11 @@ class TouchEvent {
 	 * @param onCardResult the callback triggered when the event finishes.
 	 * @return the scroll progress of the view
 	 */
-	float resultView(PointF endPosition, final OnCardResult onCardResult) {
-		float dx = endPosition.x - initialPosition.x;
-		float scrollProgress = frameData.getScrollProgress(dx);
+	ScrollProgress resultView(PointF endPosition, final OnCardResult onCardResult) {
 
-		PointF framePosition = new PointF(frame.getX(), frame.getY());
+		float dx = endPosition.x - initialPosition.x;
+		float dy = endPosition.y - initialPosition.y;
+		ScrollProgress scrollProgress = frameData.getScrollProgress(dx, dy);
 
 		final FrameResult frameResult;
 		if (TouchUtil.minorMovement(endPosition, initialPosition)) {
@@ -89,14 +89,16 @@ class TouchEvent {
 
 		switch (frameResult.getEndEvent()) {
 			case EXIT:
+				PointF framePosition = new PointF(frame.getX(), frame.getY());
 				float rotation = adjustRotationFactor(rotationFactor, touchType, frameResult.getDirection());
 
-				frameData.getExitPosition(framePosition, frameResult.getDirection(), rotation).exit(frame, new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						onCardResult.onExit(frameResult);
-					}
-				});
+				frameData.getExitPosition(framePosition, frameResult.getDirection(), rotation)
+						.exit(frame, new AnimatorListenerAdapter() {
+							@Override
+							public void onAnimationEnd(Animator animation) {
+								onCardResult.onExit(frameResult);
+							}
+						});
 
 				break;
 			case CLICK:

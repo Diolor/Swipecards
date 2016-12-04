@@ -9,17 +9,13 @@ class UpdatePosition {
 	private final float updateX;
 	private final float updateY;
 	private final float rotation;
-	private final float scrollProgress;
+	final ScrollProgress scrollProgress;
 
-	UpdatePosition(float updateX, float updateY, float rotation, float scrollProgress) {
+	UpdatePosition(float updateX, float updateY, float rotation, ScrollProgress scrollProgress) {
 		this.updateX = updateX;
 		this.updateY = updateY;
 		this.rotation = rotation;
 		this.scrollProgress = scrollProgress;
-	}
-
-	float getScrollProgress() {
-		return scrollProgress;
 	}
 
 	void move(View frame) {

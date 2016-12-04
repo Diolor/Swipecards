@@ -22,10 +22,11 @@ public class ExitTouchEventTest extends TouchEventTest {
 		}
 	};
 	private TouchEvent touchEvent;
+	private View mockView;
 
 	@Before
 	public void setUp() throws Exception {
-		View mockView = MockViewFactory.createWithAnimate();
+		mockView = MockViewFactory.createWithAnimate();
 		PointF middlishTouch = new PointF(120f, 120f);
 
 		touchEvent = new TouchEvent(15f, mockView, middlishTouch, 40f);
@@ -37,22 +38,24 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topLeftTouch = new PointF(10f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topLeftTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(topLeftTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyNegativeEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.UP);
 	}
 
 	@Test
 	public void bottomLeftOutside() throws Exception {
 		// Given
-		PointF bottomLeftTouch = new PointF(10f, 200f);
+		PointF bottomLeftTouch = new PointF(50f, 200f);
 
 		// When
-		float progress = touchEvent.resultView(bottomLeftTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(bottomLeftTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyNegativeEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.LEFT);
 	}
 
 	@Test
@@ -61,10 +64,11 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topRightTouch = new PointF(330f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topRightTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(topRightTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyPositiveEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.UP);
 	}
 
 	@Test
@@ -73,10 +77,11 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomRightTouch = new PointF(330f, 330f);
 
 		// When
-		float progress = touchEvent.resultView(bottomRightTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(bottomRightTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyPositiveEndingProgress(progress);
+		verifyPositiveEndingProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.RIGHT);
 	}
 
 	@Test
@@ -85,10 +90,11 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topLeftTouch = new PointF(110f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topLeftTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(topLeftTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyNegativeProgress(progress);
+		verifyPositiveProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.UP);
 	}
 
 	@Test
@@ -97,10 +103,11 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomLeftTouch = new PointF(110f, 200f);
 
 		// When
-		float progress = touchEvent.resultView(bottomLeftTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(bottomLeftTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyNegativeProgress(progress);
+		verifyPositiveProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.LEFT);
 	}
 
 	@Test
@@ -109,10 +116,11 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF topRightTouch = new PointF(290f, 10f);
 
 		// When
-		float progress = touchEvent.resultView(topRightTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(topRightTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyPositiveProgress(progress);
+		verifyPositiveProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.UP);
 	}
 
 	@Test
@@ -121,22 +129,24 @@ public class ExitTouchEventTest extends TouchEventTest {
 		PointF bottomRightTouch = new PointF(290f, 160f);
 
 		// When
-		float progress = touchEvent.resultView(bottomRightTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(bottomRightTouch, ON_CARD_RESULT);
 
 		// Then
-		verifyPositiveProgress(progress);
+		verifyPositiveProgress(progress.progress);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.RIGHT);
 	}
 
 	@Test
 	public void onlyVerticalMove() throws Exception {
 		// Given
-		PointF verticalTouch = new PointF(120f, 160f);
+		PointF verticalTouch = new PointF(120f, 360f);
 
 		// When
-		float progress = touchEvent.resultView(verticalTouch, ON_CARD_RESULT);
+		ScrollProgress progress = touchEvent.resultView(verticalTouch, ON_CARD_RESULT);
 
 		// Then
-		Truth.assertThat(progress).isWithin(0);
+		Truth.assertThat(progress.progress).isWithin(0);
+		Truth.assertThat(progress.direction).isEqualTo(Direction.DOWN);
 	}
 
 }

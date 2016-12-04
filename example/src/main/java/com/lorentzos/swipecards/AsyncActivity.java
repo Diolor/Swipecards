@@ -29,8 +29,8 @@ import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 import static io.reactivex.schedulers.Schedulers.newThread;
 
 /**
- * Activity with example of a network call to obtain the data and load the avatars
- * in the image views.
+ * Activity with example of a network call to obtain the data and load the avatars in the image
+ * views.
  */
 public class AsyncActivity extends AppCompatActivity {
 
@@ -87,8 +87,8 @@ public class AsyncActivity extends AppCompatActivity {
 		// Optionally add an onScrollListener
 		flingContainer.setOnScrollListener(new OnScrollListener() {
 			@Override
-			public void onScroll(View view, float scrollProgressPercent) {
-				Log.i("MyActivity", "onScroll " + scrollProgressPercent);
+			public void onScroll(View view, float scrollProgressPercent, int direction) {
+				Log.i("MyActivity", "onScroll " + direction + ": " + scrollProgressPercent);
 			}
 		});
 
@@ -116,14 +116,14 @@ public class AsyncActivity extends AppCompatActivity {
 		super.onDestroy();
 	}
 
-	@OnClick(R.id.right)
-	public void swipeRight() {
+	@OnClick(R.id.up)
+	public void swipeTop() {
 		if (memberAdapter.isEmpty()) {
-			Snackbar.make(coordinatorLayout, "Cannot swipe right. Adapter is empty.", Snackbar.LENGTH_SHORT).show();
+			Snackbar.make(coordinatorLayout, "Cannot swipe up. Adapter is empty.", Snackbar.LENGTH_SHORT).show();
 			return;
 		}
-		//Trigger the right event manually.
-		flingContainer.swipeRight();
+		//Trigger the up event manually.
+		flingContainer.swipeUp();
 	}
 
 	@OnClick(R.id.left)
@@ -136,4 +136,23 @@ public class AsyncActivity extends AppCompatActivity {
 		flingContainer.swipeLeft();
 	}
 
+	@OnClick(R.id.right)
+	public void swipeRight() {
+		if (memberAdapter.isEmpty()) {
+			Snackbar.make(coordinatorLayout, "Cannot swipe right. Adapter is empty.", Snackbar.LENGTH_SHORT).show();
+			return;
+		}
+		//Trigger the right event manually.
+		flingContainer.swipeRight();
+	}
+
+	@OnClick(R.id.down)
+	public void swipeDown() {
+		if (memberAdapter.isEmpty()) {
+			Snackbar.make(coordinatorLayout, "Cannot swipe down. Adapter is empty.", Snackbar.LENGTH_SHORT).show();
+			return;
+		}
+		//Trigger the down event manually.
+		flingContainer.swipeDown();
+	}
 }

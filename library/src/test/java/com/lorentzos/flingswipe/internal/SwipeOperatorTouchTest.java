@@ -82,6 +82,12 @@ public class SwipeOperatorTouchTest {
 		MotionEvent upEvent = MotionEventFactory.upEvent(10, 10);
 
 		swipeOperator = new SwipeOperator(new TestCardEventListener(scrollLatch) {
+
+			@Override
+			public void onCardExited(View view, @Direction int direction) {
+				super.onCardExited(view, direction);
+			}
+
 			@Override
 			public void onRecenter(View view) {
 				recenterLatch.countDown();

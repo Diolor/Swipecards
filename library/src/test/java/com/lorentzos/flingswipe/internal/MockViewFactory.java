@@ -32,6 +32,7 @@ class MockViewFactory {
 		when(mockView.getWidth()).thenReturn(SIDE_SIZE_PIXELS);
 
 		when(mockParent.getWidth()).thenReturn(400);
+		when(mockParent.getHeight()).thenReturn(450);
 		when((View) mockView.getParent()).thenReturn(mockParent);
 
 		return mockView;
@@ -49,6 +50,7 @@ class MockViewFactory {
 		when(mockView.animate()).thenReturn(mockViewPropertyAnimator);
 
 		when(mockParent.getWidth()).thenReturn(400);
+		when(mockParent.getHeight()).thenReturn(450);
 
 		when((View) mockView.getParent()).thenReturn(mockParent);
 

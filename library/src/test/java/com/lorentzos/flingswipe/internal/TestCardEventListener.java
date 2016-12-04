@@ -25,7 +25,7 @@ class TestCardEventListener implements CardEventListener {
 	}
 
 	@Override
-	public void onScroll(View view, float scrollProgressPercent) {
+	public void onScroll(View view, float scrollProgressPercent, @Direction int direction) {
 		if (scrollLatch != null) {
 			scrollLatch.countDown();
 		}
