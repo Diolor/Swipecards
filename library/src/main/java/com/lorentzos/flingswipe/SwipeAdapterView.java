@@ -16,7 +16,7 @@ import com.lorentzos.flingswipe.internal.SwipeOperator;
 import com.lorentzos.flingswipe.internal.TopView;
 
 /**
- *
+ * The {@link android.widget.AdapterView} which can perform swiping away actions on its top view.
  */
 public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventListener {
 
@@ -246,36 +246,63 @@ public class SwipeAdapterView extends BaseFlingAdapterView implements CardEventL
 		performItemClick(view, 0, 0);
 	}
 
+	/**
+	 * Register a callback to be invoked when an item in this AdapterView has exited.
+	 *
+	 * @param onExitListener The callback that will be invoked.
+	 */
 	public void setOnExitListener(OnExitListener onExitListener) {
 		this.onExitListener = onExitListener;
 	}
 
+	/**
+	 * Register a callback to be invoked when an item in this AdapterView has moved.
+	 *
+	 * @param onScrollListener The callback that will be invoked.
+	 */
 	public void setOnScrollListener(OnScrollListener onScrollListener) {
 		this.onScrollListener = onScrollListener;
 	}
 
+	/**
+	 * Register a callback to be invoked when an item in this AdapterView has been recentered.
+	 *
+	 * @param onRecenterListener The callback that will be invoked.
+	 */
 	public void setOnRecenterListener(OnRecenterListener onRecenterListener) {
 		this.onRecenterListener = onRecenterListener;
 	}
 
+	/**
+	 * Performs an immediate exit animation to the right.
+	 */
 	public void swipeRight() {
 		synchronized (object) {
 			swipe(Direction.RIGHT);
 		}
 	}
 
+	/**
+	 * Performs an immediate exit animation to the left.
+	 */
 	public void swipeLeft() {
 		synchronized (object) {
 			swipe(Direction.LEFT);
 		}
 	}
 
+	/**
+	 * Performs an immediate exit animation to the top.
+	 */
 	public void swipeUp() {
 		synchronized (object) {
 			swipe(Direction.UP);
 		}
 	}
 
+	/**
+	 * Performs an immediate exit animation to the bottom.
+	 */
 	public void swipeDown() {
 		synchronized (object) {
 			swipe(Direction.DOWN);
