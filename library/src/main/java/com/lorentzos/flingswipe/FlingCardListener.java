@@ -72,107 +72,109 @@ public class FlingCardListener implements View.OnTouchListener {
 
 
     public boolean onTouch(View view, MotionEvent event) {
+        if (!isAnimationRunning) {
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
 
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
+                    // from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
+                    // Save the ID of this pointer
 
-                // from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
-                // Save the ID of this pointer
-
-                mActivePointerId = event.getPointerId(0);
-                float x = 0;
-                float y = 0;
-                boolean success = false;
-                try {
-                    x = event.getX(mActivePointerId);
-                    y = event.getY(mActivePointerId);
-                    success = true;
-                } catch (IllegalArgumentException e) {
-                    Log.w(TAG, "Exception in onTouch(view, event) : " + mActivePointerId, e);
-                }
-                if (success) {
-                    // Remember where we started
-                    aDownTouchX = x;
-                    aDownTouchY = y;
-                    //to prevent an initial jump of the magnifier, aposX and aPosY must
-                    //have the values from the magnifier frame
-                    if (aPosX == 0) {
-                        aPosX = frame.getX();
+                    mActivePointerId = event.getPointerId(0);
+                    float x = 0;
+                    float y = 0;
+                    boolean success = false;
+                    try {
+                        x = event.getX(mActivePointerId);
+                        y = event.getY(mActivePointerId);
+                        success = true;
+                    } catch (IllegalArgumentException e) {
+                        Log.w(TAG, "Exception in onTouch(view, event) : " + mActivePointerId, e);
                     }
-                    if (aPosY == 0) {
-                        aPosY = frame.getY();
+                    if (success) {
+                        // Remember where we started
+                        aDownTouchX = x;
+                        aDownTouchY = y;
+                        //to prevent an initial jump of the magnifier, aposX and aPosY must
+                        //have the values from the magnifier frame
+                        if (aPosX == 0) {
+                            aPosX = frame.getX();
+                        }
+                        if (aPosY == 0) {
+                            aPosY = frame.getY();
+                        }
+
+                        if (y < objectH / 2) {
+                            touchPosition = TOUCH_ABOVE;
+                        } else {
+                            touchPosition = TOUCH_BELOW;
+                        }
                     }
 
-                    if (y < objectH / 2) {
-                        touchPosition = TOUCH_ABOVE;
-                    } else {
-                        touchPosition = TOUCH_BELOW;
+                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    mActivePointerId = INVALID_POINTER_ID;
+                    resetCardViewOnStack();
+                    view.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    break;
+
+                case MotionEvent.ACTION_POINTER_UP:
+                    // Extract the index of the pointer that left the touch sensor
+                    final int pointerIndex = (event.getAction() &
+                            MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                    final int pointerId = event.getPointerId(pointerIndex);
+                    if (pointerId == mActivePointerId) {
+                        // This was our active pointer going up. Choose a new
+                        // active pointer and adjust accordingly.
+                        final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+                        mActivePointerId = event.getPointerId(newPointerIndex);
                     }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+
+                    // Find the index of the active pointer and fetch its position
+                    final int pointerIndexMove = event.findPointerIndex(mActivePointerId);
+                    final float xMove = event.getX(pointerIndexMove);
+                    final float yMove = event.getY(pointerIndexMove);
+
+                    //from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
+                    // Calculate the distance moved
+                    final float dx = xMove - aDownTouchX;
+                    final float dy = yMove - aDownTouchY;
+
+
+                    // Move the frame
+                    aPosX += dx;
+                    aPosY += dy;
+
+                    // calculate the rotation degrees
+                    float distobjectX = aPosX - objectX;
+                    float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
+                    if (touchPosition == TOUCH_BELOW) {
+                        rotation = -rotation;
+                    }
+
+                    //in this area would be code for doing something with the view as the frame moves.
+                    frame.setX(aPosX);
+                    frame.setY(aPosY);
+                    frame.setRotation(rotation);
+                    mFlingListener.onScroll(getScrollProgressPercent());
+                    break;
+
+                case MotionEvent.ACTION_CANCEL: {
+                    mActivePointerId = INVALID_POINTER_ID;
+                    view.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
                 }
-
-                view.getParent().requestDisallowInterceptTouchEvent(true);
-                break;
-
-            case MotionEvent.ACTION_UP:
-                mActivePointerId = INVALID_POINTER_ID;
-                resetCardViewOnStack();
-                view.getParent().requestDisallowInterceptTouchEvent(false);
-                break;
-
-            case MotionEvent.ACTION_POINTER_DOWN:
-                break;
-
-            case MotionEvent.ACTION_POINTER_UP:
-                // Extract the index of the pointer that left the touch sensor
-                final int pointerIndex = (event.getAction() &
-                        MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-                final int pointerId = event.getPointerId(pointerIndex);
-                if (pointerId == mActivePointerId) {
-                    // This was our active pointer going up. Choose a new
-                    // active pointer and adjust accordingly.
-                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    mActivePointerId = event.getPointerId(newPointerIndex);
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                // Find the index of the active pointer and fetch its position
-                final int pointerIndexMove = event.findPointerIndex(mActivePointerId);
-                final float xMove = event.getX(pointerIndexMove);
-                final float yMove = event.getY(pointerIndexMove);
-
-                //from http://android-developers.blogspot.com/2010/06/making-sense-of-multitouch.html
-                // Calculate the distance moved
-                final float dx = xMove - aDownTouchX;
-                final float dy = yMove - aDownTouchY;
-
-
-                // Move the frame
-                aPosX += dx;
-                aPosY += dy;
-
-                // calculate the rotation degrees
-                float distobjectX = aPosX - objectX;
-                float rotation = BASE_ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
-                if (touchPosition == TOUCH_BELOW) {
-                    rotation = -rotation;
-                }
-
-                //in this area would be code for doing something with the view as the frame moves.
-                frame.setX(aPosX);
-                frame.setY(aPosY);
-                frame.setRotation(rotation);
-                mFlingListener.onScroll(getScrollProgressPercent());
-                break;
-
-            case MotionEvent.ACTION_CANCEL: {
-                mActivePointerId = INVALID_POINTER_ID;
-                view.getParent().requestDisallowInterceptTouchEvent(false);
-                break;
             }
-        }
 
-        return true;
+            return true;
+        }
+        return false;
     }
 
     private float getScrollProgressPercent() {
