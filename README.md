@@ -7,6 +7,8 @@ Travis master: [![Build Status](https://travis-ci.org/Diolor/Swipecards.svg?bran
 A Tinder-like cards effect as of August 2014. You can swipe left or right to like or dislike the content.
 The library creates a similar effect to Tinder's swipable cards with Fling animation.
 
+It was inspired by [Kikoso's Swipeable-Cards] but I decided to create a more simple and fresh approach with less bugs.
+
 It handles greatly asynchronous loading of adapter's data and uses the same layout parameters as FrameLayout (you may use `android:layout_gravity` in your layout xml file).
 
 ![ ](/screenshot.gif)
