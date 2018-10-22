@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.lorentzos.swipecards.example"
@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':library')
-    compile 'com.jakewharton:butterknife:5.1.2'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':library')
+    implementation 'com.jakewharton:butterknife:5.1.2'
 }
