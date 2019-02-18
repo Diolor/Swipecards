@@ -343,6 +343,4 @@ public class SwipeFlingAdapterView extends BaseFlingAdapterView {
 
         boolean isLeftCardExitAvailable();
     }
-
-
 }

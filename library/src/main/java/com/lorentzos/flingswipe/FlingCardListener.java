@@ -350,10 +350,4 @@ public class FlingCardListener implements View.OnTouchListener {
 
         boolean isLeftExitAvailable();
     }
-
 }
-
-
-
-
-
