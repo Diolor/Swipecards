@@ -189,11 +189,11 @@ public class FlingCardListener implements View.OnTouchListener {
     }
 
     private boolean resetCardViewOnStack() {
-        if (movedBeyondLeftBorder()) {
+        if (movedBeyondLeftBorder() && mFlingListener.isLeftExitAvailable()) {
             // Left Swipe
             onSelected(true, getExitPoint(-objectW), 100);
             mFlingListener.onScroll(-1.0f);
-        } else if (movedBeyondRightBorder()) {
+        } else if (movedBeyondRightBorder() && mFlingListener.isRightExitAvailable()) {
             // Right Swipe
             onSelected(false, getExitPoint(parentWidth), 100);
             mFlingListener.onScroll(1.0f);
@@ -272,7 +272,7 @@ public class FlingCardListener implements View.OnTouchListener {
      * Starts a default left exit animation.
      */
     public void selectLeft() {
-        if (!isAnimationRunning)
+        if (!isAnimationRunning && mFlingListener.isLeftExitAvailable())
             onSelected(true, objectY, 200);
     }
 
@@ -280,7 +280,7 @@ public class FlingCardListener implements View.OnTouchListener {
      * Starts a default right exit animation.
      */
     public void selectRight() {
-        if (!isAnimationRunning)
+        if (!isAnimationRunning && mFlingListener.isRightExitAvailable())
             onSelected(false, objectY, 200);
     }
 
@@ -345,6 +345,10 @@ public class FlingCardListener implements View.OnTouchListener {
         void onClick(Object dataObject);
 
         void onScroll(float scrollProgressPercent);
+
+        boolean isRightExitAvailable();
+
+        boolean isLeftExitAvailable();
     }
 
 }
