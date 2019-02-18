@@ -25,7 +25,7 @@ Be sure to add the `@aar` suffix.
 
 ```groovy
 dependencies {
-    compile 'com.lorentzos.swipecards:library:X.X.X@aar'
+    implementation 'com.lorentzos.swipecards:library:X.X.X@aar'
 }
 ```
 
