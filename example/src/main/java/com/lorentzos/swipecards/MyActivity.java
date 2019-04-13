@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import butterknife.BindView;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 
@@ -23,14 +23,14 @@ public class MyActivity extends Activity {
     private ArrayAdapter<String> arrayAdapter;
     private int i;
 
-    @InjectView(R.id.frame) SwipeFlingAdapterView flingContainer;
+    @BindView(R.id.frame) SwipeFlingAdapterView flingContainer;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
 
         al = new ArrayList<>();
@@ -104,8 +104,8 @@ public class MyActivity extends Activity {
 
     @OnClick(R.id.right)
     public void right() {
-        /**
-         * Trigger the right event manually.
+        /*
+          Trigger the right event manually.
          */
         flingContainer.getTopCardListener().selectRight();
     }
@@ -114,8 +114,4 @@ public class MyActivity extends Activity {
     public void left() {
         flingContainer.getTopCardListener().selectLeft();
     }
-
-
-
-
 }
