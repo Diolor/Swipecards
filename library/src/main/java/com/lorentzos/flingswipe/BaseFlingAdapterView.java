@@ -2,21 +2,18 @@ package com.lorentzos.flingswipe;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.AdapterView;
 
 /**
  * Created by dionysis_lorentzos on 6/8/14
  * for package com.lorentzos.swipecards
  * and project Swipe cards.
- * Use with caution dinausaurs might appear!
+ * Use with caution dinosaurs might appear!
  */
 abstract class BaseFlingAdapterView extends AdapterView {
 
     private int heightMeasureSpec;
     private int widthMeasureSpec;
-
-
 
     public BaseFlingAdapterView(Context context) {
         super(context);
@@ -42,7 +39,6 @@ abstract class BaseFlingAdapterView extends AdapterView {
         this.heightMeasureSpec = heightMeasureSpec;
     }
 
-
     public int getWidthMeasureSpec() {
         return widthMeasureSpec;
     }
@@ -50,8 +46,4 @@ abstract class BaseFlingAdapterView extends AdapterView {
     public int getHeightMeasureSpec() {
         return heightMeasureSpec;
     }
-
-
-
-
 }
